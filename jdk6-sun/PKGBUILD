@@ -1,0 +1,88 @@
+# Contributor: Geoffroy Carrier <geoffroy.carrier@aur.archlinux.org>
+# Contributor: Jason Chu <jason@archlinux.org>
+# Maintainer: Daniel J Griffiths <ghost1227@archlinux.us>
+
+pkgname=jdk6-sun
+pkgver=6u20
+pkgrel=1
+pkgdesc="Sun's Java Development Kit - 'alternatives' ready"
+arch=('i686' 'x86_64')
+  [ "${CARCH}" = "i686" ]   && ARCH=i586
+  [ "${CARCH}" = "x86_64" ] && ARCH=amd64
+url="http://java.sun.com"
+depends=('glibc' 'jre6-sun' 'alternatives')
+install="jdk6-sun.install"
+source=(http://download.java.net/dlj/binaries/jdk-${pkgver}-dlj-linux-${ARCH}.bin
+        https://jdk-distros.dev.java.net/source/browse/*checkout*/jdk-distros/trunk/utils/construct.sh
+	jdk6-sun.profile
+	java-control-panel_jdk6-sun.desktop 
+	java-monitoring-and-management-console_jdk6-sun.desktop
+	java-policy-settings_jdk6-sun.desktop 
+	java-visualvm_jdk6-sun.desktop 
+	java-web-start_jdk6-sun.desktop)
+[ "$CARCH" = "i686" ]   && md5sums=('37afae8ef2481b85b4c9b0356c5d7b40'
+			            '94065b612df0046d9ae758943f9f6a75'
+				    '8ccf7b1d83e6d79bd0886fc26c373d59'
+				    'fb651b083e7c4464e258f7b8fd600da2'
+				    '181bc3dffc2f51b86b623331a49ce324'
+				    '35457fed6375c74669276fb5721919d4'
+				    '431ba0a7101857a0fc5de9bc5a0e80c8'
+				    '0e956455128a9e6b8cfa663d552bf038')
+[ "$CARCH" = "x86_64" ] && md5sums=('e0d03306f57ce1b49d972a21cbb920a0'
+			            '94065b612df0046d9ae758943f9f6a75'
+	          		    '8ccf7b1d83e6d79bd0886fc26c373d59'
+				    'fb651b083e7c4464e258f7b8fd600da2'
+				    '181bc3dffc2f51b86b623331a49ce324'
+				    '35457fed6375c74669276fb5721919d4'
+				    '431ba0a7101857a0fc5de9bc5a0e80c8'
+				    '0e956455128a9e6b8cfa663d552bf038')
+replaces=('j2sdk')
+conflicts=('jdk' 'jre' 'j2sdk')
+provides=('java-environment=6' 'j2sdk')
+license=('custom')
+
+build() {
+	cd ${srcdir}
+
+	mkdir unbundle-jdk
+	cd unbundle-jdk
+
+	sh ../jdk-${pkgver}-dlj-linux-${ARCH}.bin --accept-license
+
+	cd ..
+
+	sh construct.sh unbundle-jdk linux-jdk linux-jre
+}
+
+package() {
+	cd ${srcdir}
+
+	#copy icon
+	install -Dm644 ${srcdir}/linux-jdk/jre/lib/desktop/icons/hicolor/48x48/apps/sun-java.png \
+			${pkgdir}/usr/share/pixmaps/java.png
+
+	rm -rf linux-jdk/jre
+
+	mkdir -p ${pkgdir}/usr/lib/jvm
+	mv linux-jdk ${pkgdir}/usr/lib/jvm/jdk-6-sun
+	ln -s /usr/lib/jvm/jre-6-sun ${pkgdir}/usr/lib/jvm/jdk-6-sun/jre
+
+	install -D -m755 ${srcdir}/${pkgname}.profile ${pkgdir}/etc/profile.d/${pkgname}.sh
+
+	mkdir -p ${pkgdir}/usr/share/licenses/$pkgname
+	cp ${pkgdir}/usr/lib/jvm/jdk-6-sun/COPYRIGHT ${pkgdir}/usr/share/licenses/$pkgname
+	cp ${pkgdir}/usr/lib/jvm/jdk-6-sun/LICENSE ${pkgdir}/usr/share/licenses/$pkgname
+	cp ${pkgdir}/usr/lib/jvm/jdk-6-sun/THIRDPARTYLICENSEREADME.txt ${pkgdir}/usr/share/licenses/$pkgname
+
+	#desktop entries
+	install -Dm644 ${srcdir}/java-control-panel_jdk6-sun.desktop \
+		${pkgdir}/usr/share/applications/java-control-panel_jdk6-sun.desktop
+	install -Dm644 ${srcdir}/java-monitoring-and-management-console_jdk6-sun.desktop \
+		${pkgdir}/usr/share/applications/java-monitoring-and-management-console_jdk6-sun.desktop
+	install -Dm644 ${srcdir}/java-policy-settings_jdk6-sun.desktop \
+		${pkgdir}/usr/share/applications/java-policy-settings_jdk6-sun.desktop
+	install -Dm644 ${srcdir}/java-visualvm_jdk6-sun.desktop \
+		${pkgdir}/usr/share/applications/java-visualvm_jdk6-sun.desktop
+	install -Dm644 ${srcdir}/java-web-start_jdk6-sun.desktop \
+		${pkgdir}/usr/share/applications/java-web-start_jdk6-sun.desktop
+}
