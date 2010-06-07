@@ -1,0 +1,19 @@
+Important : tomcat ne semble pas vouloir se lancer avec 'sudo'
+
+Modif à faire :
+X	compiler avec n'importe quel JDK
+		enlever '--with-jdk' du configure du PKGBUILD
+			et il suffit de set le JAVA_HOME pour build
+		suppr dans le /etc/conf.d/tomcat la ligne qui spécifie le JAVA_HOME
+			et suppr la ligne -home dans /etc/rc.d/tomcat
+
+X	placer les fichiers dans /usr/share/java/tomcat
+X	placer les logs dns /var/log/tomcat
+	permettre utilisation de tomcat5 et tomcat6
+	exporter toutes les variables de /etc/rc.d.tomcat dans le conf de tomcat
+
+À voir :
+	est-ce que le répertoire de tomcat ne devrait pas appartenir à tomcat plutôt qu'à root?
+
+
+-cp $TOMCAT_JAVA_HOME/lib/tools.jar:/usr/share/tomcat/bin/commons-daemon.jar:/usr/share/tomcat/bin/bootstrap.jar \
