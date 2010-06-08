@@ -1,0 +1,29 @@
+# Contributor: Guillaume ALAUX <guillaume alaux.net>
+pkgname=tomcat-admin
+pkgver=5.5.29
+pkgrel=1
+pkgdesc="Tomcat 5 administration web application"
+arch=(any)
+url="http://tomcat.apache.org/"
+license=('APACHE')
+#groups=(tomcat5)
+depends=(tomcat)
+source=(http://archive.apache.org/dist/tomcat/tomcat-5/v${pkgver}/bin/apache-tomcat-${pkgver}-admin.tar.gz)
+md5sums=(03231d3269b087ec751e12114fef6a18)
+
+build() {
+#	mkdir -p ${pkgdir}/srv/tomcat/server/webapps \
+#		${pkgdir}/usr/share/tomcat/conf/Catalina/localhost
+
+	install -D ${srcdir}/apache-tomcat-${pkgver}/conf/Catalina/localhost/admin.xml \
+		${pkgdir}/usr/share/tomcat/conf/Catalina/localhost/admin.xml
+
+	mkdir -p ${pkgdir}/srv/tomcat/server/webapps
+	mv ${srcdir}/apache-tomcat-${pkgver}/server/webapps/admin \
+		${pkgdir}/srv/tomcat/server/webapps
+
+	chown -R tomcat:tomcat ${pkgdir}/usr/share/tomcat/conf/Catalina/localhost/admin.xml \
+		${pkgdir}/srv/tomcat/server/webapps/admin
+
+	chmod -R 0660 ${pkgdir}/usr/share/tomcat/conf/*
+}
