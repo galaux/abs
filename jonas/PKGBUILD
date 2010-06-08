@@ -1,0 +1,44 @@
+# Contributor: Guillaume ALAUX <guillaume alaux.net>
+pkgname=jonas
+pkgver=5.1.2
+pkgrel=1
+pkgdesc="Java EE 5 certified Open Source OSGi Enterprise Server by OW2"
+arch=('i686' 'x86_64')
+url="http://jonas.ow2.org/"
+license=('LGPL')
+depends=('java-runtime' 'apache-ant>1.7')
+makedepends=()
+#install=jonas.install
+
+source=(\
+  http://download.forge.objectweb.org/jonas/jonas-full-$pkgver-bin.tar.gz \
+  http://www.apache.org/dist/jakarta/bcel/binaries/bcel-5.2.tar.gz \
+  jonas
+)
+
+md5sums=('0fa0d745f77685a31e68065a2e7a3599'
+         '19bffd7f217b0eae415f1ef87af2f0bc'
+	 '5b6e0c3a5262fd46b89175ac8e2936df')
+
+build()
+{
+	#FIXME Doesn't rm anything !!
+	find $srcdir/jonas-full-$pkgver -iname "*.bat" -o -iname "*.exe" -exec rm {} \;
+	# TODO rm this '%JONAS_ROOT%\bin\nt'
+
+	install -d $pkgdir/usr/share/java/$pkgname $pkgdir/usr/share/$pkgname
+	
+	#for f in $(find ${srcdir}/jonas-full-$pkgver -name "*.jar") do;
+	#	mv $f $pkgdir/usr/share/java/$pkgname;
+	#done
+	mv $srcdir/jonas-full-$pkgver/lib $srcdir/jonas-full-$pkgver/repositories \
+		$pkgdir/usr/share/java/$pkgname
+
+	cp -r $srcdir/jonas-full-$pkgver/* $pkgdir/usr/share/$pkgname
+
+	install $srcdir/bcel-5.2/bcel-5.2.jar $pkgdir/usr/share/java/$pkgname
+
+	install -D -m755 $srcdir/jonas $pkgdir/etc/rc.d/jonas
+
+	# Add link from /var/log/jonas
+}

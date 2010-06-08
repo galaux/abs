@@ -10,7 +10,10 @@ url="http://tomcat.apache.org/"
 license=('APACHE')
 depends=('java-environment')
 makedepends=('java-environment')
-backup=('usr/share/tomcat/conf/server.xml' 'usr/share/tomcat/conf/tomcat-users.xml' 'etc/conf.d/tomcat')
+backup=('usr/share/tomcat/conf/server.xml'
+	'usr/share/tomcat/conf/tomcat-users.xml'
+	'etc/conf.d/tomcat')
+optdepends='tomcat-admin'
 install=tomcat.install
 source=(http://archive.apache.org/dist/tomcat/tomcat-5/v${pkgver}/bin/apache-tomcat-${pkgver}.tar.gz
 	'tomcat'
@@ -32,18 +35,26 @@ build() {
 	# get rid of some cruft
 	cd ${srcdir}/apache-${pkgname}-${pkgver}
 	rm -f LICENSE NOTICE RELEASE-NOTES RUNNING.txt
-	rm -fr bin/*.exe bin/*.bat bin/*.tar.gz bin/*64/*.exe bin/jsvc-src
+	rm -fr bin/*.exe bin/*.bat bin/*.tar.gz bin/*64/*.exe bin/jsvc-src logs
 
 	# install everything
-	mkdir -p ${pkgdir}/usr/share/${pkgname}
+	mkdir -p ${pkgdir}/usr/share/${pkgname} \
+		${pkgdir}/srv/${pkgname}/server \
+		${pkgdir}/var/log/${pkgname}
 	# ${pkgdir}/usr/share/java/${pkgname}
+	mv webapps ${pkgdir}/srv/${pkgname}
+	mv server/webapps ${pkgdir}/srv/${pkgname}/server
+	sed -i 's|<Host name="localhost" appBase="webapps"|<Host name="localhost" appBase="/srv/tomcat/webapps"|g' conf/server.xml
 	cp -R * ${pkgdir}/usr/share/${pkgname}
 
 	install -D -m755 ${srcdir}/tomcat ${pkgdir}/etc/rc.d/tomcat
 	install -D -m644 ${srcdir}/tomcat.conf.d ${pkgdir}/etc/conf.d/tomcat
-	chgrp -R 66 ${pkgdir}/usr/share/tomcat/conf ${pkgdir}/usr/share/tomcat/work
-	chmod 0660 ${pkgdir}/usr/share/tomcat/conf/{*.xml,*.policy,*.properties,/Catalina/localhost/*.xml}
-	chmod 775 ${pkgdir}/usr/share/tomcat/conf ${pkgdir}/usr/share/tomcat/work
 
-	mkdir -p ${pkgdir}/var/log/tomcat
+	ln -s /var/log/${pkgname} ${pkgdir}/usr/share/${pkgname}/logs
+	ln -s /srv/${pkgname}/webapps ${pkgdir}/usr/share/${pkgname}/webapps
+	ln -s /srv/${pkgname}/server/webapps ${pkgdir}/usr/share/${pkgname}/server/webapps
+
+	chown -R tomcat:tomcat ${pkgdir}/usr/share/${pkgname} \
+		${pkgdir}/srv/${pkgname}
+	chmod -R 0660 ${pkgdir}/usr/share/${pkgname}/conf/*
 }
