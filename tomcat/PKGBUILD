@@ -39,22 +39,21 @@ build() {
 
 	# install everything
 	mkdir -p ${pkgdir}/usr/share/${pkgname} \
-		${pkgdir}/srv/${pkgname}/server \
+		${pkgdir}/srv/${pkgname} \
 		${pkgdir}/var/log/${pkgname}
-	# ${pkgdir}/usr/share/java/${pkgname}
-	mv webapps ${pkgdir}/srv/${pkgname}
-	mv server/webapps ${pkgdir}/srv/${pkgname}/server
+	
 	sed -i 's|<Host name="localhost" appBase="webapps"|<Host name="localhost" appBase="/srv/tomcat/webapps"|g' conf/server.xml
+	mv webapps ${pkgdir}/srv/${pkgname}
+	ln -s /srv/${pkgname}/webapps ${pkgdir}/usr/share/${pkgname}/webapps
+	
 	cp -R * ${pkgdir}/usr/share/${pkgname}
 
 	install -D -m755 ${srcdir}/tomcat ${pkgdir}/etc/rc.d/tomcat
 	install -D -m644 ${srcdir}/tomcat.conf.d ${pkgdir}/etc/conf.d/tomcat
 
 	ln -s /var/log/${pkgname} ${pkgdir}/usr/share/${pkgname}/logs
-	ln -s /srv/${pkgname}/webapps ${pkgdir}/usr/share/${pkgname}/webapps
-	ln -s /srv/${pkgname}/server/webapps ${pkgdir}/usr/share/${pkgname}/server/webapps
 
-	chown -R tomcat:tomcat ${pkgdir}/usr/share/${pkgname} \
-		${pkgdir}/srv/${pkgname}
-	chmod -R 0660 ${pkgdir}/usr/share/${pkgname}/conf/*
+	chgrp -R 66 ${pkgdir}/usr/share/tomcat/conf ${pkgdir}/usr/share/tomcat/work
+	chmod 0660 ${pkgdir}/usr/share/tomcat/conf/{*.xml,*.policy,*.properties,/Catalina/localhost/*.xml}
+	chmod 0775 ${pkgdir}/usr/share/tomcat/conf ${pkgdir}/usr/share/tomcat/work
 }
