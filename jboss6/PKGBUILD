@@ -1,0 +1,31 @@
+# Maintainer: Guillaume ALAUX <Guillaume at alaux dot net>
+pkgname=jboss6
+pkgver=6.0.0.M3
+pkgrel=1
+pkgdesc="Java Application Server by RedHat"
+arch=(any)
+url="http://www.jboss.org/"
+license=('LGPL')
+#groups=()
+depends=('java-environment')
+makedepends=('java-environment')
+#optdepends=()
+#provides=()
+#conflicts=()
+#replaces=()
+backup=()
+#options=()
+#install=
+#changelog=
+source=(http://downloads.sourceforge.net/project/jboss/JBoss/JBoss-6.0.0.M3/jboss-as-distribution-6.0.0.20100429-M3.zip)
+#noextract=()
+md5sums=(3b325929d4d351fa694c0ce00c2d3939)
+
+build() {
+  cd "$srcdir/$pkgname-$pkgver"
+
+  ./configure --prefix=/usr
+  make
+}
+
+# vim:set ts=2 sw=2 et:
