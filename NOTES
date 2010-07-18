@@ -1,0 +1,18 @@
+apache-ant
+jboss6
+jdk6-sun
+jonas
+jre6-sun
+NOTES
+openjdk6
+tomcat
+	signoff i686:
+		starts OK
+		/manager OK
+	Check that when uninstalled, dir /var/log/tomcat is removed
+	Rename "tomcat5" + check with update-alternatives
+
+tomcat-admin
+	signoff i686
+		/admin OK
+	Rename "tomcat5-admin" + check with update-alternatives
