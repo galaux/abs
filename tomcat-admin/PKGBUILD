@@ -1,6 +1,6 @@
 # Contributor: Guillaume ALAUX <guillaume alaux.net>
 pkgname=tomcat-admin
-pkgver=5.5.29
+pkgver=5.5.30
 pkgrel=1
 pkgdesc="Tomcat 5 administration web application"
 arch=(any)
@@ -9,7 +9,7 @@ license=('APACHE')
 #groups=(tomcat5)
 depends=(tomcat)
 source=(http://archive.apache.org/dist/tomcat/tomcat-5/v${pkgver}/bin/apache-tomcat-${pkgver}-admin.tar.gz)
-md5sums=(03231d3269b087ec751e12114fef6a18)
+md5sums=(cc79caeaab33440c1a38190b16a28dd0)
 
 build() {
 	mkdir -p ${pkgdir}/usr/share/tomcat/{conf/Catalina/localhost,server/webapps}

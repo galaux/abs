@@ -2,7 +2,7 @@
 # Contributor: Guillaume ALAUX <guillaume at alaux dot net>
 
 pkgname=tomcat
-pkgver=5.5.29
+pkgver=5.5.30
 pkgrel=1
 arch=('any')
 pkgdesc="Servlet container for Java Servlet and JavaServer Pages"
@@ -18,7 +18,7 @@ install=tomcat.install
 source=(http://archive.apache.org/dist/tomcat/tomcat-5/v${pkgver}/bin/apache-tomcat-${pkgver}.tar.gz
 	'tomcat'
 	'tomcat.conf.d')
-md5sums=('228496a9cfe3aaa3b7e79386ccd9380a'
+md5sums=('661dd3fbc25249e9ceb86652eb6a4f07'
          'bdb5d655c5e20301a07106ab59d2e0b3'
          'dc7ba215d4629003cbd229b526d08501')
 
@@ -26,11 +26,12 @@ build() {
 	unset LDFLAGS
 	# build jsvc
 	cd ${srcdir}/apache-${pkgname}-${pkgver}/bin
-	tar xzf jsvc.tar.gz
-	cd jsvc-src
+	tar xzf commons-daemon-native.tar.gz
+	cd commons-daemon-1.0.2-native-src/unix
 	sh configure
+	make clean
 	make || return 1
-	cp jsvc ..
+	cp jsvc ../..
 
 	# get rid of some cruft
 	cd ${srcdir}/apache-${pkgname}-${pkgver}
