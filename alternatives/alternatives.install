@@ -1,0 +1,24 @@
+## arg 1:  the new package version
+post_install() {
+  echo ""
+  echo "#####################"
+  echo "# IMPORTANT WARNING #"
+  echo "#####################"
+  echo "This package is (for ArchLinux) a 'proof of concept': the binaries provided work"
+  echo "but the applications managed by 'alternatives' need to be packaged in a particular way"
+  echo "such as the different versions of applications do not interfere whith each other"
+  echo "(and the package manager does not 'replace' old versions)."
+  echo "That implies that applications need to be packaged in version specific directories like:"
+  echo "/usr/share/my-app_\$pkgver."
+  echo "As packages are not made with this requirement in ArchLinux, you will not be able to use"
+  echo "'alternatives' with regular ArchLinux packages. However this 'alternative' will work"
+  echo "with any manually managed applications."
+}
+
+## arg 1:  the new package version
+## arg 2:  the old package version
+post_upgrade() {
+  post_install $1
+}
+
+# vim:set ts=2 sw=2 et:
