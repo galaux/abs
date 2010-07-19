@@ -1,6 +1,5 @@
 # Contributor: Hugo Doria <hugo@archlinux.org>
 # Contributor: Guillaume ALAUX <guillaume at alaux dot net>
-
 pkgname=tomcat
 pkgver=5.5.30
 pkgrel=1
@@ -40,12 +39,12 @@ build() {
 
 	# install everything
 	mkdir -p ${pkgdir}/usr/share/${pkgname} \
-		${pkgdir}/srv/${pkgname} \
+		${pkgdir}/srv/http/${pkgname} \
 		${pkgdir}/var/log/${pkgname}
 	
-	sed -i 's|<Host name="localhost" appBase="webapps"|<Host name="localhost" appBase="/srv/tomcat/webapps"|g' conf/server.xml
-	mv webapps ${pkgdir}/srv/${pkgname}
-	ln -s /srv/${pkgname}/webapps ${pkgdir}/usr/share/${pkgname}/webapps
+	sed -i 's|<Host name="localhost" appBase="webapps"|<Host name="localhost" appBase="/srv/http/tomcat/webapps"|g' conf/server.xml
+	mv webapps ${pkgdir}/srv/http/${pkgname}
+	ln -s /srv/http/${pkgname}/webapps ${pkgdir}/usr/share/${pkgname}/webapps
 	
 	cp -R * ${pkgdir}/usr/share/${pkgname}
 
