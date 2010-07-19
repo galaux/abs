@@ -1,10 +1,10 @@
-# $Id: PKGBUILD 81150 2010-05-26 20:31:33Z ibiru $
 # Contributor: Hugo Doria <hugo@archlinux.org>
+# Contributor: Guillaume ALAUX <guillaume at alaux dot net>
 
 pkgname=tomcat
 pkgver=5.5.29
 pkgrel=1
-arch=('i686' 'x86_64')
+arch=('any')
 pkgdesc="Servlet container for Java Servlet and JavaServer Pages"
 url="http://tomcat.apache.org/"
 license=('APACHE')

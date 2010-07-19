@@ -9,6 +9,7 @@ tomcat
 	signoff i686:
 		starts OK
 		/manager OK
+
 	Check that when uninstalled, dir /var/log/tomcat is removed
 	Rename "tomcat5" + check with update-alternatives
 
