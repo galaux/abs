@@ -1,0 +1,59 @@
+# Contributor: Hugo Doria <hugo@archlinux.org>
+# Contributor: Guillaume ALAUX <guillaume at alaux dot net>
+pkgname=tomcat7
+pkgver=7.0.0_beta
+pkgrel=1
+arch=('any')
+pkgdesc="Servlet container for Java Servlet and JavaServer Pages"
+url="http://tomcat.apache.org/"
+license=('APACHE')
+depends=('java-environment')
+makedepends=('java-environment')
+backup=('usr/share/tomcat7/conf/server.xml'
+	'usr/share/tomcat7/conf/tomcat-users.xml'
+	'etc/conf.d/tomcat7')
+#optdepends='tomcat5-admin'
+install=tomcat7.install
+source=(http://archive.apache.org/dist/tomcat/tomcat-7/v7.0.0-beta/bin/apache-tomcat-7.0.0.tar.gz
+	'tomcat7'
+	'tomcat7.conf.d')
+md5sums=('ae24fc7655d44dac63a2cbc7be2d45cd'
+         '1eb5ec0971c82fe476718c3863b3deaf'
+         '97c8767157d09edd1367a00630c61d59')
+
+build() {
+	unset LDFLAGS
+	# build jsvc
+	cd ${srcdir}/apache-tomcat-7.0.0/bin
+	tar xzf commons-daemon-native.tar.gz
+	cd commons-daemon-1.0.2-native-src/unix
+	sh configure
+	make clean
+	make || return 1
+	cp jsvc ../..
+
+	# get rid of some cruft
+	cd ${srcdir}/apache-tomcat-7.0.0
+	rm -f LICENSE NOTICE RELEASE-NOTES RUNNING.txt
+	rm -fr bin/*.bat bin/*.tar.gz logs
+
+	# install everything
+	mkdir -p ${pkgdir}/usr/share/${pkgname} \
+		${pkgdir}/srv/http/${pkgname} \
+		${pkgdir}/var/log/${pkgname}
+	
+	sed -i 's|<Host name="localhost" appBase="webapps"|<Host name="localhost" appBase="/srv/http/tomcat7/webapps"|g' conf/server.xml
+	mv webapps ${pkgdir}/srv/http/${pkgname}
+	ln -s /srv/http/${pkgname}/webapps ${pkgdir}/usr/share/${pkgname}/webapps
+	
+	cp -R * ${pkgdir}/usr/share/${pkgname}
+
+	install -D -m755 ${srcdir}/tomcat7 ${pkgdir}/etc/rc.d/tomcat7
+	install -D -m644 ${srcdir}/tomcat7.conf.d ${pkgdir}/etc/conf.d/tomcat7
+
+	ln -s /var/log/${pkgname} ${pkgdir}/usr/share/${pkgname}/logs
+
+	chgrp -R 66 ${pkgdir}/usr/share/${pkgname}/conf ${pkgdir}/usr/share/${pkgname}/work
+	chmod 0660 ${pkgdir}/usr/share/${pkgname}/conf/{*.xml,*.policy,*.properties}
+	chmod 0775 ${pkgdir}/usr/share/${pkgname}/conf ${pkgdir}/usr/share/${pkgname}/work
+}
