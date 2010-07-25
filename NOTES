@@ -5,6 +5,8 @@ jonas
 jre6-sun
 NOTES
 openjdk6
+	see http://today.java.net/pub/a/today/2007/11/29/building-the-jdk.html
+		http://openjdk.java.net/projects/jdk6/
 tomcat
 	signoff i686:	-> NO! See ISSUE
 		starts OK
