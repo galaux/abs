@@ -11,15 +11,16 @@ source=(http://archive.apache.org/dist/tomcat/tomcat-5/v${pkgver}/bin/apache-tom
 md5sums=(cc79caeaab33440c1a38190b16a28dd0)
 
 build() {
-	mkdir -p ${pkgdir}/usr/share/tomcat/{conf/Catalina/localhost,server/webapps}
+	mkdir -p ${pkgdir}/etc/tomcat/Catalina/localhost \
+		 ${pkgdir}/usr/share/tomcat/server/webapps
 
 	mv ${srcdir}/apache-tomcat-${pkgver}/server/webapps/admin \
 		${pkgdir}/usr/share/tomcat/server/webapps
 
 	mv ${srcdir}/apache-tomcat-${pkgver}/conf/Catalina/localhost/admin.xml \
-		${pkgdir}/usr/share/tomcat/conf/Catalina/localhost
+		${pkgdir}/etc/tomcat/Catalina/localhost
 
-	chgrp 66 ${pkgdir}/usr/share/tomcat/conf/Catalina/localhost/admin.xml
-	chmod 0660 ${pkgdir}/usr/share/tomcat/conf/Catalina/localhost/admin.xml
-	chmod 0775 ${pkgdir}/usr/share/tomcat/conf
+	chgrp 66 ${pkgdir}/etc/tomcat/Catalina/localhost/admin.xml
+	chmod 0660 ${pkgdir}/etc/tomcat/Catalina/localhost/admin.xml
+	chmod 0775 ${pkgdir}/etc/tomcat
 }
