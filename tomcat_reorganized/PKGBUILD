@@ -9,8 +9,8 @@ url="http://tomcat.apache.org/"
 license=('APACHE')
 depends=('java-environment')
 makedepends=('java-environment')
-backup=('usr/share/tomcat/conf/server.xml'
-	'usr/share/tomcat/conf/tomcat-users.xml'
+backup=('etc/tomcat/server.xml'
+	'etc/tomcat/tomcat-users.xml'
 	'etc/conf.d/tomcat')
 optdepends='tomcat-admin'
 install=tomcat.install
@@ -31,7 +31,9 @@ build() {
 	make clean
 	make || return 1
 	cp jsvc ../..
+}
 
+package() {
 	# get rid of some cruft
 	cd ${srcdir}/apache-${pkgname}-${pkgver}
 	rm -f LICENSE NOTICE RELEASE-NOTES RUNNING.txt
@@ -40,11 +42,17 @@ build() {
 	# install everything
 	mkdir -p ${pkgdir}/usr/share/${pkgname} \
 		${pkgdir}/srv/http/${pkgname} \
-		${pkgdir}/var/log/${pkgname}
+		${pkgdir}/var/log/${pkgname} \
+		${pkgdir}/etc/${pkgname}
 	
-	sed -i 's|<Host name="localhost" appBase="webapps"|<Host name="localhost" appBase="/srv/http/tomcat/webapps"|g' conf/server.xml
-	mv webapps ${pkgdir}/srv/http/${pkgname}
+	mv ${srcdir}/apache-${pkgname}-${pkgver}/webapps ${pkgdir}/srv/http/${pkgname}
 	ln -s /srv/http/${pkgname}/webapps ${pkgdir}/usr/share/${pkgname}/webapps
+
+	sed -i 's|<Host name="localhost" appBase="webapps"|<Host name="localhost" appBase="/srv/http/tomcat/webapps"|g' \
+		${srcdir}/apache-${pkgname}-${pkgver}/conf/server.xml
+	mv ${srcdir}/apache-${pkgname}-${pkgver}/conf/* ${pkgdir}/etc/tomcat
+	rmdir ${srcdir}/apache-${pkgname}-${pkgver}/conf
+	ln -s /etc/tomcat ${pkgdir}/usr/share/${pkgname}/conf
 	
 	cp -R * ${pkgdir}/usr/share/${pkgname}
 
@@ -53,7 +61,7 @@ build() {
 
 	ln -s /var/log/${pkgname} ${pkgdir}/usr/share/${pkgname}/logs
 
-	chgrp -R 66 ${pkgdir}/usr/share/tomcat/conf ${pkgdir}/usr/share/tomcat/work
-	chmod 0660 ${pkgdir}/usr/share/tomcat/conf/{*.xml,*.policy,*.properties,/Catalina/localhost/*.xml}
-	chmod 0775 ${pkgdir}/usr/share/tomcat/conf ${pkgdir}/usr/share/tomcat/work
+	chgrp -R 66 ${pkgdir}/etc/tomcat ${pkgdir}/usr/share/tomcat/work
+	chmod 0660 ${pkgdir}/etc/tomcat/{*.xml,*.policy,*.properties,/Catalina/localhost/*.xml}
+	chmod 0775 ${pkgdir}/etc/tomcat ${pkgdir}/usr/share/tomcat/work
 }
