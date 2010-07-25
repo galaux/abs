@@ -4,6 +4,8 @@ What is alternatives
 	[TODO give redhat's man page URL]
 	[TODO give examples]
 
+	'alternatives', aka 'update-alternatives'
+
 How this package was created
 	C sources RedHat's chkconfig [TODO give URL of sources]
 	kept only 'alternatives' files
