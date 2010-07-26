@@ -17,15 +17,18 @@ backup=()
 #options=()
 #install=
 #changelog=
-source=(http://downloads.sourceforge.net/project/jboss/JBoss/JBoss-6.0.0.M3/jboss-as-distribution-6.0.0.20100429-M3.zip)
+source=(http://downloads.sourceforge.net/project/jboss/JBoss/JBoss-${pkgver}/jboss-as-distribution-6.0.0.20100429-M3.zip)
 #noextract=()
 md5sums=(3b325929d4d351fa694c0ce00c2d3939)
 
 build() {
-  cd "$srcdir/$pkgname-$pkgver"
+  cd ${srcdir}/jboss-6.0.0.20100429-M3
+  rm -f bin/{*.bat,*.exe}
+  mkdir -p ${pkgdir}/usr/share
+  mv ${srcdir}/jboss-6.0.0.20100429-M3 ${pkgdir}/usr/share/${pkgname}
 
-  ./configure --prefix=/usr
-  make
+  install -D -oroot -groot -m755 ${startdir}/jboss6 ${startdir}/pkg/etc/rc.d/jboss6
+  install -D -oroot -groot -m755 ${startdir}/jboss6.sh ${startdir}/pkg/etc/profile.d/jboss6.sh
 }
 
 # vim:set ts=2 sw=2 et:

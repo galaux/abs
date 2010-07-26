@@ -1,6 +1,5 @@
 # Contributor: Hugo Doria <hugo@archlinux.org>
 # Contributor: Guillaume ALAUX <guillaume at alaux dot net>
-
 pkgname=tomcat
 pkgver=5.5.30
 pkgrel=1
