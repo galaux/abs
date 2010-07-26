@@ -14,7 +14,6 @@ arch=('i686' 'x86_64')
 url="http://java.sun.com"
 license=('custom')
 source=(http://download.java.net/dlj/binaries/jdk-${pkgver}-dlj-linux-${_arch}.bin
-	https://jdk-distros.dev.java.net/source/browse/*checkout*/jdk-distros/trunk/utils/construct.sh
 	jdk.profile
 	java-control-panel.desktop
 	java-monitoring-and-management-console.desktop
@@ -24,7 +23,6 @@ source=(http://download.java.net/dlj/binaries/jdk-${pkgver}-dlj-linux-${_arch}.b
 	jre.profile)
 
 [ "$CARCH" = "i686" ]   && md5sums=('b3fbbe55bafedb3f8f93e91d4e809390'
-				'94065b612df0046d9ae758943f9f6a75'
 				'7aaac9ec3e440b92361c6561ac00424a'
 				'e4d814c0f310d77ed6990c731bccd0fb'
 				'4bc2b0be93f76ed07b471e3c89eb5a8a'
@@ -33,7 +31,6 @@ source=(http://download.java.net/dlj/binaries/jdk-${pkgver}-dlj-linux-${_arch}.b
 				'568451cf45fc8c7adb83a222a61ca2c6'
 				'50b4f5ac4129097461d246645d73a622')
 [ "$CARCH" = "x86_64" ] && md5sums=('7961051f95c014a9b94ffe3e95ea66e6'
-				'94065b612df0046d9ae758943f9f6a75'
 				'7aaac9ec3e440b92361c6561ac00424a'
 				'e4d814c0f310d77ed6990c731bccd0fb'
 				'4bc2b0be93f76ed07b471e3c89eb5a8a'
@@ -48,7 +45,63 @@ build() {
   cd unbundle-jdk
   sh ../jdk-${pkgver}-dlj-linux-$_arch.bin --accept-license
   cd ..
-  sh construct.sh unbundle-jdk linux-jdk linux-jre
+#  sh construct.sh unbundle-jdk linux-jdk linux-jre
+
+#  mkdir -p ${pkgdir}/opt/java
+#  cp -Ra ${srcdir}/unbundle-jdk/jdk1.6.0_21/* ${pkgdir}/opt/java
+  # Creating JRE directory...
+  # unpacking jars...
+  cd unbundle-jdk/jdk1.6.0_21
+  for i in $(find . -name '*.pack'); do
+	  jdir=$(dirname $i)
+	  jbase=$(basename $i .pack)
+	  if ! unpack200 $jdir/$jbase.pack $jdir/$jbase.jar; then
+		  echo "error unpacking $jdir/$jbase.jar"
+		  exit 1
+	  fi
+	  if [ ! -r $jdir/$jbase.jar ]; then
+	  	echo "missing $jdir/$jbase.jar"
+		exit 1
+	  else
+	  	#echo "  $jdir/$jbase.jar"
+		# remove pack file
+		rm $jdir/$jbase.pack
+	  fi
+  done
+
+
+  # TODO See if not deprecated
+  # if this is a client installation...
+  compiler="`$jdkdir/bin/java -client -version 2>&1 | tail -n +3 | cut -d' ' -f1-4`"
+  if [ "X$compiler" = "XJava HotSpot(TM) Client VM" ]; then
+    # create the CDS archive
+    # creating the class data sharing archive...
+    if ! bin/java -client -Xshare:dump > /dev/null 2>&1; then
+      echo "returned error code $?"
+    fi
+  fi
+
+  # setting up the JRE man pages...
+  mkdir -p jre/man/{,ja_JP.eucJP/}man1
+# javaws.1 kinit.1 klist.1 ktab.1
+  for f in java.1 keytool.1 orbd.1 pack200.1 policytool.1 rmid.1 rmiregistry.1 servertool.1 tnameserv.1 unpack200.1; do
+
+	mv man/man1/$f jre/man/man1/$f
+	ln -s jre/man/man1/$f man/man1/$f
+
+	mv man/ja_JP.eucJP/man1/$f jre/man/ja_JP.eucJP/man1/$f
+	ln -s jre/man/ja_JP.eucJP/man1/$f man/ja_JP.eucJP/man1/$f
+  done
+
+  ln -s ja_JP.eucJP jre/man/ja
+
+# eliminating duplication between the JDK and JDK/jre...
+# kinit klist ktab
+  for f in ControlPanel java javaws keytool orbd pack200 policytool rmid rmiregistry servertool tnameserv unpack200; do
+
+	rm bin/$f
+	ln -s jre/bin/$f bin/$f
+  done
 }
 
 package_jre() {
@@ -59,10 +112,10 @@ package_jre() {
   replaces=('j2re')
   install='jre.install'
 
-  cd ${srcdir}
+  cd ${srcdir}/unbundle-jdk/jdk1.6.0_21
 
   mkdir -p ${pkgdir}/opt/java
-  cp -R linux-jdk/jre ${pkgdir}/opt/java
+  cp -R jre ${pkgdir}/opt/java
 
   install -Dm755 ${srcdir}/jre.profile ${pkgdir}/etc/profile.d/jre.sh
 
@@ -90,15 +143,18 @@ package_jdk() {
   replaces=('j2sdk')
   install='jdk.install'
 
+
+
   cd ${srcdir}
 
   #copy icon
-  install -Dm644 ${srcdir}/linux-jdk/jre/lib/desktop/icons/hicolor/48x48/apps/sun-java.png \
-  		 ${pkgdir}/usr/share/pixmaps/java.png
+  install -Dm644 ${srcdir}/unbundle-jdk/jdk1.6.0_21/jre/lib/desktop/icons/hicolor/48x48/apps/sun-java.png \
+		 ${pkgdir}/usr/share/pixmaps/java.png
 
-  rm -rf linux-jdk/jre
+  rm -rf unbundle-jdk/jdk1.6.0_21/jre
   mkdir -p ${pkgdir}/opt
-  mv linux-jdk ${pkgdir}/opt/java
+  mv unbundle-jdk/jdk1.6.0_21 ${pkgdir}/opt/java
+
 
   install -D -m755 ${srcdir}/jdk.profile ${pkgdir}/etc/profile.d/jdk.sh
 
