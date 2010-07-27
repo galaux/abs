@@ -99,6 +99,8 @@ build() {
 		rm bin/$f
 		ln -s ../jre/bin/$f bin/$f
 	done
+
+	rm db/bin/*.bat
 }
 
 package_jre() {
