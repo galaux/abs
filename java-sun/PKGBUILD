@@ -77,19 +77,19 @@ build() {
 	fi
 
 	# Setting up the JRE man pages...
-	mkdir -p jre/man/{,ja_JP.eucJP/}man1
-	# javaws.1 kinit.1 klist.1 ktab.1
-	for f in java.1 keytool.1 orbd.1 pack200.1 policytool.1 \
-		rmid.1 rmiregistry.1 servertool.1 tnameserv.1 unpack200.1; do
-
-		mv man/man1/$f jre/man/man1/$f
-		ln -s jre/man/man1/$f man/man1/$f
-
-		mv man/ja_JP.eucJP/man1/$f jre/man/ja_JP.eucJP/man1/$f
-		ln -s jre/man/ja_JP.eucJP/man1/$f man/ja_JP.eucJP/man1/$f
-	  done
-
-	ln -s ja_JP.eucJP jre/man/ja
+#	mkdir -p jre/man/{,ja_JP.eucJP/}man1
+#	# javaws.1 kinit.1 klist.1 ktab.1
+#	for f in java.1 keytool.1 orbd.1 pack200.1 policytool.1 \
+#		rmid.1 rmiregistry.1 servertool.1 tnameserv.1 unpack200.1; do
+#
+#		mv man/man1/$f jre/man/man1/$f
+#		ln -s jre/man/man1/$f man/man1/$f
+#
+#		mv man/ja_JP.eucJP/man1/$f jre/man/ja_JP.eucJP/man1/$f
+#		ln -s jre/man/ja_JP.eucJP/man1/$f man/ja_JP.eucJP/man1/$f
+#	  done
+#
+#	ln -s ja_JP.eucJP jre/man/ja
 
 	# Eliminating duplication between the JDK and JDK/jre...
 	# kinit klist ktab
@@ -105,7 +105,7 @@ build() {
 
 package_jre() {
 	pkgdesc="Sun/Oracle's Java Runtime Environment"
-	depends=('glibc' 'libxtst')
+	depends=('glibc' 'libxtst' 'alsa-lib' 'unixodbc')
 	provides=('j2re' 'java-runtime=6')
 	conflicts=('j2re' 'java-runtime')
 	replaces=('j2re')
@@ -113,8 +113,13 @@ package_jre() {
 
 	cd ${srcdir}/unbundle-jdk/jdk1.6.0_21
 
-	mkdir -p ${pkgdir}/opt/java
+	mkdir -p ${pkgdir}/opt/java ${pkgdir}/usr/share/man/{,ja_JP.eucJP/}man1
 	cp -R jre ${pkgdir}/opt/java
+	mv man/man1/{java,keytool,orbd,pack200,policytool,rmid,rmiregistry,servertool,tnameserv,unpack200}.1 \
+		${pkgdir}/usr/share/man/man1
+
+	mv man/ja_JP.eucJP/man1/{java,keytool,orbd,pack200,policytool,rmid,rmiregistry,servertool,tnameserv,unpack200}.1 \
+                ${pkgdir}/usr/share/man/ja_JP.eucJP/man1
 
 	install -Dm755 ${srcdir}/jre.profile ${pkgdir}/etc/profile.d/jre.sh
 
@@ -149,9 +154,10 @@ package_jdk() {
 		 ${pkgdir}/usr/share/pixmaps/java.png
 
 	rm -rf unbundle-jdk/jdk1.6.0_21/jre
-	mkdir -p ${pkgdir}/opt
+	mkdir -p ${pkgdir}/opt ${pkgdir}/usr/share/man/man1
+	mv unbundle-jdk/jdk1.6.0_21/man/man1/* ${pkgdir}/usr/share/man/man1
+	rm -rf unbundle-jdk/jdk1.6.0_21/man/man1
 	mv unbundle-jdk/jdk1.6.0_21 ${pkgdir}/opt/java
-
 
 	install -D -m755 ${srcdir}/jdk.profile ${pkgdir}/etc/profile.d/jdk.sh
 
