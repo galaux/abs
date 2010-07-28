@@ -13,6 +13,7 @@ arch=('i686' 'x86_64')
 	[ "$CARCH" = "x86_64" ] && _arch=amd64
 url="http://java.sun.com"
 license=('custom')
+makedepends=('java-runtime')
 source=(http://download.java.net/dlj/binaries/jdk-${pkgver}-dlj-linux-${_arch}.bin
 	jdk.profile
 	java-control-panel.desktop
