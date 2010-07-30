@@ -8,7 +8,7 @@ pkgdesc="Servlet container for Java Servlet and JavaServer Pages"
 url="http://tomcat.apache.org/"
 license=('APACHE')
 depends=('java-environment')
-makedepends=('java-environment')
+makedepends=('docbook2x')
 backup=('etc/tomcat/server.xml'
 	'etc/tomcat/tomcat-users.xml'
 	'etc/conf.d/tomcat')
@@ -31,20 +31,25 @@ build() {
 	make clean
 	make || return 1
 	cp jsvc ../..
+	docbook2man man/jsvc.1.xml
 }
 
 package() {
-	# get rid of some cruft
 	cd ${srcdir}/apache-${pkgname}-${pkgver}
+
+	mkdir -p ${pkgdir}/usr/share/${pkgname} ${pkgdir}/srv/http/${pkgname} \
+		${pkgdir}/var/log/${pkgname} ${pkgdir}/etc/${pkgname} \
+		${pkgdir}/usr/share/man/man1
+
+	mv bin/commons-daemon-1.0.2-native-src/unix/JSVC.1 \
+		${pkgdir}/usr/share/man/man1
+	
+	# get rid of some cruft
 	rm -f LICENSE NOTICE RELEASE-NOTES RUNNING.txt
-	rm -fr bin/*.exe bin/*.bat bin/*.tar.gz bin/*64/*.exe bin/jsvc-src logs
+	rm -fr  bin/*.exe bin/*.bat bin/*.tar.gz bin/*64/*.exe bin/jsvc-src logs \
+		bin/commons-daemon-1.0.2-native-src
 
 	# install everything
-	mkdir -p ${pkgdir}/usr/share/${pkgname} \
-		${pkgdir}/srv/http/${pkgname} \
-		${pkgdir}/var/log/${pkgname} \
-		${pkgdir}/etc/${pkgname}
-	
 	mv ${srcdir}/apache-${pkgname}-${pkgver}/webapps ${pkgdir}/srv/http/${pkgname}
 	ln -s /srv/http/${pkgname}/webapps ${pkgdir}/usr/share/${pkgname}/webapps
 
