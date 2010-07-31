@@ -7,7 +7,7 @@ arch=(any)
 url="http://www.jboss.org/"
 license=('LGPL')
 #groups=()
-depends=('java-environment')
+depends=('java-runtime')
 makedepends=('java-environment')
 #optdepends=()
 #provides=()
@@ -17,9 +17,13 @@ backup=()
 #options=()
 #install=
 #changelog=
-source=(http://downloads.sourceforge.net/project/jboss/JBoss/JBoss-${pkgver}/jboss-as-distribution-6.0.0.20100429-M3.zip)
+source=('http://downloads.sourceforge.net/project/jboss/JBoss/JBoss-${pkgver}/jboss-as-distribution-6.0.0.20100429-M3.zip'
+        'jboss6.sh'
+        'jboss6')
 #noextract=()
-md5sums=(3b325929d4d351fa694c0ce00c2d3939)
+md5sums=('3b325929d4d351fa694c0ce00c2d3939'
+         '692149450f1718dc28c28e045de80a8e'
+         'a02bd01ae8e17651ffa28c95a0878934')
 
 build() {
   cd ${srcdir}/jboss-6.0.0.20100429-M3
@@ -27,8 +31,8 @@ build() {
   mkdir -p ${pkgdir}/usr/share
   mv ${srcdir}/jboss-6.0.0.20100429-M3 ${pkgdir}/usr/share/${pkgname}
 
-  install -D -oroot -groot -m755 ${startdir}/jboss6 ${startdir}/pkg/etc/rc.d/jboss6
-  install -D -oroot -groot -m755 ${startdir}/jboss6.sh ${startdir}/pkg/etc/profile.d/jboss6.sh
+  install -D -oroot -groot -m755 ${startdir}/jboss6 ${pkgdir}/etc/rc.d/jboss6
+  install -D -oroot -groot -m755 ${startdir}/jboss6.sh ${pkgdir}/etc/profile.d/jboss6.sh
 }
 
 # vim:set ts=2 sw=2 et:
