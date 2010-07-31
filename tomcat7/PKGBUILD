@@ -7,7 +7,7 @@ arch=('any')
 pkgdesc="Servlet container for Java Servlet and JavaServer Pages"
 url="http://tomcat.apache.org/"
 license=('APACHE')
-depends=('java-runtime')
+depends=('java-runtime>=6')
 makedepends=('java-environment' 'docbook2x')
 backup=('etc/tomcat7/server.xml'
 	'etc/tomcat7/tomcat-users.xml'
