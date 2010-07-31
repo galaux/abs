@@ -1,7 +1,8 @@
 post_install() {
-  getent group tomcat >/dev/null 2>&1 || groupadd -g 66 tomcat
-  getent passwd tomcat >/dev/null 2>&1 || useradd -u 66 -g tomcat -d /usr/share/tomcat -s /bin/false tomcat
-  
+  getent group tomcat >/dev/null 2>&1 || groupadd tomcat
+  getent passwd tomcat >/dev/null 2>&1 || useradd -g tomcat -d /usr/share/tomcat -s /bin/false tomcat
+  chgrp -R tomcat /etc/tomcat /usr/share/tomcat/work
+
   if [ -f lib/modules/`uname -r`/kernel/security/capability.ko ]; then
     echo ">>> It appears that your current kernel has linux security"
     echo ">>> capabilities built as a module. Tomcat requires this"

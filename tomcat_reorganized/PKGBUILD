@@ -66,7 +66,6 @@ package() {
 
 	ln -s /var/log/${pkgname} ${pkgdir}/usr/share/${pkgname}/logs
 
-	chgrp -R 66 ${pkgdir}/etc/tomcat ${pkgdir}/usr/share/tomcat/work
 	chmod 0660 ${pkgdir}/etc/tomcat/{*.xml,*.policy,*.properties,/Catalina/localhost/*.xml}
 	chmod 0775 ${pkgdir}/etc/tomcat ${pkgdir}/usr/share/tomcat/work
 }
