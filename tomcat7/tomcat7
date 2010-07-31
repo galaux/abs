@@ -5,34 +5,34 @@
 . /etc/rc.conf
 . /etc/rc.d/functions
 
-JSVC_BIN='/usr/share/tomcat7/bin/jsvc'
-PID_FILE='/var/run/tomcat7.pid'
-TOMCAT_DIR='/usr/share/tomcat7'
+JSVC_BIN=/usr/share/tomcat7/bin/jsvc
+PID_FILE=/var/run/tomcat7.pid
 
 case "$1" in
   start)
-    stat_busy "Starting Tomcat"
+    stat_busy "Starting Tomcat 7"
     $JSVC_BIN \
       -user tomcat7 \
-      -Dcatalina.home=$TOMCAT_DIR \
-      -Dcatalina.base=$TOMCAT_DIR \
+      -Dcatalina.home=/usr/share/tomcat7 \
+      -Dcatalina.base=/usr/share/tomcat7 \
       -Djava.io.tmpdir=/tmp \
       -wait 10 \
       -pidfile $PID_FILE \
+      -outfile $OUT_FILE \
       -errfile $ERROR_FILE \
       $CATALINA_OPTS \
-      -cp $TOMCAT_DIR/bin/commons-daemon.jar:$TOMCAT_DIR/bin/bootstrap.jar \
+      -cp /usr/share/tomcat7/bin/commons-daemon.jar:/usr/share/tomcat7/bin/bootstrap.jar:/usr/share/tomcat7/bin/tomcat-juli.jar \
       org.apache.catalina.startup.Bootstrap
 
     if [ $? -gt 0 ]; then
       stat_fail
     else
-      add_daemon tomcat
+      add_daemon tomcat7
       stat_done
     fi
     ;;
   stop)
-    stat_busy "Stopping Tomcat"
+    stat_busy "Stopping Tomcat 7"
     $JSVC_BIN \
       -stop \
       -pidfile $PID_FILE \
@@ -41,7 +41,7 @@ case "$1" in
     if [ $? -gt 0 ]; then
       stat_fail
     else
-      rm_daemon tomcat
+      rm_daemon tomcat7
       stat_done
     fi
     ;;
