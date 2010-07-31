@@ -5,16 +5,20 @@
 . /etc/rc.conf
 . /etc/rc.d/functions
 
+JSVC_BIN=/usr/share/tomcat/bin/jsvc
+PID_FILE=/var/run/tomcat.pid
+
 case "$1" in
   start)
     stat_busy "Starting Tomcat"
-    /usr/share/tomcat/bin/jsvc \
+    $JSVC_BIN \
       -user tomcat \
       -Dcatalina.home=/usr/share/tomcat \
       -Dcatalina.base=/usr/share/tomcat \
       -Djava.io.tmpdir=/tmp \
       -wait 10 \
-      -pidfile /var/run/tomcat.pid \
+      -pidfile $PID_FILE \
+      -outfile $OUT_FILE \
       -errfile $ERROR_FILE \
       $CATALINA_OPTS \
       -cp /usr/share/tomcat/bin/commons-daemon.jar:/usr/share/tomcat/bin/bootstrap.jar \
@@ -29,9 +33,9 @@ case "$1" in
     ;;
   stop)
     stat_busy "Stopping Tomcat"
-    /usr/share/tomcat/bin/jsvc \
+    $JSVC_BIN \
       -stop \
-      -pidfile /var/run/tomcat.pid \
+      -pidfile $PID_FILE \
       org.apache.catalina.startup.Bootstrap
 
     if [ $? -gt 0 ]; then

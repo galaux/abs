@@ -18,7 +18,12 @@ post_upgrade() {
   post_install $1
 }
 
-pre_remove() {
-  getent passwd tomcat >/dev/null 2>&1 || userdel tomcat &> /dev/null
-  getent group tomcat >/dev/null 2>&1 || groupdel tomcat &> /dev/null
+post_remove() {
+  if [ $(getent passwd tomcat) ]; then
+    userdel tomcat
+  fi
+
+  if [ $(getent group tomcat) ]; then
+    groupdel tomcat
+  fi
 }

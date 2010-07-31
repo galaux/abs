@@ -1,4 +1,5 @@
 # Tomcat additional commandline options
 CATALINA_OPTS=
 
-ERROR_FILE=/var/log/tomcat/catalina.log
+OUT_FILE=/var/log/tomcat/catalina-out.log
+ERROR_FILE=/var/log/tomcat/catalina-err.log
