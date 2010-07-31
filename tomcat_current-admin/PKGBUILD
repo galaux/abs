@@ -1,8 +1,8 @@
-# Contributor: Guillaume ALAUX <guillaume alaux.net>
+# Maintainer: Guillaume ALAUX <guillaume alaux.net>
 pkgname=tomcat-admin
 pkgver=5.5.30
 pkgrel=1
-pkgdesc="Tomcat 5 administration web application"
+pkgdesc="Tomcat 5.5 administration web application"
 arch=(any)
 url="http://tomcat.apache.org/"
 license=('APACHE')
