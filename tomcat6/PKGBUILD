@@ -14,7 +14,7 @@ backup=('etc/tomcat6/server.xml'
 	'etc/conf.d/tomcat6')
 optdepends='tomcat6-admin'
 install=tomcat6.install
-source=(http://archive.apache.org/dist/tomcat/tomcat-5/v${pkgver}/bin/apache-tomcat-${pkgver}.tar.gz
+source=(http://archive.apache.org/dist/tomcat/tomcat-6/v${pkgver}/bin/apache-tomcat-${pkgver}.tar.gz
 	'tomcat6'
 	'tomcat6.conf.d')
 md5sums=('7d614e03d18d3f21fcfdff96f0b6c311'
