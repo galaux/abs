@@ -3,14 +3,14 @@
 pkgname=tomcat5
 pkgver=5.5.30
 pkgrel=1
-arch=('any')
+arch=('i686' 'x86_64')
 pkgdesc="Servlet container for Java Servlet and JavaServer Pages"
 url="http://tomcat.apache.org/"
 license=('APACHE')
-depends=('java-environment')
-makedepends=('java-environment')
-backup=('usr/share/tomcat5/conf/server.xml'
-	'usr/share/tomcat5/conf/tomcat-users.xml'
+depends=('java-runtime')
+makedepends=('java-environment' 'docbook2x')
+backup=('etc/tomcat5/server.xml'
+	'etc/tomcat5/tomcat-users.xml'
 	'etc/conf.d/tomcat5')
 optdepends='tomcat5-admin'
 install=tomcat5.install
@@ -18,7 +18,7 @@ source=(http://archive.apache.org/dist/tomcat/tomcat-5/v${pkgver}/bin/apache-tom
 	'tomcat5'
 	'tomcat5.conf.d')
 md5sums=('661dd3fbc25249e9ceb86652eb6a4f07'
-         '6b113d1e4620ebb8225f37ba36cce4b1'
+         '3b76748ff2ebdac1ab76da0a7b6ca569'
          '12620cce72c460a8e274e77dd5f42a46')
 
 build() {
@@ -31,29 +31,41 @@ build() {
 	make clean
 	make || return 1
 	cp jsvc ../..
+	docbook2man man/jsvc.1.xml
+}
 
-	# get rid of some cruft
+package() {
 	cd ${srcdir}/apache-tomcat-${pkgver}
-	rm -f LICENSE NOTICE RELEASE-NOTES RUNNING.txt
-	rm -fr bin/*.exe bin/*.bat bin/*.tar.gz bin/*64/*.exe bin/jsvc-src logs
+
+	mkdir -p ${pkgdir}/usr/share/${pkgname} ${pkgdir}/srv/http/${pkgname} \
+		${pkgdir}/var/log/${pkgname} ${pkgdir}/etc/${pkgname} \
+		${pkgdir}/usr/share/man/man1
+
+	mv bin/commons-daemon-1.0.2-native-src/unix/JSVC.1 \
+		${pkgdir}/usr/share/man/man1
+	
+	# get rid of some cruft
+	rm -rf	LICENSE NOTICE RELEASE-NOTES RUNNING.txt \
+		bin/*.exe bin/*.bat bin/*.tar.gz bin/*64/*.exe logs \
+		bin/commons-daemon-1.0.2-native-src
 
 	# install everything
-	mkdir -p ${pkgdir}/usr/share/${pkgname} \
-		${pkgdir}/srv/http/${pkgname} \
-		${pkgdir}/var/log/${pkgname}
-	
-	sed -i 's|<Host name="localhost" appBase="webapps"|<Host name="localhost" appBase="/srv/http/tomcat5/webapps"|g' conf/server.xml
-	mv webapps ${pkgdir}/srv/http/${pkgname}
+	mv ${srcdir}/apache-tomcat-${pkgver}/webapps ${pkgdir}/srv/http/${pkgname}
 	ln -s /srv/http/${pkgname}/webapps ${pkgdir}/usr/share/${pkgname}/webapps
+
+	sed -i 's|<Host name="localhost" appBase="webapps"|<Host name="localhost" appBase="/srv/http/tomcat5/webapps"|g' \
+		${srcdir}/apache-tomcat-${pkgver}/conf/server.xml
+	mv ${srcdir}/apache-tomcat-${pkgver}/conf/* ${pkgdir}/etc/${pkgname}
+	rmdir ${srcdir}/apache-tomcat-${pkgver}/conf
+	ln -s /etc/${pkgname} ${pkgdir}/usr/share/${pkgname}/conf
 	
 	cp -R * ${pkgdir}/usr/share/${pkgname}
 
-	install -D -m755 ${srcdir}/tomcat5 ${pkgdir}/etc/rc.d/tomcat5
-	install -D -m644 ${srcdir}/tomcat5.conf.d ${pkgdir}/etc/conf.d/tomcat5
+	install -D -m755 ${srcdir}/tomcat5 ${pkgdir}/etc/rc.d/${pkgname}
+	install -D -m644 ${srcdir}/tomcat5.conf.d ${pkgdir}/etc/conf.d/${pkgname}
 
 	ln -s /var/log/${pkgname} ${pkgdir}/usr/share/${pkgname}/logs
 
-	chgrp -R 66 ${pkgdir}/usr/share/${pkgname}/conf ${pkgdir}/usr/share/${pkgname}/work
-	chmod 0660 ${pkgdir}/usr/share/${pkgname}/conf/{*.xml,*.policy,*.properties,/Catalina/localhost/*.xml}
-	chmod 0775 ${pkgdir}/usr/share/${pkgname}/conf ${pkgdir}/usr/share/${pkgname}/work
+	chmod 0660 ${pkgdir}/etc/${pkgname}/{*.xml,*.policy,*.properties,Catalina/localhost/*.xml}
+	chmod 0775 ${pkgdir}/etc/${pkgname} ${pkgdir}/usr/share/${pkgname}/work
 }

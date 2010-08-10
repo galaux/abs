@@ -1,7 +1,8 @@
 post_install() {
-  getent group tomcat5 >/dev/null 2>&1 || groupadd -g 66 tomcat5
-  getent passwd tomcat5 >/dev/null 2>&1 || useradd -u 66 -g tomcat5 -d /usr/share/tomcat5 -s /bin/false tomcat5
-  
+  getent group tomcat5 >/dev/null 2>&1 || groupadd tomcat5
+  getent passwd tomcat5 >/dev/null 2>&1 || useradd -g tomcat5 -d /usr/share/tomcat5 -s /bin/false tomcat5
+  chgrp -R tomcat5 /etc/tomcat5 /usr/share/tomcat5/work
+
   if [ -f lib/modules/`uname -r`/kernel/security/capability.ko ]; then
     echo ">>> It appears that your current kernel has linux security"
     echo ">>> capabilities built as a module. Tomcat requires this"
@@ -17,7 +18,12 @@ post_upgrade() {
   post_install $1
 }
 
-pre_remove() {
-  getent passwd tomcat5 >/dev/null 2>&1 || userdel tomcat5 &> /dev/null
-  getent group tomcat5 >/dev/null 2>&1 || groupdel tomcat5 &> /dev/null
+post_remove() {
+  if [ $(getent passwd tomcat5) ]; then
+    userdel tomcat5
+  fi
+
+  if [ $(getent group tomcat5) ]; then
+    groupdel tomcat5
+  fi
 }

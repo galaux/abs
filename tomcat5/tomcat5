@@ -13,7 +13,7 @@ case "$1" in
   start)
     stat_busy "Starting Tomcat"
     $JSVC_BIN \
-      -user tomcat \
+      -user tomcat5 \
       -Dcatalina.home=$TOMCAT_DIR \
       -Dcatalina.base=$TOMCAT_DIR \
       -Djava.io.tmpdir=/tmp \
@@ -27,12 +27,12 @@ case "$1" in
     if [ $? -gt 0 ]; then
       stat_fail
     else
-      add_daemon tomcat
+      add_daemon tomcat5
       stat_done
     fi
     ;;
   stop)
-    stat_busy "Stopping Tomcat"
+    stat_busy "Stopping Tomcat 5.5"
     $JSVC_BIN \
       -stop \
       -pidfile $PID_FILE \
@@ -41,7 +41,7 @@ case "$1" in
     if [ $? -gt 0 ]; then
       stat_fail
     else
-      rm_daemon tomcat
+      rm_daemon tomcat5
       stat_done
     fi
     ;;

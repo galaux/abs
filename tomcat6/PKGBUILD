@@ -1,23 +1,23 @@
 # Contributor: Hugo Doria <hugo@archlinux.org>
 # Contributor: Guillaume ALAUX <guillaume at alaux dot net>
 pkgname=tomcat6
-pkgver=6.0.28
+pkgver=6.0.29
 pkgrel=1
-arch=('any')
+arch=('i686' 'x86_64')
 pkgdesc="Servlet container for Java Servlet and JavaServer Pages"
 url="http://tomcat.apache.org/"
 license=('APACHE')
-depends=('java-environment')
-makedepends=('java-environment')
-backup=('usr/share/tomcat6/conf/server.xml'
-	'usr/share/tomcat6/conf/tomcat-users.xml'
+depends=('java-runtime')
+makedepends=('java-environment' 'docbook2x')
+backup=('etc/tomcat6/server.xml'
+	'etc/tomcat6/tomcat-users.xml'
 	'etc/conf.d/tomcat6')
-#optdepends='tomcat5-admin'
+optdepends='tomcat6-admin'
 install=tomcat6.install
-source=(http://archive.apache.org/dist/tomcat/tomcat-6/v${pkgver}/bin/apache-tomcat-${pkgver}.tar.gz
+source=(http://archive.apache.org/dist/tomcat/tomcat-5/v${pkgver}/bin/apache-tomcat-${pkgver}.tar.gz
 	'tomcat6'
 	'tomcat6.conf.d')
-md5sums=('e79253eff8e851a2c2bf9d42e58b0a78'
+md5sums=('7d614e03d18d3f21fcfdff96f0b6c311'
          '002dfa4548f57f737909e0fca8902239'
          '6cdcd0c3b6418d015e6bc4e93c1ecf90')
 
@@ -31,29 +31,41 @@ build() {
 	make clean
 	make || return 1
 	cp jsvc ../..
+	docbook2man man/jsvc.1.xml
+}
 
-	# get rid of some cruft
+package() {
 	cd ${srcdir}/apache-tomcat-${pkgver}
-	rm -f LICENSE NOTICE RELEASE-NOTES RUNNING.txt
-	rm -fr bin/*.bat bin/*.tar.gz logs
+
+	mkdir -p ${pkgdir}/usr/share/${pkgname} ${pkgdir}/srv/http/${pkgname} \
+		${pkgdir}/var/log/${pkgname} ${pkgdir}/etc/${pkgname} \
+		${pkgdir}/usr/share/man/man1
+
+	mv bin/commons-daemon-1.0.2-native-src/unix/JSVC.1 \
+		${pkgdir}/usr/share/man/man1
+	
+	# get rid of some cruft
+	rm -rf	LICENSE NOTICE RELEASE-NOTES RUNNING.txt \
+		bin/*.exe bin/*.bat bin/*.tar.gz bin/*64/*.exe logs \
+		bin/commons-daemon-1.0.2-native-src
 
 	# install everything
-	mkdir -p ${pkgdir}/usr/share/${pkgname} \
-		${pkgdir}/srv/http/${pkgname} \
-		${pkgdir}/var/log/${pkgname}
-	
-	sed -i 's|<Host name="localhost" appBase="webapps"|<Host name="localhost" appBase="/srv/http/tomcat6/webapps"|g' conf/server.xml
-	mv webapps ${pkgdir}/srv/http/${pkgname}
+	mv ${srcdir}/apache-tomcat-${pkgver}/webapps ${pkgdir}/srv/http/${pkgname}
 	ln -s /srv/http/${pkgname}/webapps ${pkgdir}/usr/share/${pkgname}/webapps
+
+	sed -i 's|<Host name="localhost" appBase="webapps"|<Host name="localhost" appBase="/srv/http/tomcat6/webapps"|g' \
+		${srcdir}/apache-tomcat-${pkgver}/conf/server.xml
+	mv ${srcdir}/apache-tomcat-${pkgver}/conf/* ${pkgdir}/etc/${pkgname}
+	rmdir ${srcdir}/apache-tomcat-${pkgver}/conf
+	ln -s /etc/${pkgname} ${pkgdir}/usr/share/${pkgname}/conf
 	
 	cp -R * ${pkgdir}/usr/share/${pkgname}
 
-	install -D -m755 ${srcdir}/tomcat6 ${pkgdir}/etc/rc.d/tomcat6
-	install -D -m644 ${srcdir}/tomcat6.conf.d ${pkgdir}/etc/conf.d/tomcat6
+	install -D -m755 ${srcdir}/tomcat6 ${pkgdir}/etc/rc.d/${pkgname}
+	install -D -m644 ${srcdir}/tomcat6.conf.d ${pkgdir}/etc/conf.d/${pkgname}
 
 	ln -s /var/log/${pkgname} ${pkgdir}/usr/share/${pkgname}/logs
 
-	chgrp -R 66 ${pkgdir}/usr/share/${pkgname}/conf ${pkgdir}/usr/share/${pkgname}/work
-	chmod 0660 ${pkgdir}/usr/share/${pkgname}/conf/{*.xml,*.policy,*.properties}
-	chmod 0775 ${pkgdir}/usr/share/${pkgname}/conf ${pkgdir}/usr/share/${pkgname}/work
+	chmod 0660 ${pkgdir}/etc/${pkgname}/*
+	chmod 0775 ${pkgdir}/etc/${pkgname} ${pkgdir}/usr/share/${pkgname}/work
 }

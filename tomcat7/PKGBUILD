@@ -3,7 +3,7 @@
 pkgname=tomcat7
 pkgver=7.0.0_beta
 pkgrel=2
-arch=('any')
+arch=('i686' 'x86_64')
 pkgdesc="Servlet container for Java Servlet and JavaServer Pages"
 url="http://tomcat.apache.org/"
 license=('APACHE')

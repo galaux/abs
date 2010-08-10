@@ -3,12 +3,12 @@
 
 pkgname=hibernate-script
 pkgver=2.0
-pkgrel=2
+pkgrel=4
 pkgdesc="Set of scripts for managing tux on ice, hibernation and suspend to RAM"
 arch=('i686' 'x86_64')
 url="http://www.tuxonice.net"
 license=('GPL')
-depends=('kbd')
+depends=('sh')
 options=(!strip)
 backup=('etc/hibernate/hibernate.conf' 'etc/hibernate/tuxonice.conf' \
         'etc/hibernate/disk.conf' 'etc/hibernate/ram.conf' \
