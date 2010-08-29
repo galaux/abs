@@ -1,38 +1,28 @@
 # Maintainer: Guillaume ALAUX <Guillaume at alaux dot net>
 pkgname=jboss6
-pkgver=6.0.0.M3
+pkgver=6.0.0.M4
 pkgrel=1
-pkgdesc="Java Application Server by RedHat"
-arch=(any)
+pkgdesc="JBoss Application Server by RedHat"
+arch=('i686' 'x86_64')
 url="http://www.jboss.org/"
 license=('LGPL')
-#groups=()
-depends=('java-runtime')
+depends=('java-environment')
 makedepends=('java-environment')
-#optdepends=()
-#provides=()
-#conflicts=()
-#replaces=()
 backup=()
-#options=()
-#install=
-#changelog=
-source=('http://downloads.sourceforge.net/project/jboss/JBoss/JBoss-${pkgver}/jboss-as-distribution-6.0.0.20100429-M3.zip'
-        'jboss6.sh'
-        'jboss6')
-#noextract=()
-md5sums=('3b325929d4d351fa694c0ce00c2d3939'
-         '692149450f1718dc28c28e045de80a8e'
-         'a02bd01ae8e17651ffa28c95a0878934')
+_pkgfullversion=6.0.0.20100721-M4
+source=(http://downloads.sourceforge.net/project/jboss/JBoss/JBoss-${pkgver}/jboss-as-distribution-${_pkgfullversion}.zip
+	jboss6.sh
+	jboss6)
+md5sums=('3d330b26c90339dcb186961314dfcaa2'
+	 '72fd145eaf046725324ed99f17d06197'
+	 '4a144f3fe86ca75fb2acd15a64adf305')
 
 build() {
-  cd ${srcdir}/jboss-6.0.0.20100429-M3
-  rm -f bin/{*.bat,*.exe}
+  cd ${srcdir}/jboss-${_pkgfullversion}
+  rm -f bin/*.{bat,exe}
   mkdir -p ${pkgdir}/usr/share
-  mv ${srcdir}/jboss-6.0.0.20100429-M3 ${pkgdir}/usr/share/${pkgname}
+  mv ${srcdir}/jboss-${_pkgfullversion} ${pkgdir}/usr/share/${pkgname}
 
-  install -D -oroot -groot -m755 ${startdir}/jboss6 ${pkgdir}/etc/rc.d/jboss6
-  install -D -oroot -groot -m755 ${startdir}/jboss6.sh ${pkgdir}/etc/profile.d/jboss6.sh
+  install -D -oroot -groot -m755 ${startdir}/jboss6 ${startdir}/pkg/etc/rc.d/jboss6
+  install -D -oroot -groot -m755 ${startdir}/jboss6.sh ${startdir}/pkg/etc/profile.d/jboss6.sh
 }
-
-# vim:set ts=2 sw=2 et:

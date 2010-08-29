@@ -1,8 +1,7 @@
-# Contributor: Hugo Doria <hugo@archlinux.org>
-# Contributor: Guillaume ALAUX <guillaume at alaux dot net>
+# Maintainer: Guillaume ALAUX <guillaume at alaux dot net>
 pkgname=tomcat7
-pkgver=7.0.0_beta
-pkgrel=2
+pkgver=7.0.2_beta
+pkgrel=1
 arch=('i686' 'x86_64')
 pkgdesc="Servlet container for Java Servlet and JavaServer Pages"
 url="http://tomcat.apache.org/"
@@ -12,21 +11,20 @@ makedepends=('java-environment' 'docbook2x')
 backup=('etc/tomcat7/server.xml'
 	'etc/tomcat7/tomcat-users.xml'
 	'etc/conf.d/tomcat7')
-#optdepends='tomcat7-admin'
 install=tomcat7.install
-source=(http://archive.apache.org/dist/tomcat/tomcat-7/v7.0.0-beta/bin/apache-tomcat-7.0.0.tar.gz
+source=(http://archive.apache.org/dist/tomcat/tomcat-7/v7.0.2-beta/bin/apache-tomcat-7.0.2.tar.gz
 	'tomcat7'
 	'tomcat7.conf.d')
-md5sums=('ae24fc7655d44dac63a2cbc7be2d45cd'
+md5sums=('43b5ba6aec55dd9a30957e035d0aac5f'
 	 'bfb3622379141597805da55fc7de1893'
 	 'f411e14280175095b519eaa9da425519')
 
 build() {
 	unset LDFLAGS
 	# build jsvc
-	cd ${srcdir}/apache-tomcat-7.0.0/bin
+	cd ${srcdir}/apache-tomcat-7.0.2/bin
 	tar xzf commons-daemon-native.tar.gz
-	cd commons-daemon-1.0.2-native-src/unix
+	cd commons-daemon-1.0.3-native-src/unix
 	sh configure
 	make clean
 	make || return 1
@@ -35,28 +33,28 @@ build() {
 }
 
 package() {
-	cd ${srcdir}/apache-tomcat-7.0.0
+	cd ${srcdir}/apache-tomcat-7.0.2
 
 	mkdir -p ${pkgdir}/usr/share/${pkgname} ${pkgdir}/srv/http/${pkgname} \
 		${pkgdir}/var/log/${pkgname} ${pkgdir}/etc/${pkgname} \
 		${pkgdir}/usr/share/man/man1
 
-	mv bin/commons-daemon-1.0.2-native-src/unix/JSVC.1 \
+	mv bin/commons-daemon-1.0.3-native-src/unix/JSVC.1 \
 		${pkgdir}/usr/share/man/man1
 	
 	# get rid of some cruft
 	rm -fr LICENSE NOTICE RELEASE-NOTES RUNNING.txt \
 	       bin/*.bat bin/*.tar.gz logs temp \
-	       bin/commons-daemon-1.0.2-native-src
+	       bin/commons-daemon-1.0.3-native-src
 
 	# install everything
-	mv ${srcdir}/apache-tomcat-7.0.0/webapps ${pkgdir}/srv/http/${pkgname}
+	mv ${srcdir}/apache-tomcat-7.0.2/webapps ${pkgdir}/srv/http/${pkgname}
 	ln -s /srv/http/${pkgname}/webapps ${pkgdir}/usr/share/${pkgname}/webapps
 
 	sed -i 's|<Host name="localhost" appBase="webapps"|<Host name="localhost" appBase="/srv/http/tomcat7/webapps"|g' \
-		${srcdir}/apache-tomcat-7.0.0/conf/server.xml
-	mv ${srcdir}/apache-tomcat-7.0.0/conf/* ${pkgdir}/etc/tomcat7
-	rmdir ${srcdir}/apache-tomcat-7.0.0/conf
+		${srcdir}/apache-tomcat-7.0.2/conf/server.xml
+	mv ${srcdir}/apache-tomcat-7.0.2/conf/* ${pkgdir}/etc/tomcat7
+	rmdir ${srcdir}/apache-tomcat-7.0.2/conf
 	ln -s /etc/tomcat7 ${pkgdir}/usr/share/${pkgname}/conf
 	
 	cp -R * ${pkgdir}/usr/share/${pkgname}
