@@ -2,8 +2,8 @@
 # Maintainer: Andreas Radke <andyrtr@archlinux.org>
 # Contributor: Jan de Groot <jgc@archlinux.org>
 
-pkgname=('openjdk6' 'openjdk6-src')
-pkgbase="openjdk6"
+pkgname=('jre6-openjdk' 'jdk6-openjdk' 'openjdk6-src')
+pkgbase="java6-openjdk"
 _date=20100715
 _javaver=6
 _icedteaver=1.8.1
@@ -11,10 +11,12 @@ _openjdk_version=b18
 _openjdk_date=16_feb_2010
 #pkgver=${_javaver}.${_openjdk_version}_0.hg_${_date}
 pkgver=${_javaver}.${_openjdk_version}_${_icedteaver}
-pkgrel=2
+pkgrel=1
 url='http://icedtea.classpath.org'
 arch=('i686' 'x86_64')
 license=('GPL')
+# cat src/icedtea6/hotspot.map or what it downlopads itself / remove from configure to get it
+_hotspotver=62926c7f67a3 
 makedepends=('gcc-libs' 'xdg-utils' 'hicolor-icon-theme' 'ca-certificates-java' 'libxtst' 'alsa-lib' 'giflib' 'libxp' 'gtk2'
 	     'nspr' 'zlib' 'freetype2' 'libjpeg>=8' 'libx11' 'libcups' 'patch' 'xalan-java' 'xulrunner>=1.9.2' 
 	     'apache-ant' 'autoconf' 'unzip' 'rhino' 'mercurial' 'zip' 'cpio')
@@ -22,6 +24,7 @@ options=('!emptydirs') # 'force') # force needed for hg shots
 source=(http://icedtea.classpath.org/download/source/icedtea6-${_icedteaver}.tar.gz
 	#ftp://ftp.archlinux.org/other/openjdk6/icedtea6-${_date}.tar.xz
 	http://download.java.net/openjdk/jdk6/promoted/${_openjdk_version}/openjdk-6-src-${_openjdk_version}-${_openjdk_date}.tar.gz
+	http://hg.openjdk.java.net/hsx/hsx16/master/archive/${_hotspotver}.tar.gz
 	https://jaxp.dev.java.net/files/documents/913/147329/jdk6-jaxp-2009_10_13.zip
 	http://kenai.com/projects/jdk6-drops/downloads/download/jdk6-jaxws-2009_10_27.zip
 	http://kenai.com/projects/jdk6-drops/downloads/download/jdk6-jaf-2009_10_27.zip
@@ -30,10 +33,12 @@ source=(http://icedtea.classpath.org/download/source/icedtea6-${_icedteaver}.tar
 	aatext_by_default.diff
 	fontconfig-paths.diff
 	nonreparenting-wm.diff
-	openjdk6.profile)
-noextract=(openjdk-6-src-${_openjdk_version}-${_openjdk_date}.tar.gz)
+	jre6-openjdk.profile
+	jdk6-openjdk.profile)
+noextract=(openjdk-6-src-${_openjdk_version}-${_openjdk_date}.tar.gz ${_hotspotver}.tar.gz)
 md5sums=('72d44286d16c948c7b3bb3d545200b76'
          '94db01691ab38f98b7d42b2ebf4d5c0b'
+         'd683eb501e7ce710198f20f0c127ebbb'
          'a2f7b972124cd776ff71e7754eb9a429'
          '3ea5728706169498b722b898a1008acf'
          '7a50bb540a27cdd0001885630088b758'
@@ -42,7 +47,8 @@ md5sums=('72d44286d16c948c7b3bb3d545200b76'
          'ef60d567c0d9bad111212851220deafd'
          'ee1afda124d5927345014ab382ef581e'
          '409812b5675f9678b1c9e1a12a945a9a'
-         '10d13b19762218ee157273cee874394e')
+         '10d13b19762218ee157273cee874394e'
+	 '10d13b19762218ee157273cee874394e')
 
 # source PKGBUILD && mksource
 mksource() {
@@ -68,6 +74,7 @@ build() {
   cd ${srcdir}/icedtea6-${_icedteaver}
 
   ln -s ${srcdir}/openjdk-6-src-${_openjdk_version}-${_openjdk_date}.tar.gz .
+  ln -s ${srcdir}/${_hotspotver}.tar.gz .
 
   cp ${srcdir}/*.diff ${srcdir}/icedtea6-${_icedteaver}/patches/
 
@@ -92,7 +99,7 @@ build() {
 	--with-xalan2-jar=/usr/share/java/xalan.jar \
 	--with-ant-home=/usr/share/java/apache-ant \
 	--with-pkgversion=ArchLinux-${pkgver}-${pkgrel}-$CARCH  $JCONF \
-	--with-openjdk-src-zip=openjdk-6-src-${_openjdk_version}-${_openjdk_date}.tar.gz \
+	--with-hotspot-src-zip=${_hotspotver}.tar.gz \
 	--with-jaxp-drop-zip=${srcdir}/jdk6-jaxp-2009_10_13.zip \
 	--with-jaxws-drop-zip=${srcdir}/jdk6-jaxws-2009_10_27.zip \
 	--with-jaf-drop-zip=${srcdir}/jdk6-jaf-2009_10_27.zip
@@ -103,7 +110,85 @@ build() {
   LD_PRELOAD="" make || return 1
 }
 
-package_openjdk6() {
+package_jre6-openjdk() {
+ pkgdesc='Free Java Runtime Environment based on OpenJDK 6.0 with IcedTea6 replacing binary plugs.'
+ backup=(etc/profile.d/jre6-openjdk.sh)
+ depends=('gcc-libs' 'xdg-utils' 'hicolor-icon-theme' 'ca-certificates-java' 'libxtst')
+ optdepends=('xulrunner: for the browser plugin'
+            'gtk2: for the browser plugin'
+            'alsa-lib: for sound'
+            'giflib: for gif format support')
+ conflicts=('java-environment' 'java-runtime')
+ provides=('java-environment=6' 'java-runtime=6')
+#TODO Check this
+  install=openjdk6.install
+
+#TODO Factorize this
+  if [ "${CARCH}" = "x86_64" ]; then
+    _arch=amd64
+  else
+    _arch=i586
+  fi
+
+  _javaver=6
+  _jvmdir=/usr/lib/jvm/java-${_javaver}-openjdk
+
+  cd ${srcdir}/icedtea6-${_icedteaver}
+  install -m755 -d ${pkgdir}/${_jvmdir}/jre
+
+  pushd ${srcdir}/icedtea6-${_icedteaver}/openjdk/build/linux-${_arch}/j2re-image
+
+   # Install main files.
+  cp -a bin lib ${pkgdir}/${_jvmdir}/jre/ || return 1
+
+  mv ${pkgdir}/${_jvmdir}/jre/lib/fontconfig.Ubuntu.properties.src \
+     ${pkgdir}/${_jvmdir}/jre/lib/fontconfig.properties.src || return 1
+  mv ${pkgdir}/${_jvmdir}/jre/lib/fontconfig.Ubuntu.bfc \
+     ${pkgdir}/${_jvmdir}/jre/lib/fontconfig.bfc || return 1
+  rm -f ${pkgdir}/${_jvmdir}/jre/lib/fontconfig.*.bfc
+  rm -f ${pkgdir}/${_jvmdir}/jre/lib/fontconfig.*.properties.src
+
+   # Install man pages.
+  install -m755 -d ${pkgdir}/usr/share/man/man1
+  install -m644 man/man1/*.1 ${pkgdir}/usr/share/man/man1/ || return 1
+
+  popd
+
+  # Install icons and menu entries.
+  for s in 16 24 32 48 ; do
+    install -m755 -d ${pkgdir}/usr/share/icons/hicolor/${s}x${s}/apps
+    install -m644 openjdk/jdk/src/solaris/classes/sun/awt/X11/java-icon${s}.png \
+      ${pkgdir}/usr/share/icons/hicolor/${s}x${s}/apps/java.png || return 1
+  done
+
+  # Install desktop files.
+  install -m755 -d ${pkgdir}/usr/share/{applications,pixmaps}
+  install -m644 javaws.png ${pkgdir}/usr/share/pixmaps || return 1
+  install -m644 {javaws,policytool}.desktop ${pkgdir}/usr/share/applications || return 1
+
+  # link the mozilla-plugin - test it here http://www.java.com/en/download/help/testvm.xml
+  install -m755 -d ${pkgdir}/usr/lib/mozilla/plugins/
+  ln -sf ${_jvmdir}/jre/lib/${_arch/i586/i386}/IcedTeaPlugin.so ${pkgdir}/usr/lib/mozilla/plugins/ || return 1
+
+  # link binaries into /usr/bin
+  install -m755 -d ${pkgdir}/usr/bin
+  pushd ${pkgdir}/${_jvmdir}/bin
+  for file in *; do
+    ln -sf ${_jvmdir}/bin/${file} \
+      ${pkgdir}/usr/bin || return 1
+  done
+  popd
+
+  # link JKS keystore from ca-certificates-java
+  rm -f ${pkgdir}/${_jvmdir}/jre/lib/security/cacerts
+  ln -sf /etc/ssl/certs/java/cacerts "${pkgdir}/${_jvmdir}/jre/lib/security/cacerts"
+ 
+  # set some variables
+  install -m755 -d ${pkgdir}/etc/profile.d
+  install -m755 ${srcdir}/jre6-openjdk.profile ${pkgdir}/etc/profile.d/jre6-openjdk.sh || return 1
+}
+
+package_jdk6-openjdk() {
  pkgdesc='Free Java environment based on OpenJDK 6.0 with IcedTea6 replacing binary plugs.'
  backup=(etc/profile.d/openjdk6.sh)
  depends=('gcc-libs' 'xdg-utils' 'hicolor-icon-theme' 'ca-certificates-java' 'libxtst')
