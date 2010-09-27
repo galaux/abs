@@ -1,0 +1,65 @@
+# Maintainer: Guillaume ALAUX <guillaume at alaux dot net>
+basename=java6-harmony
+pkgname=('jre6-harmony' 'jdk6-harmony')
+_harmonyver=6.0
+_milestonever=M3
+_releasever=991881
+pkgver=${_harmonyver}_${_milestonever}
+pkgrel=1
+arch=('i686' 'x86_64')
+url="http://harmony.apache.org"
+license=('APACHE')
+[ $CARCH = "i686" ] && source=(
+  http://archive.apache.org/dist/harmony/milestones/${_harmonyver}/${_milestonever}/apache-harmony-${_harmonyver}-jdk-r${_releasever}-linux-x86-snapshot.tar.gz
+#  http://archive.apache.org/dist/harmony/milestones/${_harmonyver}/${_milestonever}/apache-harmony-${_harmonyver}-hdk-r${_releasever}-linux-x86-snapshot.tar.gz
+  ${basename}.profile)
+[ $CARCH = "x86_64" ] && source=(
+  http://archive.apache.org/dist/harmony/milestones/${_harmonyver}/${_milestonever}/apache-harmony-${_harmonyver}-jdk-r${_releasever}-linux-x86_64-snapshot.tar.gz
+#  http://archive.apache.org/dist/harmony/milestones/${_harmonyver}/${_milestonever}/apache-harmony-${_harmonyver}-hdk-r${_releasever}-linux-x86_64-snapshot.tar.gz
+  ${basename}.profile)
+[ $CARCH = "i686" ] && md5sums=('d676aea4f6a80edea0fcd588d62d88aa'
+                                '7fd10b918d028f1bac545759daed7694')
+[ $CARCH = "x86_64" ] && md5sums=('606f3c023853b66beefdeb930205043a'
+                                  '7fd10b918d028f1bac545759daed7694')
+
+package_jre6-harmony() {
+  pkgdesc="An implementation of the Java SE 6 Runtime Environment (JRE)"
+  provides=('java-runtime=6')
+
+  mkdir -p ${pkgdir}/{usr/lib/jvm/java-6-harmony/jre,etc/profile.d,usr/bin}
+  cp -R ${srcdir}/harmony-${_harmonyver}-jdk-${_releasever}/jre/{bin,lib} \
+        ${pkgdir}/usr/lib/jvm/java-6-harmony/jre
+
+  cp ${srcdir}/harmony-${_harmonyver}-jdk-${_releasever}/{NOTICE,README} \
+        ${pkgdir}/usr/lib/jvm/java-6-harmony
+
+  cp ${srcdir}/${basename}.profile \
+     ${pkgdir}/etc/profile.d/${basename}.sh
+
+  for binary in java keytool pack200 policytool unpack200; do
+    ln -s /usr/lib/jvm/java-6-harmony/jre/bin/${binary} ${pkgdir}/usr/bin/${binary}
+  done
+}
+
+package_jdk6-harmony() {
+  pkgdesc="An implementation of the Java SE 6 JRE"
+  depends=('jre6-harmony')
+  provides=('java-environment=6')
+
+  mkdir -p ${pkgdir}/{usr/lib/jvm/java-6-harmony,usr/bin}
+  cp -R ${srcdir}/harmony-${_harmonyver}-jdk-${_releasever}/{bin,include,lib} \
+        ${pkgdir}/usr/lib/jvm/java-6-harmony
+
+  for binary in appletviewer data jar jarsigner javac javadoc javah javap jdb rmic rmid rmiregistry serialver; do
+    ln -s /usr/lib/jvm/java-6-harmony/bin/${binary} ${pkgdir}/usr/bin/${binary}
+  done
+}
+
+#package_hdk5-harmony() {
+#  pkgdesc="An implementation of the Java SE 6 JDK"
+#  provides=('java-runtime')
+#
+#  echo "To be done..."
+#}
+
+# vim:set ts=2 sw=2 et:

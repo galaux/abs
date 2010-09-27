@@ -1,0 +1,36 @@
+# Maintainer: Your Name <youremail@domain.com>
+pkgname=geronimo
+pkgver=3.0_M1
+pkgrel=1
+pkgdesc=""
+arch=()
+url=""
+license=('GPL')
+groups=()
+depends=()
+makedepends=('java-environment>=1.6' 'maven>=2')
+optdepends=()
+provides=()
+conflicts=()
+replaces=()
+backup=()
+options=()
+install=
+changelog=
+source=(http://archive.apache.org/dist/geronimo/${pkgver/_/-}/geronimo-${pkgver/_/-}-release.tar.gz)
+noextract=()
+md5sums=('76b594b6b7f8f83b05aa1d89d2ba9126')
+
+build() {
+  cd "${srcdir}/{$pkgname}-${pkgver/_/-}"
+
+  mvn clean build
+}
+
+package() {
+  cd "$srcdir/$pkgname-$pkgver"
+
+  make DESTDIR="$pkgdir/" install
+}
+
+# vim:set ts=2 sw=2 et:
