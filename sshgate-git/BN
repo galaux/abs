@@ -1,0 +1,8 @@
+fichier de conf par défaut
+    contient chaîne "set by build.sh"
+    a besoin de
+        SSHGATE_DIRECTORY?      <- quelle utilité?
+        SCRIPT_HELPER_DIRECTORY     <- cette info est stockée dans /etc/ScriptHelper.conf
+
+    SSHGATE_EDITOR              <- ${EDITOR}
+    SSHGATE_MAIL_TO='sshgate@linagora.com'  <- valeur plus "neutre"?
