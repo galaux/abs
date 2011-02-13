@@ -1,5 +1,5 @@
 # Maintainer: Guillaume ALAUX <guillaume at alaux dot net>
-pkgname=('sshGate-client-git' 'sshGate-server-git')
+pkgname=('sshgate-client-git' 'sshgate-server-git')
 pkgbase=sshGate-git
 pkgver=20110213
 pkgrel=1
@@ -7,7 +7,7 @@ arch=(any)
 url="https://github.com/Tauop/${_gitname}"
 license=('GPL2')
 groups=()
-depends=('lib-scripthelper-git')
+depends=('libscripthelper-git')
 makedepends=('git')
 optdepends=()
 provides=()
@@ -30,16 +30,24 @@ build() {
 
   #TODO remove somment when done
   if [ -d ${_gitname} ] ; then
-#    cd ${_gitname} && git pull origin
+    cd ${_gitname} && git pull origin
     msg "The local files are updated."
-#  else
-#    git clone ${_gitroot} ${_gitname}
+  else
+    git clone ${_gitroot} ${_gitname}
   fi
 
   msg "GIT checkout done or server timeout"
+
+  sed -i -e "s|%% __SSHGATE_VERSION__ %%|${pkgver}|g" \
+         -e "s|%% __SSHGATE_BUILD__ %%|${pkgver}|g" \
+            ${srcdir}/${_gitname}/server/tests/sshgate.test.conf
+
+  sed -i -e "s|/opt/sshgate|/usr/share/sshGate|g" \
+         -e "s|/usr/share/sshGate/bin/lib|/usr/lib/ScriptHelper|g" \
+            ${srcdir}/${_gitname}/server/sshgate.conf
 }
 
-package_sshGate-client-git() {
+package_sshgate-client-git() {
   # TODO update good desc
   pkgdesc="Tools to configure and use a ssh proxy server"
 
@@ -48,12 +56,13 @@ package_sshGate-client-git() {
   install -dm755 ${pkgdir}/usr/bin
   install -dm755 ${pkgdir}/usr/share/{,doc/}${_gitname}/client
   install -m755  scpg sshg ${pkgdir}/usr/bin
-  install -m755  install.sh ${pkgdir}/usr/share/${_gitname}/client
+  # No +x because 'as is' this script would not work
+  install -m644  install.sh ${pkgdir}/usr/share/${_gitname}/client
   # TODO see if we can ship only one COPYING
   install -m644  ../COPYING README ${pkgdir}/usr/share/doc/${_gitname}/client
 }
 
-package_sshGate-server-git() {
+package_sshgate-server-git() {
   # TODO update good desc
   pkgdesc="Tools to configure and use a ssh proxy server"
 
@@ -69,7 +78,8 @@ package_sshGate-server-git() {
   cp -r tests ${pkgdir}/usr/share/${_gitname}/server
   cp -r data  ${pkgdir}/usr/share/${_gitname}/server
   install -m644  sshgate.conf ${pkgdir}/etc
-  install -m755  install.sh upgrade.sh ${pkgdir}/usr/share/${_gitname}/server
+  # No +x because 'as is' this script would not work
+  install -m644  install.sh upgrade.sh ${pkgdir}/usr/share/${_gitname}/server
   install -m644  ../COPYING ${pkgdir}/usr/share/doc/${_gitname}/server
 }
 
