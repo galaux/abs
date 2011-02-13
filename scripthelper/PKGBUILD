@@ -1,5 +1,5 @@
 # Maintainer: Guillaume ALAUX <guillaume at alaux dot net>
-pkgname=lib-scripthelper-git
+pkgname=libscripthelper-git
 pkgver=20110213
 pkgrel=1
 pkgdesc="Shell libraries to help writting shell script"
