@@ -1,0 +1,75 @@
+# Maintainer: Guillaume ALAUX <guillaume at alaux dot net>
+pkgname=('sshGate-client-git' 'sshGate-server-git')
+pkgbase=sshGate-git
+pkgver=20110213
+pkgrel=1
+arch=(any)
+url="https://github.com/Tauop/${_gitname}"
+license=('GPL2')
+groups=()
+depends=('lib-scripthelper-git')
+makedepends=('git')
+optdepends=()
+provides=()
+conflicts=()
+replaces=()
+backup=()
+options=()
+install=
+changelog=
+#source=($pkgname-$pkgver.tar.gz)
+noextract=()
+#md5sums=() #generate with 'makepkg -g'
+
+_gitname="sshGate"
+_gitroot="git://github.com/Tauop/${_gitname}.git"
+
+build() {
+  cd "${srcdir}"
+  msg "Connecting to GIT server...."
+
+  #TODO remove somment when done
+  if [ -d ${_gitname} ] ; then
+#    cd ${_gitname} && git pull origin
+    msg "The local files are updated."
+#  else
+#    git clone ${_gitroot} ${_gitname}
+  fi
+
+  msg "GIT checkout done or server timeout"
+}
+
+package_sshGate-client-git() {
+  # TODO update good desc
+  pkgdesc="Tools to configure and use a ssh proxy server"
+
+  cd "${srcdir}/${_gitname}/client"
+
+  install -dm755 ${pkgdir}/usr/bin
+  install -dm755 ${pkgdir}/usr/share/{,doc/}${_gitname}/client
+  install -m755  scpg sshg ${pkgdir}/usr/bin
+  install -m755  install.sh ${pkgdir}/usr/share/${_gitname}/client
+  # TODO see if we can ship only one COPYING
+  install -m644  ../COPYING README ${pkgdir}/usr/share/doc/${_gitname}/client
+}
+
+package_sshGate-server-git() {
+  # TODO update good desc
+  pkgdesc="Tools to configure and use a ssh proxy server"
+
+  cd "${srcdir}/${_gitname}/server"
+
+  install -dm755 ${pkgdir}/usr/lib/${_gitname}
+  install -dm755 ${pkgdir}/{etc,usr/bin}
+  install -dm755 ${pkgdir}/usr/share/{,doc/}${_gitname}/server
+
+  cp -r bin/core ${pkgdir}/usr/lib/${_gitname}
+  install -m755  bin/sshgate-cli bin/sshgate.sh ${pkgdir}/usr/bin
+  install -m755  bin/archive-log.sh ${pkgdir}/usr/bin/sshgate-archive-log.sh
+  cp -r tests ${pkgdir}/usr/share/${_gitname}/server
+  cp -r data  ${pkgdir}/usr/share/${_gitname}/server
+  install -m644  sshgate.conf ${pkgdir}/etc
+  install -m755  install.sh upgrade.sh ${pkgdir}/usr/share/${_gitname}/server
+  install -m644  ../COPYING ${pkgdir}/usr/share/doc/${_gitname}/server
+}
+
