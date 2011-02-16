@@ -1,0 +1,52 @@
+# Maintainer: Guillaume ALAUX <guillaume at alaux dot net>
+pkgname=lib-scripthelper-git
+pkgver=20110213
+pkgrel=1
+pkgdesc="Shell libraries to help writting shell script"
+arch=(any)
+url="https://github.com/Tauop/${_gitname}"
+license=('GPL2')
+groups=()
+depends=()
+makedepends=('git')
+optdepends=()
+provides=()
+conflicts=()
+replaces=()
+backup=()
+options=()
+install=
+changelog=
+#source=($pkgname-$pkgver.tar.gz)
+noextract=()
+#md5sums=() #generate with 'makepkg -g'
+
+_gitname="ScriptHelper"
+_gitroot="git://github.com/Tauop/${_gitname}.git"
+
+build() {
+  cd "${srcdir}"
+  msg "Connecting to GIT server...."
+
+  if [ -d ${_gitname} ] ; then
+    cd ${_gitname} && git pull origin
+    msg "The local files are updated."
+  else
+    git clone ${_gitroot} ${_gitname}
+  fi
+
+  msg "GIT checkout done or server timeout"
+}
+
+package() {
+  cd "${srcdir}/${_gitname}"
+
+  install -dm755 ${pkgdir}/{etc,usr/lib/${_gitname}}
+  install -dm755 ${pkgdir}/usr/share{,/doc}/${_gitname}
+
+  install -m644 *.lib.sh ${pkgdir}/usr/lib/${_gitname}
+  install -m644 ScriptHelper.conf ${pkgdir}/etc
+  cp -r tests ${pkgdir}/usr/share/${_gitname}
+  install -m644 COPYING INSTALL README ${pkgdir}/usr/share/doc/${_gitname}
+}
+
