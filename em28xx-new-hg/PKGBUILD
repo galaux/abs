@@ -12,7 +12,7 @@ md5sums=('dfefefb7a3bb016f0f4492c321338d09'
 install=($pkgname.install)
 build()
 {
-	
+#hg clone https://bitbucket.org/mdonoughe/em28xx-new	
 
        cd $srcdir
 	mkdir -p $pkgdir/lib/firmware
