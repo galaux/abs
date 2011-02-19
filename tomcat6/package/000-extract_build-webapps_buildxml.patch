@@ -1,0 +1,114 @@
+--- build.xml	2011-02-12 17:36:30.000000000 +0100
++++ build.xml.new	2011-02-12 18:16:20.000000000 +0100
+@@ -468,7 +468,7 @@
+     building a tomcat release.</echo>
+   </target>
+ 
+-  <target name="deploy" depends="build-only,build-docs,warn.dbcp">
++  <target name="deploy" depends="build-only,build-docs,warn.dbcp,build-webapps">
+ 
+     <copy tofile="${tomcat.build}/bin/tomcat-native.tar.gz"
+             file="${tomcat-native.tar.gz}" />
+@@ -528,9 +528,16 @@
+       <filterset refid="version.filters"/>
+     </copy>
+ 
++    <copy file="${tomcat-dbcp.jar}" todir="${tomcat.build}/lib"
++      failonerror="false"/>
++    <copy file="${jdt.jar}" todir="${tomcat.build}/lib" />
++
++  </target>
++
++  <target name="build-webapps">
+     <!-- Build classes for examples webapp -->
+     <javac   srcdir="webapps/examples/WEB-INF/classes"
+-             destdir="${tomcat.build}/webapps/examples/WEB-INF/classes"
++             destdir="webapps/examples/WEB-INF/classes"
+              debug="${compile.debug}" deprecation="${compile.deprecation}"
+              source="${compile.source}"
+              target="${compile.target}"
+@@ -541,7 +548,7 @@
+     </javac>
+ 
+     <javac   srcdir="webapps/examples/jsp/plugin/applet"
+-             destdir="${tomcat.build}/webapps/examples/jsp/plugin/applet"
++             destdir="webapps/examples/jsp/plugin/applet"
+              debug="${compile.debug}" deprecation="${compile.deprecation}"
+              source="${compile.source}"
+              target="${compile.target}"
+@@ -555,7 +562,7 @@
+     <taskdef    name="txt2html"
+            classname="org.apache.tomcat.buildutil.Txt2Html"
+            classpath="${tomcat.classes}" />
+-    <txt2html todir="${tomcat.build}/webapps/examples/jsp/jsp2/simpletag">
++    <txt2html todir="webapps/examples/jsp/jsp2/simpletag">
+       <fileset dir="webapps/examples/WEB-INF/classes/jsp2/examples">
+         <include name="BookBean.java"/>
+       </fileset>
+@@ -569,7 +576,7 @@
+       </fileset>
+     </txt2html>
+ 
+-    <txt2html todir="${tomcat.build}/webapps/examples/jsp/jsp2/jspattribute">
++    <txt2html todir="webapps/examples/jsp/jsp2/jspattribute">
+       <fileset dir="webapps/examples/WEB-INF/classes/jsp2/examples">
+         <include name="FooBean.java"/>
+       </fileset>
+@@ -580,7 +587,7 @@
+       </fileset>
+     </txt2html>
+ 
+-    <txt2html todir="${tomcat.build}/webapps/examples/jsp/cal">
++    <txt2html todir="webapps/examples/jsp/cal">
+       <fileset dir="webapps/examples/WEB-INF/classes/cal">
+         <include name="Entries.java"/>
+         <include name="Entry.java"/>
+@@ -589,31 +596,31 @@
+       </fileset>
+     </txt2html>
+ 
+-    <txt2html todir="${tomcat.build}/webapps/examples/jsp/jsptoserv">
++    <txt2html todir="webapps/examples/jsp/jsptoserv">
+       <fileset dir="webapps/examples/WEB-INF/classes">
+         <include name="servletToJsp.java"/>
+       </fileset>
+     </txt2html>
+ 
+-    <txt2html todir="${tomcat.build}/webapps/examples/jsp/jsp2/el">
++    <txt2html todir="webapps/examples/jsp/jsp2/el">
+       <fileset dir="webapps/examples/WEB-INF/classes/jsp2/examples/el">
+         <include name="Functions.java"/>
+       </fileset>
+     </txt2html>
+ 
+-    <txt2html todir="${tomcat.build}/webapps/examples/jsp/jsp2/misc">
++    <txt2html todir="webapps/examples/jsp/jsp2/misc">
+       <fileset dir="webapps/examples/WEB-INF/classes/jsp2/examples/simpletag">
+         <include name="EchoAttributesTag.java"/>
+       </fileset>
+     </txt2html>
+ 
+-    <txt2html todir="${tomcat.build}/webapps/examples/jsp/jsp2/tagfiles">
++    <txt2html todir="webapps/examples/jsp/jsp2/tagfiles">
+       <fileset dir="webapps/examples/WEB-INF/tags">
+         <include name="**/*.tag" />
+       </fileset>
+     </txt2html>
+ 
+-    <txt2html todir="${tomcat.build}/webapps/examples">
++    <txt2html todir="webapps/examples">
+       <fileset dir="webapps/examples">
+         <include name="**/*.jsp" />
+         <include name="**/*.jspx" />
+@@ -628,11 +635,6 @@
+         <exclude name="source.jsp"/>
+       </fileset>
+     </txt2html>
+-
+-    <copy file="${tomcat-dbcp.jar}" todir="${tomcat.build}/lib"
+-      failonerror="false"/>
+-    <copy file="${jdt.jar}" todir="${tomcat.build}/lib" />
+-
+   </target>
+ 
+   <target name="clean-depend"

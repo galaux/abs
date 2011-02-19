@@ -1,0 +1,38 @@
+# Maintainer: Guillaume ALAUX <guillaume@archlinux.org>
+_libname=commons-daemon
+pkgname=java-${_libname}
+pkgver=1.0.5
+pkgrel=1
+pkgdesc="Apache Java library for starting and stopping a JVM for server-side application"
+arch=('i686' 'x86_64')
+url='http://commons.apache.org/daemon/'
+license=('APACHE')
+depends=('java-runtime')
+makedepends=('apache-ant')
+#optdepends=()
+#provides=()
+#conflicts=()
+#replaces=()
+#backup=()
+#options=()
+#install=.install
+#changelog=
+source=(http://archive.apache.org/dist/commons/daemon/source/${_libname}-${pkgver}-src.tar.gz)
+#noextract=()
+md5sums=('2fe0a35d4a9c0338ecd45dad20f33662')
+
+build() {
+  cd "${srcdir}/${_libname}-${pkgver}-src"
+
+  ant
+}
+
+package() {
+  cd "${srcdir}/${_libname}-${pkgver}-src"
+
+  install -Dm755 dist/${_libname}-${pkgver}.jar \
+                 ${pkgdir}/usr/share/java/${_libname}-${pkgver}.jar
+  ln -s ${_libname}-${pkgver}.jar \
+        ${pkgdir}/usr/share/java/${_libname}.jar
+}
+
