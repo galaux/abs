@@ -1,2 +1,9 @@
 rajouter les fichreirs de backup dans tomcat
 vérifier tous les champs du style license, arch
+
+commons-dbcp
+commons-pool
+tomcat-native
+
+bcel?
+    Si oui alors extraire de mes paquets

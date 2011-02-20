@@ -8,7 +8,7 @@ url='http://tomcat.apache.org/'
 license=('APACHE')
 depends=('java-runtime>=5' 'eclipse-ecj' 'java-commons-daemon')
 makedepends=('java-environment>=5' 'apache-ant>=1.6' 'eclipse-ecj' 'java-commons-daemon')
-#optdepends=()
+optdepends=('tomcat-native')
 #backup=()
 install=tomcat.install
 source=(http://archive.apache.org/dist/${pkgname}/${pkgname}-6/v${pkgver}/src/apache-${pkgname}-${pkgver}-src.tar.gz
