@@ -18,31 +18,23 @@ case "$1" in
     if [ -z "$PID" ]; then
       [ -f /var/run/${daemon_name}.pid ] && rm -f /var/run/${daemon_name}.pid
       # RUN
-#      /usr/share/tomcat/bin/catalina.sh start > /dev/null
       /usr/bin/jsvc \
         -Dcatalina.home=${CATALINA_HOME} \
         -Dcatalina.base=${CATALINA_BASE} \
         -Djava.io.tmpdir=/var/tmp/tomcat/temp \
-        -user tomcat \
         -cp /usr/share/java/commons-daemon.jar:${CATALINA_HOME}/bin/bootstrap.jar \
+        -user tomcat \
+        -wait 10 \
         -pidfile /var/run/${daemon_name}.pid \
         -errfile /var/log/tomcat/catalina.err \
         -outfile /var/log/tomcat/catalina.out \
+        ${CATALINA_OPTS} \
         org.apache.catalina.startup.Bootstrap
 
-
-#        -cp ${CATALINA_HOME}/lib/commons-daemon.jar:${CATALINA_HOME}/bin/bootstrap.jar \
-#        -java-home $TOMCAT_JAVA_HOME \
-#        $CATALINA_OPTS \
-#        -wait 10 \
-#        -cp $TOMCAT_JAVA_HOME/lib/tools.jar:/opt/tomcat/bin/commons-daemon.jar:/opt/tomcat/bin/bootstrap.jar \
-
-#
       if [ $? -gt 0 ]; then
         stat_fail
         exit 1
       else
-#        echo $(get_pid) > /var/run/${daemon_name}.pid
         add_daemon ${daemon_name}
         stat_done
       fi
@@ -56,7 +48,6 @@ case "$1" in
     stat_busy "Stopping ${daemon_name} daemon"
     PID=$(get_pid)
     # STOP
-#    /usr/share/tomcat/bin/catalina.sh stop > /dev/null
     /usr/bin/jsvc \
       -pidfile /var/run/${daemon_name}.pid \
       -stop \

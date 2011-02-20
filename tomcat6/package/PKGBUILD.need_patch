@@ -13,22 +13,18 @@ makedepends=('java-environment>=5' 'apache-ant>=1.6' 'eclipse-ecj')
 install=tomcat.install
 source=(http://archive.apache.org/dist/${pkgname}/${pkgname}-6/v${pkgver}/src/apache-${pkgname}-${pkgver}-src.tar.gz
         http://tomcat.apache.org/dev/dist/m2-repository/org/apache/tomcat/dbcp/${pkgver}/dbcp-${pkgver}.jar
+        000-extract_build-webapps_buildxml.patch
         tomcat.conf.d
         tomcat
-        tomcat.install
-        http://www.apache.org/dist/tomcat/tomcat-connectors/native/1.1.20/source/tomcat-native-1.1.20-src.tar.gz
-        http://archive.apache.org/dist/commons/daemon/source/commons-daemon-1.0.5-src.tar.gz)
-# TODO include tomcat-native into this PKGBUILD then remove this ^
-# TODO also factorize name 'tomcat-native' and version
+        tomcat.install)
 
 noextract=(dbcp-${pkgver}.jar)
 md5sums=('19a1eaa9c9938b520d3c360d8cf4af22'
          'c5b7101dbe6ed66624db6eca70d7873a'
+         'cd23f72cec0fe3b418ea10a9d18e11c6'
          'c8ccc31e2c824d27d7daa07516fa3351'
          '1444ad4851ca208ad2bbdefa8c924615'
-         '1be39071bd27781c352b2d73b765e29d'
-         'fb2b9d073cb6575c2d0020eda266ca0c'
-         '2fe0a35d4a9c0338ecd45dad20f33662')
+         '1be39071bd27781c352b2d73b765e29d')
 build() {
   # Tomcat
   cd "${srcdir}/apache-${pkgname}-${pkgver}-src"
@@ -36,14 +32,16 @@ build() {
 #  ant -Dbase.path=DOWN_LIBS download build-only build-docs
   # TODO Remove 'clean' once done
 #  ant -lib /usr/share/java clean build-only build-docs
+
+  patch < ${srcdir}/000-extract_build-webapps_buildxml.patch
+
   ant \
     -lib /usr/share/java \
-    -Dtomcat-dbcp.jar=${srcdir}/dbcp-${pkgver}.jar \
-    -Dtomcat-native.tar.gz=${srcdir}/tomcat-native-1.1.20-src.tar.gz \
-    -Dcommons-daemon.native.src.tgz=${srcdir}/commons-daemon-1.0.5-src.tar.gz \
-    -Dcommons-daemon.jar=/usr/share/java/commons-daemon.jar \
-    -Djdt.jar=/usr/share/java/ecj.jar \
-    clean deploy
+    clean build-only build-docs build-webapps
+#    -Dtomcat-dbcp.jar=${srcdir}/dbcp-${pkgver}.jar \
+#    -Dcommons-daemon.jar=/usr/share/java/commons-daemon.jar \
+#    -Djdt.jar=/usr/share/java/ecj.jar \
+#    clean deploy
 }
 
 package() {

@@ -8,7 +8,7 @@ arch=('i686' 'x86_64')
 url="http://commons.apache.org/daemon/"
 license=('APACHE')
 depends=('java-runtime')
-makedepends=('apache-ant')
+makedepends=('apache-ant' 'docbook2x' 'docbook-xsl')
 source=(http://archive.apache.org/dist/commons/daemon/source/${_libname}-${pkgver}-src.tar.gz)
 md5sums=('2fe0a35d4a9c0338ecd45dad20f33662')
 
@@ -21,17 +21,21 @@ build() {
   cd "${srcdir}/${_libname}-${pkgver}-src/src/native/unix"
   ./configure
   make
+  docbook2man man/jsvc.1.xml
 }
 
 package() {
+  # commons-daemon.jar
   cd "${srcdir}/${_libname}-${pkgver}-src"
 
-  # commons-daemon.jar
   install -Dm755 dist/${_libname}-${pkgver}.jar \
                  ${pkgdir}/usr/share/java/${_libname}-${pkgver}.jar
   ln -s ${_libname}-${pkgver}.jar \
         ${pkgdir}/usr/share/java/${_libname}.jar
 
   # jsvc
-  install -Dm755 src/native/unix/jsvc ${pkgdir}/usr/bin/jsvc
+  cd "${srcdir}/${_libname}-${pkgver}-src/src/native/unix"
+
+  install -Dm755 jsvc ${pkgdir}/usr/sbin/jsvc
+  install -Dm644 JSVC.1 ${pkgdir}/usr/share/man/man1/JSVC.1
 }

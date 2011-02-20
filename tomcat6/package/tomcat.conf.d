@@ -5,7 +5,7 @@ CATALINA_HOME=/usr/share/tomcat
 # binary distribution shared among multiple users on the same server.  To make
 # this possible, you can set the $CATALINA_BASE environment variable to the
 # directory that contains the files for your 'personal' Tomcat instance.
-CATALINA_BASE=$CATALINA_HOME
+CATALINA_BASE=${CATALINA_HOME}
 
 # Tomcat additional commandline options
 CATALINA_OPTS=

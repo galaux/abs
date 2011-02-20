@@ -2,11 +2,11 @@
 pkgname=tomcat
 pkgver=6.0.32
 pkgrel=1
-pkgdesc="Apache Tomcat 6 Servlet-2.5/JSP-2.1 Container"
+pkgdesc="Apache Tomcat Servlet-2.5/JSP-2.1 Container"
 arch=('i686' 'x86_64')
 url='http://tomcat.apache.org/'
 license=('APACHE')
-depends=('java-runtime>=5' 'eclipse-ecj' 'java-commons-daemon')
+depends=('java-runtime>=5' 'java-commons-daemon')
 makedepends=('java-environment>=5' 'apache-ant>=1.6' 'eclipse-ecj' 'java-commons-daemon')
 #optdepends=()
 #backup=()
@@ -15,44 +15,51 @@ source=(http://archive.apache.org/dist/${pkgname}/${pkgname}-6/v${pkgver}/src/ap
         http://tomcat.apache.org/dev/dist/m2-repository/org/apache/tomcat/dbcp/${pkgver}/dbcp-${pkgver}.jar
         tomcat.conf.d
         tomcat
-        tomcat.install)
+        tomcat.install
+        http://www.apache.org/dist/tomcat/tomcat-connectors/native/1.1.20/source/tomcat-native-1.1.20-src.tar.gz
+        http://archive.apache.org/dist/commons/daemon/source/commons-daemon-1.0.5-src.tar.gz)
+# TODO include tomcat-native into this PKGBUILD then remove this ^
+# TODO also factorize name 'tomcat-native' and version
 
 noextract=(dbcp-${pkgver}.jar)
 md5sums=('19a1eaa9c9938b520d3c360d8cf4af22'
          'c5b7101dbe6ed66624db6eca70d7873a'
-         '11a30b7d3542ef0b62857a01c0d2acbd'
-         'ff644b42d780cafe970aa5d4c89ec57d'
-         '1be39071bd27781c352b2d73b765e29d')
+         'c8ccc31e2c824d27d7daa07516fa3351'
+         '1444ad4851ca208ad2bbdefa8c924615'
+         '1be39071bd27781c352b2d73b765e29d'
+         'fb2b9d073cb6575c2d0020eda266ca0c'
+         '2fe0a35d4a9c0338ecd45dad20f33662')
 build() {
   # Tomcat
   cd "${srcdir}/apache-${pkgname}-${pkgver}-src"
 
-  mv ${srcdir}/dbcp-${pkgver}.jar ${srcdir}/tomcat-dbcp.jar
-
+#  ant -Dbase.path=DOWN_LIBS download build-only build-docs
+  # TODO Remove 'clean' once done
+#  ant -lib /usr/share/java clean build-only build-docs
   ant \
     -lib /usr/share/java \
-    -Dtomcat-dbcp.jar=${srcdir}/tomcat-dbcp.jar \
+    -Dtomcat-dbcp.jar=${srcdir}/dbcp-${pkgver}.jar \
+    -Dtomcat-native.tar.gz=${srcdir}/tomcat-native-1.1.20-src.tar.gz \
+    -Dcommons-daemon.native.src.tgz=${srcdir}/commons-daemon-1.0.5-src.tar.gz \
     -Dcommons-daemon.jar=/usr/share/java/commons-daemon.jar \
     -Djdt.jar=/usr/share/java/ecj.jar \
-    -Dbase.path=${srcdir}/DOWN_LIBS \
-    clean download deploy
+    clean deploy
 }
 
 package() {
-  cd "${srcdir}/apache-${pkgname}-${pkgver}-src/output/build"
-
   # Tomcat general files
-  install -dm755 ${pkgdir}/usr/share/{,java/}${pkgname}
-  cp -r bin ${pkgdir}/usr/share/${pkgname}
-  rm ${pkgdir}/usr/share/${pkgname}/bin/{*.bat,commons-daemon*,tomcat-native.tar.gz}
+  cd "${srcdir}/apache-${pkgname}-${pkgver}-src"
 
-  install lib/* ${pkgdir}/usr/share/java/${pkgname}
-  rm ${pkgdir}/usr/share/java/${pkgname}/ecj.jar
-  ln -s /usr/share/java/${pkgname} ${pkgdir}/usr/share/${pkgname}/lib
+  install -dm755 ${pkgdir}/usr/share/${pkgname}
+  cp -r output/build/{bin,lib} ${pkgdir}/usr/share/${pkgname}
+  install -m755 bin/*.sh ${pkgdir}/usr/share/${pkgname}/bin
+  install -m644 bin/catalina-tasks.xml ${pkgdir}/usr/share/${pkgname}/bin
 
-  # 66=tomcat / 19=log
-  install -dm775 -o 66 -g 19 ${pkgdir}/var/log/${pkgname}
+  install -dm775 -o 66 -g 66 ${pkgdir}/var/log/${pkgname}
   ln -s /var/log/${pkgname} ${pkgdir}/usr/share/${pkgname}/logs
+  # TODO Remove?
+#  sed -i 's|${catalina.base}/logs|/var/log/tomcat|' \
+#         conf/logging.properties
 
   install -dm770 ${pkgdir}/etc/${pkgname}
   install -m660 conf/* ${pkgdir}/etc/${pkgname}
@@ -60,6 +67,7 @@ package() {
 
   install -dm775 ${pkgdir}/var/lib/${pkgname}
   cp -r webapps ${pkgdir}/var/lib/${pkgname}
+  # '66:66' = 'tomcat:tomcat'
   chown -R 66:66 ${pkgdir}/var/lib/${pkgname}
   ln -s /var/lib/${pkgname}/webapps ${pkgdir}/usr/share/${pkgname}/webapps
 
