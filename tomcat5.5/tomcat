@@ -1,6 +1,6 @@
 #!/bin/bash
 
-[ -f /etc/conf.d/tomcat ] && . /etc/conf.d/tomcat
+[ -f /etc/conf.d/tomcat5.5 ] && . /etc/conf.d/tomcat5.5
 
 . /etc/rc.conf
 . /etc/rc.d/functions
@@ -15,7 +15,7 @@ case "$1" in
       -Dcatalina.base=/opt/tomcat \
       -Djava.io.tmpdir=/opt/tomcat/temp \
       -wait 10 \
-      -pidfile /var/run/tomcat.pid \
+      -pidfile /var/run/tomcat5.5.pid \
       -errfile /opt/tomcat/logs/catalina.log \
       $CATALINA_OPTS \
       -cp $TOMCAT_JAVA_HOME/lib/tools.jar:/opt/tomcat/bin/commons-daemon.jar:/opt/tomcat/bin/bootstrap.jar \
@@ -24,7 +24,7 @@ case "$1" in
     if [ $? -gt 0 ]; then
       stat_fail
     else
-      add_daemon tomcat
+      add_daemon tomcat5.5
       stat_done
     fi
     ;;
@@ -32,13 +32,13 @@ case "$1" in
     stat_busy "Stopping Tomcat"
     /opt/tomcat/bin/jsvc \
       -stop \
-      -pidfile /var/run/tomcat.pid \
+      -pidfile /var/run/tomcat5.5.pid \
       org.apache.catalina.startup.Bootstrap
 
     if [ $? -gt 0 ]; then
       stat_fail
     else
-      rm_daemon tomcat
+      rm_daemon tomcat5.5
       stat_done
     fi
     ;;
