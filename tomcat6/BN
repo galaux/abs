@@ -1,9 +1,56 @@
-rajouter les fichreirs de backup dans tomcat
-vérifier tous les champs du style license, arch
-
 commons-dbcp
 commons-pool
 tomcat-native
 
 bcel?
     Si oui alors extraire de mes paquets
+
+
+X   "Créer" PKGBUILD tomcat5.5
+    Rajouter les fichiers à svg dans tomcat5
+    Rajouter les fichiers à svg dans tomcat(6)
+    Rajouter warning dans tomcat(6) pour dire qu'on passe de TC5.5 à TC6
+    Vérifier que tomcat5.5 et tomcat ne sont pas en conflit
+    vérifier tous les champs du style license, arch
+
+    Liste des pkg à créer pour TC6 (penser à les faire supprimer d'AUR) :
+        java-commons-daemon
+        tomcat-native
+
+
+Note de passage à tc6
+    attention tc6 n'est pas une màj de tc5.5
+    'tomcat' reste sous le nom de 'tomcat5.5'
+        les seuls fichiers qui changent sont
+            etc/rc.d/tomcat5.5
+            etc/conf.d/tomcat5.5
+    répertoire webapps ne doit pas être supprimé
+    nouveau tomcat (6) ne rentre pas en conflit avec tomcat5.5 (Attention : ils utilisent tout de même tous les 2 le port 8080 par défaut)
+
+
+Mettre à jour la page wiki
+    linker vers la page de tomcat.apache.org sur les versions
+        http://tomcat.apache.org/whichversion.html
+    donner quelques tips de sécu
+
+    comment migrer tomcat pour Arch Linux
+        vérifier que vos applis sont compatibles avec les versiuon de JSP/Servlet
+        Si voulez rester à tomcat 5.5 :
+            /etc/rc.d/tomcat stop
+            faire backup des webapps et de la conf
+            pacman -R tomcat // Ne doit pas supprimer conf ni webapps <- à vérifier
+            pacman -Sy tomcat5.5
+            si précédent a planté sur "fichier existant" : pacman -Syf tomcat5.5
+            /etc/rc.d/tomcat5.5 start
+            Vérifier que tout est OK
+
+        Si migration vers TC6 :
+            /etc/rc.d/tomcat stop
+            faire backup des webapps et de la conf
+            pacman -Sy tomcat
+            migrer les webapps de /opt/tomcat/webapps vers /var/lib/tomcat/webapps
+            /etc/rc.d/tomcat start
+            Vérifier que tout est OK
+            si tout est OK, supprimer : opt/tomcat
+
+            
