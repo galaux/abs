@@ -1,6 +1,3 @@
-commons-dbcp
-commons-pool
-tomcat-native
 
 bcel?
     Si oui alors extraire de mes paquets
@@ -8,7 +5,7 @@ bcel?
 
 X   "Créer" PKGBUILD tomcat5.5
     Rajouter les fichiers à svg dans tomcat5
-    Rajouter les fichiers à svg dans tomcat(6)
+X   Rajouter les fichiers à svg dans tomcat(6)
     Rajouter warning dans tomcat(6) pour dire qu'on passe de TC5.5 à TC6
     Vérifier que tomcat5.5 et tomcat ne sont pas en conflit
     vérifier tous les champs du style license, arch
@@ -17,6 +14,9 @@ X   "Créer" PKGBUILD tomcat5.5
         java-commons-daemon
         tomcat-native
 
+	commons-dbcp
+	commons-pool
+	tomcat-connectors (?)
 
 Note de passage à tc6
     attention tc6 n'est pas une màj de tc5.5
