@@ -9,7 +9,13 @@ license=('APACHE')
 depends=('java-runtime>=5' 'eclipse-ecj' 'java-commons-daemon')
 makedepends=('java-environment>=5' 'apache-ant>=1.6' 'eclipse-ecj' 'java-commons-daemon')
 optdepends=('tomcat-native')
-#backup=()
+backup=(etc/tomcat/catalina.policy
+        etc/tomcat/catalina.properties
+        etc/tomcat/context.xml
+        etc/tomcat/logging.properties
+        etc/tomcat/server.xml
+        etc/tomcat/tomcat-users.xml
+        etc/tomcat/web.xml)
 install=tomcat.install
 source=(http://archive.apache.org/dist/${pkgname}/${pkgname}-6/v${pkgver}/src/apache-${pkgname}-${pkgver}-src.tar.gz
         http://tomcat.apache.org/dev/dist/m2-repository/org/apache/tomcat/dbcp/${pkgver}/dbcp-${pkgver}.jar
