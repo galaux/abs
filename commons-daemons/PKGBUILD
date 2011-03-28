@@ -36,6 +36,6 @@ package() {
   # jsvc
   cd "${srcdir}/${_libname}-${pkgver}-src/src/native/unix"
 
-  install -Dm755 jsvc ${pkgdir}/usr/sbin/jsvc
+  install -Dm755 jsvc ${pkgdir}/usr/bin/jsvc
   install -Dm644 JSVC.1 ${pkgdir}/usr/share/man/man1/JSVC.1
 }
