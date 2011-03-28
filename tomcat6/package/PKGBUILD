@@ -2,8 +2,8 @@
 pkgname=tomcat
 pkgver=6.0.32
 pkgrel=1
-pkgdesc="Apache Tomcat 6 Servlet-2.5/JSP-2.1 Container"
-arch=('i686' 'x86_64')
+pkgdesc="Servlet-2.5/JSP-2.1 Container"
+arch=('any')
 url='http://tomcat.apache.org/'
 license=('APACHE')
 depends=('java-runtime>=5' 'eclipse-ecj' 'java-commons-daemon')
