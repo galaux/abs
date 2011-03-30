@@ -28,12 +28,13 @@ md5sums=('19a1eaa9c9938b520d3c360d8cf4af22'
          'c5b7101dbe6ed66624db6eca70d7873a'
          '84e819ababbc8e1ac5c325d8af7febf8'
          '2760f0a3f3a9585c7a4f8bdd7100c45f'
-         'e24da0c1d6034f04f9eba4218ad22c1f')
+         '89617779ce76658d7c4b8c603bcbd38b')
 build() {
   cd "${srcdir}/apache-tomcat-${pkgver}-src"
 
   mv ${srcdir}/dbcp-${pkgver}.jar ${srcdir}/tomcat-dbcp.jar
 
+  . /etc/profile.d/apache-ant.sh
   ant \
     -lib /usr/share/java \
     -Dtomcat-dbcp.jar=${srcdir}/tomcat-dbcp.jar \
