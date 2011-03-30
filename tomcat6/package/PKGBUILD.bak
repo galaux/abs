@@ -1,5 +1,5 @@
 # Maintainer: Guillaume ALAUX <guillaume@archlinux.org>
-pkgname=tomcat6
+pkgname=tomcat
 pkgver=6.0.32
 pkgrel=1
 pkgdesc="Servlet-2.5/JSP-2.1 Container"
@@ -9,28 +9,28 @@ license=('APACHE')
 depends=('java-runtime>=5' 'eclipse-ecj' 'java-commons-daemon')
 makedepends=('java-environment>=5' 'apache-ant>=1.6' 'eclipse-ecj' 'java-commons-daemon')
 optdepends=('tomcat-native')
-backup=(etc/tomcat6/catalina.policy
-        etc/tomcat6/catalina.properties
-        etc/tomcat6/context.xml
-        etc/tomcat6/logging.properties
-        etc/tomcat6/server.xml
-        etc/tomcat6/tomcat-users.xml
-        etc/tomcat6/web.xml)
-install=tomcat6.install
-source=(http://archive.apache.org/dist/tomcat/tomcat-6/v${pkgver}/src/apache-tomcat-${pkgver}-src.tar.gz
+backup=(etc/tomcat/catalina.policy
+        etc/tomcat/catalina.properties
+        etc/tomcat/context.xml
+        etc/tomcat/logging.properties
+        etc/tomcat/server.xml
+        etc/tomcat/tomcat-users.xml
+        etc/tomcat/web.xml)
+install=tomcat.install
+source=(http://archive.apache.org/dist/${pkgname}/${pkgname}-6/v${pkgver}/src/apache-${pkgname}-${pkgver}-src.tar.gz
         http://tomcat.apache.org/dev/dist/m2-repository/org/apache/tomcat/dbcp/${pkgver}/dbcp-${pkgver}.jar
-        tomcat6.conf.d
-        tomcat6
-        tomcat6.install)
+        tomcat.conf.d
+        tomcat
+        tomcat.install)
 
 noextract=(dbcp-${pkgver}.jar)
 md5sums=('19a1eaa9c9938b520d3c360d8cf4af22'
          'c5b7101dbe6ed66624db6eca70d7873a'
-         '84e819ababbc8e1ac5c325d8af7febf8'
-         '2760f0a3f3a9585c7a4f8bdd7100c45f'
-         'e24da0c1d6034f04f9eba4218ad22c1f')
+         '11a30b7d3542ef0b62857a01c0d2acbd'
+         'ff644b42d780cafe970aa5d4c89ec57d'
+         '1be39071bd27781c352b2d73b765e29d')
 build() {
-  cd "${srcdir}/apache-tomcat-${pkgver}-src"
+  cd "${srcdir}/apache-${pkgname}-${pkgver}-src"
 
   mv ${srcdir}/dbcp-${pkgver}.jar ${srcdir}/tomcat-dbcp.jar
 
@@ -44,7 +44,7 @@ build() {
 }
 
 package() {
-  cd "${srcdir}/apache-tomcat-${pkgver}-src/output/build"
+  cd "${srcdir}/apache-${pkgname}-${pkgver}-src/output/build"
 
   # Tomcat general files
   install -dm755 ${pkgdir}/usr/share/{,java/}${pkgname}
@@ -55,8 +55,8 @@ package() {
   rm ${pkgdir}/usr/share/java/${pkgname}/ecj.jar
   ln -s /usr/share/java/${pkgname} ${pkgdir}/usr/share/${pkgname}/lib
 
-  # 68=tomcat6 / 19=log
-  install -dm775 -o 68 -g 19 ${pkgdir}/var/log/${pkgname}
+  # 66=tomcat / 19=log
+  install -dm775 -o 66 -g 19 ${pkgdir}/var/log/${pkgname}
   ln -s /var/log/${pkgname} ${pkgdir}/usr/share/${pkgname}/logs
 
   install -dm770 ${pkgdir}/etc/${pkgname}
@@ -65,16 +65,16 @@ package() {
 
   install -dm775 ${pkgdir}/var/lib/${pkgname}
   cp -r webapps ${pkgdir}/var/lib/${pkgname}
-  chown -R 68:68 ${pkgdir}/var/lib/${pkgname}
+  chown -R 66:66 ${pkgdir}/var/lib/${pkgname}
   ln -s /var/lib/${pkgname}/webapps ${pkgdir}/usr/share/${pkgname}/webapps
 
   install -dm1777 ${pkgdir}/var/tmp
-  install -dm755 -o 68 -g 68 ${pkgdir}/var/tmp/${pkgname}/{temp,work}
+  install -dm755 -o 66 -g 66 ${pkgdir}/var/tmp/${pkgname}/{temp,work}
   ln -s /var/tmp/${pkgname}/temp ${pkgdir}/usr/share/${pkgname}/temp
   ln -s /var/tmp/${pkgname}/work ${pkgdir}/usr/share/${pkgname}/work
 
   # Arch scripts
-  install -Dm644 ${srcdir}/tomcat6.conf.d ${pkgdir}/etc/conf.d/${pkgname}
-  install -Dm755 ${srcdir}/tomcat6 ${pkgdir}/etc/rc.d/${pkgname}
+  install -Dm644 ${srcdir}/tomcat.conf.d ${pkgdir}/etc/conf.d/${pkgname}
+  install -Dm755 ${srcdir}/tomcat ${pkgdir}/etc/rc.d/${pkgname}
 }
 
