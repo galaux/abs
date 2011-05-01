@@ -1,70 +1,81 @@
-# Maintainer: Guillaume ALAUX <guillaume at alaux dot net>
-pkgname=tomcat7
-pkgver=7.0.2_beta
+# Maintainer: Guillaume ALAUX <guillaume@archlinux.org>
+pkgname=tomcat
+pkgver=7.0.12
 pkgrel=1
-arch=('i686' 'x86_64')
-pkgdesc="Servlet container for Java Servlet and JavaServer Pages"
-url="http://tomcat.apache.org/"
+pkgdesc="Servlet-3.0/JSP-2.2 Container"
+arch=('any')
+url='http://tomcat.apache.org/'
 license=('APACHE')
-depends=('java-runtime>=6')
-makedepends=('java-environment' 'docbook2x')
-backup=('etc/tomcat7/server.xml'
-	'etc/tomcat7/tomcat-users.xml'
-	'etc/conf.d/tomcat7')
-install=tomcat7.install
-source=(http://archive.apache.org/dist/tomcat/tomcat-7/v7.0.2-beta/bin/apache-tomcat-7.0.2.tar.gz
-	'tomcat7'
-	'tomcat7.conf.d')
-md5sums=('43b5ba6aec55dd9a30957e035d0aac5f'
-	 'bfb3622379141597805da55fc7de1893'
-	 'f411e14280175095b519eaa9da425519')
+depends=('java-runtime>=6' 'eclipse-ecj' 'java-commons-daemon')
+makedepends=('java-environment>=6' 'apache-ant>=1.6' 'eclipse-ecj' 'java-commons-daemon')
+optdepends=('tomcat-native')
+backup=(etc/tomcat/catalina.policy
+        etc/tomcat/catalina.properties
+        etc/tomcat/context.xml
+        etc/tomcat/logging.properties
+        etc/tomcat/server.xml
+        etc/tomcat/tomcat-users.xml
+        etc/tomcat/web.xml)
+install=tomcat.install
+source=(http://archive.apache.org/dist/tomcat/tomcat-7/v${pkgver}/src/apache-tomcat-${pkgver}-src.tar.gz
+        http://tomcat.apache.org/dev/dist/m2-repository/org/apache/tomcat/dbcp/${pkgver}/dbcp-${pkgver}.jar
+        tomcat.conf.d
+        tomcat
+        tomcat.install)
 
+noextract=(dbcp-${pkgver}.jar)
+md5sums=('19a1eaa9c9938b520d3c360d8cf4af22'
+         'c5b7101dbe6ed66624db6eca70d7873a'
+         '84e819ababbc8e1ac5c325d8af7febf8'
+         '2760f0a3f3a9585c7a4f8bdd7100c45f'
+         '89617779ce76658d7c4b8c603bcbd38b')
 build() {
-	unset LDFLAGS
-	# build jsvc
-	cd ${srcdir}/apache-tomcat-7.0.2/bin
-	tar xzf commons-daemon-native.tar.gz
-	cd commons-daemon-1.0.3-native-src/unix
-	sh configure
-	make clean
-	make || return 1
-	cp jsvc ../..
-	docbook2man man/jsvc.1.xml
+  cd "${srcdir}/apache-tomcat-${pkgver}-src"
+
+  mv ${srcdir}/dbcp-${pkgver}.jar ${srcdir}/tomcat-dbcp.jar
+
+  . /etc/profile.d/apache-ant.sh
+  ant \
+    -lib /usr/share/java \
+    -Dtomcat-dbcp.jar=${srcdir}/tomcat-dbcp.jar \
+    -Dcommons-daemon.jar=/usr/share/java/commons-daemon.jar \
+    -Djdt.jar=/usr/share/java/ecj.jar \
+    -Dbase.path=${srcdir}/DOWN_LIBS \
+    download deploy
 }
 
 package() {
-	cd ${srcdir}/apache-tomcat-7.0.2
+  cd "${srcdir}/apache-tomcat-${pkgver}-src/output/build"
 
-	mkdir -p ${pkgdir}/usr/share/${pkgname} ${pkgdir}/srv/http/${pkgname} \
-		${pkgdir}/var/log/${pkgname} ${pkgdir}/etc/${pkgname} \
-		${pkgdir}/usr/share/man/man1
+  # Tomcat general files
+  install -dm755 ${pkgdir}/usr/share/{,java/}${pkgname}
+  cp -r bin ${pkgdir}/usr/share/${pkgname}
+  rm ${pkgdir}/usr/share/${pkgname}/bin/{*.bat,commons-daemon*,tomcat-native.tar.gz}
 
-	mv bin/commons-daemon-1.0.3-native-src/unix/JSVC.1 \
-		${pkgdir}/usr/share/man/man1
-	
-	# get rid of some cruft
-	rm -fr LICENSE NOTICE RELEASE-NOTES RUNNING.txt \
-	       bin/*.bat bin/*.tar.gz logs temp \
-	       bin/commons-daemon-1.0.3-native-src
+  install lib/* ${pkgdir}/usr/share/java/${pkgname}
+  rm ${pkgdir}/usr/share/java/${pkgname}/ecj.jar
+  ln -s /usr/share/java/${pkgname} ${pkgdir}/usr/share/${pkgname}/lib
 
-	# install everything
-	mv ${srcdir}/apache-tomcat-7.0.2/webapps ${pkgdir}/srv/http/${pkgname}
-	ln -s /srv/http/${pkgname}/webapps ${pkgdir}/usr/share/${pkgname}/webapps
+  # 66=tomcat / 19=log
+  install -dm775 -o 66 -g 19 ${pkgdir}/var/log/${pkgname}
+  ln -s /var/log/${pkgname} ${pkgdir}/usr/share/${pkgname}/logs
 
-	sed -i 's|<Host name="localhost" appBase="webapps"|<Host name="localhost" appBase="/srv/http/tomcat7/webapps"|g' \
-		${srcdir}/apache-tomcat-7.0.2/conf/server.xml
-	mv ${srcdir}/apache-tomcat-7.0.2/conf/* ${pkgdir}/etc/tomcat7
-	rmdir ${srcdir}/apache-tomcat-7.0.2/conf
-	ln -s /etc/tomcat7 ${pkgdir}/usr/share/${pkgname}/conf
-	
-	cp -R * ${pkgdir}/usr/share/${pkgname}
+  install -dm770 ${pkgdir}/etc/${pkgname}
+  install -m660 conf/* ${pkgdir}/etc/${pkgname}
+  ln -s /etc/${pkgname} ${pkgdir}/usr/share/${pkgname}/conf
 
-	install -D -m755 ${srcdir}/tomcat7 ${pkgdir}/etc/rc.d/tomcat7
-	install -D -m644 ${srcdir}/tomcat7.conf.d ${pkgdir}/etc/conf.d/tomcat7
+  install -dm775 ${pkgdir}/var/lib/${pkgname}
+  cp -r webapps ${pkgdir}/var/lib/${pkgname}
+  chown -R 66:66 ${pkgdir}/var/lib/${pkgname}
+  ln -s /var/lib/${pkgname}/webapps ${pkgdir}/usr/share/${pkgname}/webapps
 
-	ln -s /var/log/${pkgname} ${pkgdir}/usr/share/${pkgname}/logs
-	ln -s /tmp ${pkgdir}/usr/share/${pkgname}/temp
+  install -dm1777 ${pkgdir}/var/tmp
+  install -dm755 -o 66 -g 66 ${pkgdir}/var/tmp/${pkgname}/{temp,work}
+  ln -s /var/tmp/${pkgname}/temp ${pkgdir}/usr/share/${pkgname}/temp
+  ln -s /var/tmp/${pkgname}/work ${pkgdir}/usr/share/${pkgname}/work
 
-	chmod 0660 ${pkgdir}/etc/tomcat7/{*.xml,*.policy,*.properties}
-	chmod 0775 ${pkgdir}/etc/tomcat7 ${pkgdir}/usr/share/tomcat7/work
+  # Arch scripts
+  install -Dm644 ${srcdir}/tomcat.conf.d ${pkgdir}/etc/conf.d/${pkgname}
+  install -Dm755 ${srcdir}/tomcat ${pkgdir}/etc/rc.d/${pkgname}
 }
+
