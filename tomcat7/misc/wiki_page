@@ -1,0 +1,87 @@
+Presentation
+	Java Servlet container
+	makes it possible to run WARs, EAR, ...
+	is not a full java application server because lacks ...
+	if you are looking for a full Java application server, consider adding features like ... or rather installing Glassfish, JOnAS, JBoss, ...
+
+	Remark on tomcat versions
+		Tomcat currently exists under 3 stable branches : 5.5, 6 and 7. None of these deprecates the previous. Instead, each branch is the implementation of a couple of the "Servlet" and "JSP" Java standards http://tomcat.apache.org/whichversion.html#Apache_Tomcat_Versions. The version officially suported in Arch Linux is version 7 implementing Servlet 3.0 and JSP 2.2. If you happen to need to run a WAR/EAR with older version of Servlet and/or JSP, you should try unsupported packages tomcat6 http://aur.archlinux.org/packages.php?ID=19452 or tomcat5.5 from AUR.
+
+Installation
+	pacman -S tomcat
+
+	If using  out of a development environment (eg production), consider installing tomcat-native [http://tomcat.apache.org/native-doc/] which adds native 32b/64b code to enhance performance. This will remove the following warning in catalina.err:
+	INFO: The APR based Apache Tomcat Native library which allows optimal performance in production environments was not found on the java.library.path ...
+
+	pacman -S tomcat-native
+
+Filesystem hierarchy
+	/usr/share/tomcat
+		main tomcat folder containing scripts and links to other directories
+	/usr/share/java/tomcat
+		tomcat librairies (jars)
+	/etc/tomcat
+		Configuration files
+	/etc/rc.d/tomcat
+		start/stop daemon script
+	/etc/conf.d/tomcat
+		default running option file
+		here you can set the JVM you want tomcat to be run with, options to pas to tomcat through the environment variable CATALINA_OPTS, ...
+	/var/log/tomcat
+		log files
+
+	/var/lib/tomcat/webapps
+		where tomcat deploys web applications
+
+	/var/tmp/tomcat
+		where tomcat store webapps' data 
+
+Basic configuration and use
+
+	/etc/tomcat/tomcat-users.xml
+		[Détailler les roles]
+
+		Example config file (You NEED to change the following [CHANGE_ME] passwords):
+<?xml version='1.0' encoding='utf-8'?>
+  <role rolename="tomcat"/>
+  <role rolename="role1"/>
+  <role rolename="manager-gui"/>
+  <role rolename="manager-script"/>
+  <role rolename="manager-jmx"/>
+  <role rolename="manager-status"/>
+  <role rolename="admin-gui"/>
+  <role rolename="admin-script"/>
+  <user username="tomcat" password="[CHANGE_ME]" roles="tomcat"/>
+  <user username="both" password="[CHANGE_ME]" roles="tomcat,role1"/>
+  <user username="role1" password="[CHANGE_ME]" roles="role1"/>
+  <user username="manager" password="[CHANGE_ME]" roles="manager-gui,manager-script"/>
+  <user username="admin" password="[CHANGE_ME]" roles="admin-gui,manager-gui,manager-script,manager-jmx,manager-status"/>
+</tomcat-users>
+
+	tomcat needs to be restarted for changes to take effect
+
+	/etc/rc.d/tomcat {start|stop|restart|status}
+	add tomcat to your rc.conf to make it start at boot
+	tomcat is packaged in Arch Linux so that it uses jsvc from common-daemons. This Apache binary is run as root and then launches tomcat with underprivilege user (tomcat:tomcat in Arch Linux). This prevents malicious code that could have been executed in a bad application from making too much damage
+ 
+	FYI tomcat can also be controled directly using upstream scripts:
+		/usr/share/tomcat/bin/{startup.sh,shutdown.sh,..}
+		This can be usefull to debug applications
+		nb: in order to be able to use these scripts, some further configuration may be needed.
+		be aware that using these scripts disables the jsvc security remark above.
+
+	Visit localhost:8080
+
+	deploy
+		Use http://localhost:8080/manager/html
+		copy war file to /usr/share/tomcat/webapps
+
+	If tomcat fails to start/stop, have a look at log files in /var/log/tomcat. Google is full of answer on recurrent issues found in tomcat logs.
+
+Security configuration
+	remove unwanted default applications such as examples, ... You could also remove the manager and deploy your java applications by copying the WAR into /usr/share/java/webapps. Be sure that the autoDeploy option is still set:
+		      <Host name="localhost"  appBase="webapps"
+			unpackWARs="true" autoDeploy="true">
+
+	Use strong passwords in /etc/tomcat-users.xml
+	Disable SHUTDOWN from localhost

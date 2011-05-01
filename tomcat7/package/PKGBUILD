@@ -7,7 +7,7 @@ arch=('any')
 url='http://tomcat.apache.org/'
 license=('APACHE')
 depends=('java-runtime>=6' 'java-commons-daemon' 'eclipse-ecj')
-makedepends=('java-environment>=6' 'apache-ant>=1.6' 'java-commons-daemon' 'eclipse-ecj')
+makedepends=('java-environment>=6' 'apache-ant>=1.8' 'java-commons-daemon' 'eclipse-ecj')
 optdepends=('tomcat-native: to allow optimal performance in production environments')
 backup=(etc/tomcat/catalina.policy
         etc/tomcat/catalina.properties
@@ -42,10 +42,11 @@ package() {
 
   # Tomcat general files
   install -dm755 ${pkgdir}/usr/share/{,java/}${pkgname}
-  #rm bin/{*.bat,commons-daemon*,tomcat-native.tar.gz}
-  rm bin/{*.bat,commons-daemon*}
+  # commons-daemon and tomcat-natives are packaged on their own
+  rm bin/{*.bat,commons-daemon*,tomcat-native.tar.gz}
   cp -r bin ${pkgdir}/usr/share/${pkgname}
 
+  # eclipse-ecj is packaged on its own
   rm lib/eclipse-ecj.jar
   install lib/* ${pkgdir}/usr/share/java/${pkgname}
   ln -s /usr/share/java/${pkgname} ${pkgdir}/usr/share/${pkgname}/lib
