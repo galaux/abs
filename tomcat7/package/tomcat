@@ -22,7 +22,7 @@ case "$1" in
         -Dcatalina.home=${CATALINA_HOME} \
         -Dcatalina.base=${CATALINA_BASE} \
         -Djava.io.tmpdir=/var/tmp/tomcat/temp \
-        -cp /usr/share/java/commons-daemon.jar:${CATALINA_HOME}/bin/bootstrap.jar \
+        -cp /usr/share/java/commons-daemon.jar:${CATALINA_HOME}/bin/bootstrap.jar:${CATALINA_HOME}/bin/tomcat-juli.jar \
         -user tomcat \
         -wait 10 \
         -pidfile /var/run/${daemon_name}.pid \

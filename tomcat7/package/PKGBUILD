@@ -6,9 +6,9 @@ pkgdesc="Servlet-3.0/JSP-2.2 Container"
 arch=('any')
 url='http://tomcat.apache.org/'
 license=('APACHE')
-depends=('java-runtime>=6' 'eclipse-ecj' 'java-commons-daemon')
-makedepends=('java-environment>=6' 'apache-ant>=1.6' 'eclipse-ecj' 'java-commons-daemon')
-optdepends=('tomcat-native')
+depends=('java-runtime>=6' 'java-commons-daemon' 'eclipse-ecj')
+makedepends=('java-environment>=6' 'apache-ant>=1.6' 'java-commons-daemon' 'eclipse-ecj')
+optdepends=('tomcat-native: to allow optimal performance in production environments')
 backup=(etc/tomcat/catalina.policy
         etc/tomcat/catalina.properties
         etc/tomcat/context.xml
@@ -18,30 +18,23 @@ backup=(etc/tomcat/catalina.policy
         etc/tomcat/web.xml)
 install=tomcat.install
 source=(http://archive.apache.org/dist/tomcat/tomcat-7/v${pkgver}/src/apache-tomcat-${pkgver}-src.tar.gz
-        http://tomcat.apache.org/dev/dist/m2-repository/org/apache/tomcat/dbcp/${pkgver}/dbcp-${pkgver}.jar
         tomcat.conf.d
         tomcat
         tomcat.install)
 
 noextract=(dbcp-${pkgver}.jar)
-md5sums=('19a1eaa9c9938b520d3c360d8cf4af22'
-         'c5b7101dbe6ed66624db6eca70d7873a'
-         '84e819ababbc8e1ac5c325d8af7febf8'
-         '2760f0a3f3a9585c7a4f8bdd7100c45f'
-         '89617779ce76658d7c4b8c603bcbd38b')
+md5sums=('edfd253c21b51ccadce8ec05be5e61fb'
+         '11a30b7d3542ef0b62857a01c0d2acbd'
+         'b27364a5565a7c8c7e9c13a3f4b987bb'
+         '1be39071bd27781c352b2d73b765e29d')
 build() {
   cd "${srcdir}/apache-tomcat-${pkgver}-src"
 
-  mv ${srcdir}/dbcp-${pkgver}.jar ${srcdir}/tomcat-dbcp.jar
-
   . /etc/profile.d/apache-ant.sh
   ant \
-    -lib /usr/share/java \
-    -Dtomcat-dbcp.jar=${srcdir}/tomcat-dbcp.jar \
-    -Dcommons-daemon.jar=/usr/share/java/commons-daemon.jar \
-    -Djdt.jar=/usr/share/java/ecj.jar \
     -Dbase.path=${srcdir}/DOWN_LIBS \
-    download deploy
+    -Dcommons-daemon.jar=/usr/share/java/commons-daemon.jar \
+    -Djdt.jar=/usr/share/java/eclipse-ecj.jar
 }
 
 package() {
@@ -49,11 +42,12 @@ package() {
 
   # Tomcat general files
   install -dm755 ${pkgdir}/usr/share/{,java/}${pkgname}
+  #rm bin/{*.bat,commons-daemon*,tomcat-native.tar.gz}
+  rm bin/{*.bat,commons-daemon*}
   cp -r bin ${pkgdir}/usr/share/${pkgname}
-  rm ${pkgdir}/usr/share/${pkgname}/bin/{*.bat,commons-daemon*,tomcat-native.tar.gz}
 
+  rm lib/eclipse-ecj.jar
   install lib/* ${pkgdir}/usr/share/java/${pkgname}
-  rm ${pkgdir}/usr/share/java/${pkgname}/ecj.jar
   ln -s /usr/share/java/${pkgname} ${pkgdir}/usr/share/${pkgname}/lib
 
   # 66=tomcat / 19=log
