@@ -1,5 +1,5 @@
 # Maintainer: Guillaume ALAUX <guillaume@archlinux.org>
-pkgname=tomcat
+pkgname=tomcat7
 pkgver=7.0.12
 pkgrel=1
 pkgdesc="Servlet-3.0/JSP-2.2 Container"
@@ -7,26 +7,27 @@ arch=('any')
 url='http://tomcat.apache.org/'
 license=('APACHE')
 depends=('java-runtime>=6' 'java-commons-daemon' 'eclipse-ecj')
-makedepends=('java-environment>=6' 'apache-ant>=1.8' 'java-commons-daemon' 'eclipse-ecj')
+makedepends=('java-environment>=6' 'apache-ant>=1.8' 'java-jsvc' 'eclipse-ecj')
 optdepends=('tomcat-native: to allow optimal performance in production environments')
-backup=(etc/tomcat/catalina.policy
-        etc/tomcat/catalina.properties
-        etc/tomcat/context.xml
-        etc/tomcat/logging.properties
-        etc/tomcat/server.xml
-        etc/tomcat/tomcat-users.xml
-        etc/tomcat/web.xml)
-install=tomcat.install
+backup=(etc/tomcat7/catalina.policy
+        etc/tomcat7/catalina.properties
+        etc/tomcat7/context.xml
+        etc/tomcat7/logging.properties
+        etc/tomcat7/server.xml
+        etc/tomcat7/tomcat-users.xml
+        etc/tomcat7/web.xml)
+install=tomcat7.install
 source=(http://archive.apache.org/dist/tomcat/tomcat-7/v${pkgver}/src/apache-tomcat-${pkgver}-src.tar.gz
-        tomcat.conf.d
-        tomcat
-        tomcat.install)
+        tomcat7.conf.d
+        tomcat7
+        tomcat7.install)
 
 noextract=(dbcp-${pkgver}.jar)
 md5sums=('edfd253c21b51ccadce8ec05be5e61fb'
-         '11a30b7d3542ef0b62857a01c0d2acbd'
-         'b27364a5565a7c8c7e9c13a3f4b987bb'
+         '13eb5570b4d7dcbbe8b8372575c010c9'
+         '70eabcf5bbfa0978e738d95c64abb7a7'
          '1be39071bd27781c352b2d73b765e29d')
+
 build() {
   cd "${srcdir}/apache-tomcat-${pkgver}-src"
 
@@ -70,7 +71,7 @@ package() {
   ln -s /var/tmp/${pkgname}/work ${pkgdir}/usr/share/${pkgname}/work
 
   # Arch scripts
-  install -Dm644 ${srcdir}/tomcat.conf.d ${pkgdir}/etc/conf.d/${pkgname}
-  install -Dm755 ${srcdir}/tomcat ${pkgdir}/etc/rc.d/${pkgname}
+  install -Dm644 ${srcdir}/tomcat7.conf.d ${pkgdir}/etc/conf.d/${pkgname}
+  install -Dm755 ${srcdir}/tomcat7 ${pkgdir}/etc/rc.d/${pkgname}
 }
 

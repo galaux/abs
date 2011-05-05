@@ -63,7 +63,7 @@ Control Tomcat (start, stop, ...)
 
 	As usual one can add "tomcat" to the DAEMONS array of the rc.conf to make it start at boot.
 
-	Please note that Tomcat is packaged in Arch Linux to use the jsvc binary from common-daemons http://commons.apache.org/daemon/. Tomcat rc.d script runs this Apache binary with root privileges which itself starts Tomcat with an underprivileged user (tomcat:tomcat in Arch Linux). This prevents malicious code that could be executed in a bad web application from making too much damage along with enabling the use of port under 1024 (if needed). please see "man jsvc" for options available and pass them throught the CATALINA_OPTS envrionment variable declared in /etc/conf.d/tomcat.
+	Please note that Tomcat is packaged in Arch Linux to use the jsvc http://commons.apache.org/daemon/jsvc.html binary from common-daemons http://commons.apache.org/daemon/. Tomcat rc.d script runs this Apache binary with root privileges which itself starts Tomcat with an underprivileged user (tomcat:tomcat in Arch Linux). This prevents malicious code that could be executed in a bad web application from making too much damage along with enabling the use of port under 1024 (if needed). please see "man jsvc" for options available and pass them throught the CATALINA_OPTS envrionment variable declared in /etc/conf.d/tomcat.
  
 	FYI tomcat can also be controled directly using upstream scripts:
 		/usr/share/tomcat/bin/{startup.sh,shutdown.sh,..}
