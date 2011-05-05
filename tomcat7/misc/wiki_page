@@ -49,7 +49,7 @@ Initial configuration
   <role rolename="admin-script"/>
   <user username="tomcat" password="[CHANGE_ME]" roles="tomcat"/>
   <user username="manager" password="[CHANGE_ME]" roles="manager-gui,manager-script,manager-jmx,manager-status"/>
-  <user username="admin" password="[CHANGE_ME]" roles="admin-gui,admin-script"/>
+  <user username="admin" password="[CHANGE_ME]" roles="admin-gui"/>
 </tomcat-users>
 
 	Keep in mind that Tomcat must be restarted each time a modification is made to this file.

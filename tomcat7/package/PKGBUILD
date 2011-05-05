@@ -55,6 +55,8 @@ package() {
   # 66=tomcat / 19=log
   install -dm775 -o 66 -g 19 ${pkgdir}/var/log/${pkgname}
   ln -s /var/log/${pkgname} ${pkgdir}/usr/share/${pkgname}/logs
+  touch ${pkgdir}/var/log/${pkgname}/catalina.{out,err}
+  chgrp 19 ${pkgdir}/var/log/${pkgname}/catalina.{out,err}
 
   install -dm770 ${pkgdir}/etc/${pkgname}
   install -m660 conf/* ${pkgdir}/etc/${pkgname}
