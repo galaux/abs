@@ -40,7 +40,7 @@ package_java-commons-daemon() {
 package_java-jsvc() {
   pkgdesc="Apache application for making Java applications run on UNIX more easily"
   arch=('i686' 'x86_64')
-  depends=("java-${_libname}")
+  depends=("java-${_libname}" 'libcap')
 
   # jsvc
   cd "${srcdir}/${_libname}-${pkgver}-src/src/native/unix"
