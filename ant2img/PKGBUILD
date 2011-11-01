@@ -1,0 +1,66 @@
+# This is an example PKGBUILD file. Use this as a start to creating your own,
+# and remove these comments. For more information, see 'man PKGBUILD'.
+# NOTE: Please fill out the license field for your package! If it is unknown,
+# then please put 'unknown'.
+
+# See http://wiki.archlinux.org/index.php/VCS_PKGBUILD_Guidelines
+# for more information on packaging from GIT sources.
+
+# Maintainer: Guillaume ALAUX <Guillaume at Alaux dot net>
+pkgname=ant2img-git
+pkgver=0
+pkgrel=1
+pkgdesc="Simple bash script that automates drawing graphs from Apache Ant's build.xml using ant2dot.xsl"
+arch=('any')
+url=""
+license=('custom')
+groups=()
+depends=('java-environment' 'xalan-java')
+makedepends=('git')
+provides=()
+conflicts=()
+replaces=()
+backup=()
+options=()
+install=
+source=(ant2img
+        ant2img.conf)
+noextract=()
+md5sums=('9d231a1dbcd1fd9fff461bf672a89f17'
+         '19538d8f35cdc5537c1f3e1a0fb16adf')
+
+_gitroot=GITURL
+_gitname=MODENAME
+
+build() {
+  cd "$srcdir"
+  msg "Connecting to GIT server...."
+
+  if [[ -d "$_gitname" ]]; then
+    cd "$_gitname" && git pull origin
+    msg "The local files are updated."
+  else
+    git clone "$_gitroot" "$_gitname"
+  fi
+
+  msg "GIT checkout done or server timeout"
+  msg "Starting build..."
+
+  rm -rf "$srcdir/$_gitname-build"
+  git clone "$srcdir/$_gitname" "$srcdir/$_gitname-build"
+  cd "$srcdir/$_gitname-build"
+
+  #
+  # BUILD HERE
+  #
+  ./autogen.sh
+  ./configure --prefix=/usr
+  make
+}
+
+package() {
+  cd "$srcdir/$_gitname-build"
+  make DESTDIR="$pkgdir/" install
+}
+
+# vim:set ts=2 sw=2 et:
