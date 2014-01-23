@@ -1,0 +1,62 @@
+# Maintainer: Guillaume ALAUX <Guillaume at Arch Linux dot org>
+_libname=bsf
+pkgname=java-commons-${_libname}2
+pkgver=2.4.0
+pkgrel=1
+pkgdesc="Bean Scripting Framework, library which provides scripting language support, and access to Java objects and methods from scripting languages"
+arch=('any')
+url="http://commons.apache.org/bsf/"
+license=('APACHE')
+groups=()
+depends=('java-environment')
+# jruby jacl judoscript
+#makedepends=('apache-ant' 'rhino' 'jython' 'xalan-java' 'junit' 'java-commons-logging')
+makedepends=('apache-ant' '' 'jython' 'netrexx' 'rhino' 'xalan-java' 'junit')
+checkdepends=('apache-ant')
+optdepends=()
+provides=()
+conflicts=()
+replaces=()
+backup=()
+options=()
+install=
+changelog=
+# 'build-properties.xml' does not belong to the source tarball
+# https://issues.apache.org/jira/browse/BSF-12
+source=(http://apache.org/dist/jakarta/${_libname}/source/${_libname}-src-${pkgver}.tar.gz
+        http://svn.apache.org/repos/asf/commons/proper/${_libname}/tags/${_libname}-${pkgver}/build-properties.xml
+        http://downloads.sourceforge.net/project/tcljava/jacl/1.4.1/jaclBinary141.zip
+        http://ec2-67-202-36-54.compute-1.amazonaws.com/files/NetRexxC.jar
+        http://ec2-67-202-36-54.compute-1.amazonaws.com/files/NetRexxR.jar
+        http://apache.org/dist/velocity/anakia/1.0/anakia-1.0.jar)
+noextract=()
+md5sums=('7e58b2a009c0f70ab36bbef420b25c07'
+         'd7180c2b95f1a5424f785a2482260eaa'
+         '83a17762f9e8cf697683fae7a6db8112'
+         'c3dc18ce0aed0010be8ababf893db606'
+         '656c244b4cbfc93b6be572e96a0ed56b'
+         '02ebd98192f155ff7a102dd85b176905')
+
+build() {
+  cd "${srcdir}/${_libname}-${pkgver}"
+  cp ${srcdir}/build-properties.xml .
+    #TODO change /usr/share/java/commons-logging/commons-logging.jar to /usr/share/java/commons-logging.jar
+  ant \
+    -lib /opt/jython/jython.jar \
+    bindist
+    #-lib /usr/share/java/bsh.jar \
+
+#    -lib /usr/share/java \
+#    -lib ${srcdir}/jacl141/lib/tcljava1.4.1 \
+#    -lib /opt/jython/jython.jar \
+#    -lib /usr/share/java/commons-logging/commons-logging.jar \
+}
+
+check() {
+  cd "${srcdir}/${_libname}-${pkgver}"
+  ant test
+}
+
+package() {
+  cd "${srcdir}/${_libname}-${pkgver}"
+}
