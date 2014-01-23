@@ -1,0 +1,25 @@
+# Maintainer: Markus Volkmann <mcfock@counterstrike.de>
+# Contributor: Guillaume ALAUX <guillaume@archlinux.org>
+pkgname=etherwake
+pkgver=1.09
+pkgrel=5
+arch=('i686' 'x86_64')
+pkgdesc="Utility for waking up computers via wake-on-lan (wol)"
+license=('GPL')
+url="http://www.scyld.com/wakeonlan.html"
+source=(http://ftp.debian.org/debian/pool/main/e/${pkgname}/${pkgname}_${pkgver}.orig.tar.gz)
+md5sums=('628e8b2a28d47f262e4c26c989402a59')
+
+build() {
+    cd "${srcdir}/${pkgname}-${pkgver}.orig"
+
+    sed -i "s/ether-wake/${pkgname}/g" ether-wake.c
+    gcc ether-wake.c -o ${pkgname}
+}
+
+package() {
+    cd "${srcdir}/${pkgname}-${pkgver}.orig"
+
+    install -D ${pkgname} ${pkgdir}/usr/sbin/${pkgname}
+    install -Dm644 ${pkgname}.8 ${pkgdir}/usr/share/man/man8/${pkgname}.8
+}
