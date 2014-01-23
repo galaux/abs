@@ -1,0 +1,32 @@
+# Maintainer: Guillaume ALAUX <guillaume at archlinux dot org>
+pkgname=log4j
+pkgver=1.2.16
+pkgrel=1
+pkgdesc="The Apache Java logging API"
+arch=(any)
+url="http://logging.apache.org/log4j/"
+license=('APACHE')
+depends=()
+makedepends=('maven')
+checkdepends=()
+optdepends=()
+source=(http://archive.apache.org/dist/logging/${pkgname}/${pkgver}/apache-${pkgname}-${pkgver}.tar.gz)
+noextract=()
+md5sums=('8e331a930d0b56280a1c66a00621b3a3')
+
+build() {
+  cd "$srcdir/apache-$pkgname-$pkgver"
+  mvn package
+}
+
+#check() {
+#  cd "$srcdir/$pkgname-$pkgver"
+#  make -k check
+#}
+
+#package() {
+#  cd "$srcdir/$pkgname-$pkgver"
+#  make DESTDIR="$pkgdir/" install
+#}
+
+# vim:set ts=2 sw=2 et:
