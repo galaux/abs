@@ -1,0 +1,47 @@
+# Maintainer: Your Name <youremail@domain.com>
+_shortpkgname=compat-wireless
+pkgname=${_shortpkgname}_alx
+_ver=3.5.1-1-snpc
+pkgver=${_ver//-/_}
+pkgrel=1
+epoch=
+pkgdesc="Compat wireless"
+arch=('i686' 'x86_64')
+url=""
+license=('GPL')
+groups=()
+depends=()
+makedepends=()
+checkdepends=()
+optdepends=()
+provides=()
+conflicts=()
+replaces=()
+backup=()
+options=()
+install=
+changelog=
+http://www.orbit-lab.org/kernel/compat-wireless-3-stable/v3.5/compat-wireless-3.5.1-1-snpc.tar.bz2
+source=(http://www.orbit-lab.org/kernel/${_shortpkgname}-3-stable/v3.5/${_shortpkgname}-${_ver}.tar.bz2)
+noextract=()
+md5sums=('1516bf69b257e16114e27819e52e1891')
+
+build() {
+  cd "${srcdir}/${_shortpkgname}-${_ver}"
+  
+  ./scripts/driver-select alx
+  make
+}
+
+#check() {
+#  cd "${srcdir}/${pkgname}-${_ver}"
+#  make -k check
+#}
+
+package() {
+  cd "${srcdir}/${_shortpkgname}-${_ver}"
+  install -dm755 ${pkgdir}/usr/sbin
+  make DESTDIR="$pkgdir" INSTALL_MOD_PATH=$pkgdir install-modules
+}
+
+# vim:set ts=2 sw=2 et:

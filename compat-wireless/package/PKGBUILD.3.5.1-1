@@ -1,0 +1,69 @@
+# Maintainer: Your Name <youremail@domain.com>
+pkgname=('compat-wireless_alx')
+pkgbase=compat-wireless
+_offver=3.5.1-1
+pkgver=${_offver//-/_}
+pkgrel=1
+epoch=
+pkgdesc=""
+arch=('i686' 'x86_64')
+url=""
+license=('GPL')
+groups=()
+depends=()
+makedepends=()
+checkdepends=()
+provides=()
+conflicts=()
+replaces=()
+backup=()
+options=()
+install=
+changelog=
+#source=(http://www.orbit-lab.org/kernel/${pkgbase}-3-stable/v3.5/${pkgbase}-${_offver}-snpc.tar.bz2)
+source=(http://www.orbit-lab.org/kernel/compat-wireless/compat-wireless-2012-07-03-pc.tar.bz2)
+noextract=()
+md5sums=('2590589ee5ecaeb77b2f4b90f3965734')
+
+build() {
+  cd "${srcdir}/${pkgbase}-${pkgver}"
+
+  ./configure --prefix=/usr
+  make
+}
+
+check() {
+  cd "${srcdir}/${pkgname}-${pkgver}"
+  make -k check
+}
+
+package_compat-wireless_alx() {
+  # options and directives that can be overridden
+  pkgver=
+  pkgrel=
+  epoch=
+  pkgdesc=""
+  arch=()
+  license=()
+  groups=()
+  depends=()
+  optdepends=()
+  provides=()
+  conflicts=()
+  replaces=()
+  backup=()
+  options=()
+  install=
+  changelog=
+
+  cd "${srcdir}/${pkgbase}-${pkgver}"
+  make DESTDIR="${pkgdir}/" install-pkg1
+}
+
+package_pkg2() {
+  # options and directives overrides
+  pkgdesc=""
+
+  cd "${srcdir}/${pkgbase}-${pkgver}"
+  make DESTDIR="${pkgdir}/" install-pkg2
+}

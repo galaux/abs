@@ -1,0 +1,68 @@
+# Maintainer: Your Name <youremail@domain.com>
+pkgname=('compat-wireless_alx')
+pkgbase=compat-wireless
+_offver=2012-07-03
+pkgver=${_offver//-/_}
+pkgrel=1
+epoch=
+pkgdesc=""
+arch=('i686' 'x86_64')
+url=""
+license=('GPL')
+groups=()
+depends=()
+makedepends=()
+checkdepends=()
+provides=()
+conflicts=()
+replaces=()
+backup=()
+options=()
+install=
+changelog=
+source=(http://www.orbit-lab.org/kernel/${pkgbase}/${pkgbase}-2012-07-03-pc.tar.bz2)
+noextract=()
+md5sums=('2590589ee5ecaeb77b2f4b90f3965734')
+
+_targetkernel=/lib/modules/3.4.7-1-ARCH
+
+build() {
+  cd "${srcdir}/${pkgbase}-${_offver}-pc"
+
+  ./scripts/driver-select alx
+  make \
+    KLIB=${_targetkernel} KLIB_BUILD=${_targetkernel}
+}
+
+#check() {
+#  cd "${srcdir}/${pkgbase}-${_offver}-pc"
+#  make -k check
+#}
+
+package_compat-wireless_alx() {
+  # options and directives that can be overridden
+  epoch=
+  pkgdesc=""
+  license=()
+  groups=()
+  depends=()
+  optdepends=()
+  provides=()
+  conflicts=()
+  replaces=()
+  backup=()
+  options=()
+  install=
+  changelog=
+
+  cd "${srcdir}/${pkgbase}-${_offver}-pc"
+  make DESTDIR="${pkgdir}/" INSTALL_MOD_PATH=$pkgdir install-modules
+}
+
+package_pkg2() {
+  # options and directives overrides
+  pkgdesc=""
+
+  cd "${srcdir}/${pkgbase}-${_offver}-pc"
+  make DESTDIR="${pkgdir}/" install-pkg2
+}
