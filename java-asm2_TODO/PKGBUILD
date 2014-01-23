@@ -1,0 +1,44 @@
+# Maintainer: Guillaume ALAUX <Guillaume at Arch Linux dot org>
+_libname=asm
+pkgname=java-${_libname}2
+pkgver=2.2.3
+pkgrel=1
+pkgdesc="All purpose Java bytecode manipulation and analysis framework - version 2"
+arch=('any')
+url="http://asm.ow2.org/"
+license=('custom')
+depends=('java-runtime')
+makedepends=('apache-ant')
+checkdepends=('apache-ant') #'java-commons-bcel' TODO: 'serp' 'javassist' 'janino')
+source=(http://download.forge.objectweb.org/${_libname}/${_libname}-${pkgver}.tar.gz
+        http://download.forge.objectweb.org/monolog/ow_util_ant_tasks_1.3.2.zip)
+md5sums=('7a92c87bf067925685cf68dcc0dd8998'
+         'cd602bf75a0feab480fa97739955b84e')
+
+build() {
+  cd "${srcdir}/${_libname}-${pkgver}"
+
+  mkdir -p test/lib
+
+  ant \
+    -Dobjectweb.ant.tasks.path=${srcdir}/output/lib/ow_util_ant_tasks.jar \
+    jar
+}
+
+#check() {
+#  cd "${srcdir}/${_libname}-${pkgver}"
+#  cd test
+#  ant \
+#    -Dobjectweb.ant.tasks.path=${srcdir}/output/lib/ow_util_ant_tasks.jar
+#TODO: add the following jars as checkdeps: serp javassist janino
+#}
+
+package() {
+  cd "${srcdir}/${_libname}-${pkgver}/output/dist/lib"
+
+  install -dm755 ${pkgdir}/usr/share/java/${_libname}
+  install -m644 *.jar ${pkgdir}/usr/share/java/${_libname}
+  for j in *.jar; do
+    ln -s ${_libname}/${j} ${pkgdir}/usr/share/java/${j/-${pkgver}/}
+  done
+}
