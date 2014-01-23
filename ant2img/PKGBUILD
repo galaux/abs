@@ -1,3 +1,4 @@
+# FIXME Pb: git does not allow to clone only a subdir
 # This is an example PKGBUILD file. Use this as a start to creating your own,
 # and remove these comments. For more information, see 'man PKGBUILD'.
 # NOTE: Please fill out the license field for your package! If it is unknown,
@@ -12,7 +13,7 @@ pkgver=0
 pkgrel=1
 pkgdesc="Simple bash script that automates drawing graphs from Apache Ant's build.xml using ant2dot.xsl"
 arch=('any')
-url=""
+url="https://github.com/galaux/abs/tree/master/ant2img"
 license=('custom')
 groups=()
 depends=('java-environment' 'xalan-java')
@@ -23,44 +24,35 @@ replaces=()
 backup=()
 options=()
 install=
-source=(ant2img
-        ant2img.conf)
 noextract=()
-md5sums=('9d231a1dbcd1fd9fff461bf672a89f17'
-         '19538d8f35cdc5537c1f3e1a0fb16adf')
 
-_gitroot=GITURL
-_gitname=MODENAME
+_gitroot=https://github.com/galaux/abs
+_gitname=ant2img
 
 build() {
-  cd "$srcdir"
+  cd "${srcdir}"
   msg "Connecting to GIT server...."
 
-  if [[ -d "$_gitname" ]]; then
-    cd "$_gitname" && git pull origin
-    msg "The local files are updated."
-  else
-    git clone "$_gitroot" "$_gitname"
-  fi
+  wget https://raw.github.com/galaux/abs/master/ant2img/ant2img
+  wget https://raw.github.com/galaux/abs/master/ant2img/ant2img.conf
+##  if [[ -d "${_gitname}" ]]; then
+#    cd "${_gitname}" && git pull origin
+#    msg "The local files are updated."
+#  else
+#    git clone "${_gitroot}" "${_gitname}"
+#  fi
 
-  msg "GIT checkout done or server timeout"
-  msg "Starting build..."
+#  msg "GIT checkout done or server timeout"
+#  msg "Starting build..."
 
-  rm -rf "$srcdir/$_gitname-build"
-  git clone "$srcdir/$_gitname" "$srcdir/$_gitname-build"
-  cd "$srcdir/$_gitname-build"
-
-  #
-  # BUILD HERE
-  #
-  ./autogen.sh
-  ./configure --prefix=/usr
-  make
+#  rm -rf "${srcdir}/${_gitname}-build"
+#  git clone "${srcdir}/${_gitname}" "${srcdir}/${_gitname}-build"
+#  cd "${srcdir}/${_gitname}-build"
 }
 
 package() {
-  cd "$srcdir/$_gitname-build"
-  make DESTDIR="$pkgdir/" install
-}
+  cd "${srcdir}/${_gitname}-build"
 
-# vim:set ts=2 sw=2 et:
+  install -Dm755 ${_gitname} ${pkgdir}/usr/local/bin/${_gitname}
+  install -Dm755 ${_gitname}.conf ${pkgdir}/etc/${_gitname}.conf
+}
