@@ -1,0 +1,108 @@
+# Maintainer: Guillaume ALAUX <guillaume@archlinux.org>
+pkgname=thermostat
+pkgver=0.11.0
+pkgrel=1
+pkgdesc='Instrumentation tool for the Hotspot JVM'
+arch=('any')
+url='http://icedtea.classpath.org/thermostat/'
+license=('GPL')
+makedepends=('maven' 'libgnome-keyring')
+checkdepends=('maven')
+depends=('jre7-openjdk' 'mongodb>=2.0.0')
+provides=()
+conflicts=()
+replaces=()
+backup=()
+options=()
+install=
+changelog=
+source=(http://icedtea.classpath.org/download/${pkgname}/${pkgname}-${pkgver}.tar.gz
+        thermostat_profile.d)
+noextract=()
+sha256sums=('10c89fb2b0468edd528a0803f3ad3ab17e813e41cc1b1974399a3f6900254a50'
+            '7158e59148be4937fc36e41f53cdf2dcbaacd2d78def8ab2d9101bdbf4dfed9f')
+
+_THERMOSTAT_HOME=/usr/share/${pkgname}
+
+build() {
+  cd "${srcdir}/${pkgname}-${pkgver}"
+  test -z ${M2_REPO} && export M2_REPO=${srcdir}/m2_repo
+  mkdir -p ${M2_REPO}
+
+  mvn \
+    -Dmaven.repo.local=${M2_REPO} \
+    -Dthermostat.home=${_THERMOSTAT_HOME} \
+    -Dmaven.test.skip=true \
+    clean \
+    install
+}
+
+#check() {
+#  cd "${srcdir}/${pkgname}-${pkgver}"
+#  mvn test
+#}
+
+package() {
+  cd "${srcdir}/${pkgname}-${pkgver}/distribution/target"
+
+#bin
+#agent
+#backends
+#classes
+#client
+#generated-sources
+#storage
+
+#etc
+#libs
+
+#thermostat.desktop
+#thermostat-distribution-0.3.jar
+
+
+#TODO Add a thermostat.conf in /etc/profile.d with THERMOSTAT_HOME=/usr/share/thermostat
+#TODO check regular user has w to /var/lib/thermostat and /var/log/thermostat/*
+#       -> create a 'thermostat' user and set him as owner of legitimate files
+#TODO extract JAR dependencies
+#TODO Split package
+
+  install -dm755 ${pkgdir}{/etc,/usr/share,/usr/share/java}/thermostat
+  install -dm777 ${pkgdir}/var/lib/thermostat
+  install -dm755 ${pkgdir}/var/log/thermostat/{agent,storage}
+  install -dm755 ${pkgdir}/usr/bin
+
+  cp -r {bin,backends,classes,client,generated-sources,thermostat-distribution-${pkgver}.jar} \
+        ${pkgdir}${_THERMOSTAT_HOME}
+
+  rm ${pkgdir}${_THERMOSTAT_HOME}/bin/thermostat-init-layout
+
+  # 'agent'
+  install -Dm755 agent/agent.properties ${pkgdir}${_THERMOSTAT_HOME}/agent/agent.properties
+  ln -s /var/log/thermostat/agent ${pkgdir}${_THERMOSTAT_HOME}/agent/logs
+  ln -s /run ${pkgdir}${_THERMOSTAT_HOME}/agent/run
+
+  # 'storage'
+  install -Dm755 storage/db.properties ${pkgdir}${_THERMOSTAT_HOME}/storage/db.properties
+  ln -s /var/log/thermostat/storage ${pkgdir}${_THERMOSTAT_HOME}/storage/logs
+  ln -s /run ${pkgdir}${_THERMOSTAT_HOME}/storage/run
+  ln -s /var/lib/thermostat ${pkgdir}${_THERMOSTAT_HOME}/storage/db
+
+  install -m755 etc/* ${pkgdir}/etc/thermostat
+  ln -s /etc/thermostat ${pkgdir}${_THERMOSTAT_HOME}/etc
+
+  cp libs/* ${pkgdir}/usr/share/java/thermostat
+  ln -s ../java/thermostat ${pkgdir}${_THERMOSTAT_HOME}/libs
+
+  install -dm777 ${pkgdir}/var/lib/thermostat/osgi
+  ln -s /var/lib/thermostat/osgi ${pkgdir}${_THERMOSTAT_HOME}/osgi
+
+  pushd ${pkgdir}${_THERMOSTAT_HOME}/bin
+  for b in *; do
+    ln -s ${_THERMOSTAT_HOME}/bin/${b} ${pkgdir}/usr/bin/${b}
+  done
+  popd
+
+  install -Dm755 thermostat_profile.d ${pkgdir}/etc/profile.d/thermostat.sh
+
+  install -Dm755 thermostat.desktop ${pkgdir}/usr/share/applications/thermostat.desktop
+}
