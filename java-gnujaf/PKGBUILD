@@ -1,0 +1,28 @@
+# Maintainer: Guillaume ALAUX <Guillaume at Arch Linux dot org>
+_libname=jaf
+pkgname=java-${_libname}
+pkgver=1.1.1
+pkgrel=1
+pkgdesc="Java framework for declaring what beans operate on what MIME type data"
+arch=('any')
+url="http://www.gnu.org/s/classpathx/jaf/jaf.html"
+license=('LGPL')
+depends=('java-runtime')
+makedepends=('apache-ant')
+source=(http://ftp.gnu.org/gnu/classpathx/activation-${pkgver}.tar.gz)
+md5sums=('de50d7728e8140eb404f2b4554321f8c')
+
+build() {
+  cd "${srcdir}/activation-${pkgver}"
+
+  ant dist
+}
+
+package() {
+  cd "${srcdir}/activation-${pkgver}"
+
+  install -Dm644 ${srcdir}/activation-${pkgver}/activation.jar \
+                 ${pkgdir}/usr/share/${_libname}/activation-${pkgver}.jar
+
+  ln -s ${_libname}/activation-${pkgver}.jar ${pkgdir}/usr/share/activation.jar
+}
