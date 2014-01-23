@@ -1,0 +1,60 @@
+#DONE
+    activation-1.1.jar
+    antlr-2.7.7.jar
+    bcel-5.1.jar
+    commons-logging-1.0.4.jar
+    commons-logging-api-1.1.jar
+    commons-net-1.4.1.jar
+    jasper-compiler-4.1.36.jar
+    jasper-runtime-4.1.36.jar
+    jdepend-2.9.1.jar
+    js-1.6R7.jar
+    jsch-0.1.42.jar
+    junit-4.8.1.jar
+    log4j-1.2.14.jar
+    servlet-api-2.3.jar (2.5 is available in TC6)
+    which-1.0.jar
+    xalan-2.7.1.jar
+    serializer-2.7.1.jar
+
+    xml-apis-1.3.04.jar (provided by java-xml-commons-external)
+    xml-resolver-1.2.jar
+    asm-2.2.3.jar
+    asm-commons-2.2.3.jar
+    asm-tree-2.2.3.jar
+
+    #Packaged GNU mail instead as this Oracle one is proprietary
+    mail-1.4.jar
+
+    bsh-2.0b4.jar
+    bsh-core-2.0b4.jar
+
+
+
+
+#TODO
+bsf-2.4.0.jar
+#  Jacl (tcl-java)
+  Jython
+  NetRexx
+  
+
+#TODO
+# In AUR by Heftig
+jruby-0.9.8.jar
+#TODO
+maven-artifact-ant-2.0.4-dep.jar
+#TODO
+NetRexxC.jar
+
+
+
+
+#Optional
+#TODO
+oro-2.0.8.jar
+#TODO
+regexp-1.2.jar
+#TODO
+regexp-1.3.jar
+http://sourceforge.net/projects/tcljava/files/tclblend/1.4.1/tclBlend1.4.1.tar.gz/download

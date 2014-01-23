@@ -1,0 +1,249 @@
+strict digraph {
+
+    graph [
+//        fontsize=10,
+//        fontcolor=black,
+//        fontname=Verdana,
+        rankdir = LR
+    ];
+
+    node [
+//        fontsize=8,
+//        fontcolor=black,
+//        fontname=Verdana,
+        shape=box,
+//        color=black,
+        style="filled",
+        shape=record
+    ];
+
+//    edge [
+//        fontsize=6,
+//        fontcolor=black,
+//        fontname=Verdana
+//    ];
+
+    // State  #############################################
+
+    // DONE -----------------------------------------------
+    "java-xml-commons-external" [
+        label="java-xml-commons-external|Provides xml-api",
+        fillcolor="green"
+    ];
+    "java-resolver" [
+        fillcolor="blue"
+    ];
+
+    "java-xml-commons-which"[
+        fillcolor="green"
+    ];
+    "log4j" [
+        /*fillcolor="green"*/
+    ];
+    "java-commons-logging" [
+        fillcolor="green"
+    ];
+    "junit" [
+        fillcolor="green"
+    ];
+    "java-commons-net1" [
+        fillcolor="blue"
+    ];
+    "java-commons-net3" [
+        fillcolor="green"
+    ];
+    "jsch" [
+        fillcolor="blue"
+    ];
+    "java-bcel" [
+        fillcolor="blue"
+    ];
+    "jdepend" [
+        fillcolor="blue"
+    ];
+    "java-asm1" [
+        fillcolor="green"
+    ];
+    "java-stax" [
+        fillcolor="green"
+    ];
+    "xmlbeans" [
+        label="xmlbeans|No official pkg|make the PKGBUILD makedepend on AL's saxon"
+    ];
+    "java-antlr2" [
+        fillcolor="green"
+    ];
+
+    "java-activation-gnu" [
+        fillcolor="blue"
+    ];
+
+    "java-asm2" [
+        fillcolor="green"
+    ];
+
+    "beanshell" [
+        fillcolor="green"
+    ];
+
+
+    // TODO -----------------------------------------------
+    "junit4" [
+    ];
+
+    "xalan-java" [
+        label="xalan-java|Provides serializer.jar"
+    ];
+
+    "xerces2-java";
+
+    "java-antlr3" [
+    ];
+
+    "java-commons-bsf2" [
+    ];
+
+    "java-asm3";
+
+    "jruby" [
+        label="jruby| Was 'downgraded' to AUR (to package?)"
+    ];
+
+    "rhino" [
+        label="rhino|Rebuild with JAR from Arch package 'xmlbeans'",
+        /*fillcolor=""*/
+    ];
+
+    "jmf" [
+        label="jmf"
+    ];
+
+    "netrexx" [
+        label="netrexx"
+    ];
+
+    "swing" [
+        label="swing"
+    ];
+
+    "java-gnumail" [
+        fillcolor="blue"
+    ];
+
+    "java-inetlib" [
+        fillcolor="blue"
+    ];
+
+    "servlet-api-2.3.jar" [
+        label="servlet-api-2.3.jar|Provided by Tomcat",
+        fillcolor="blue"
+    ];
+
+    "jasper-compiler-4.1.36.jar, jasper-runtime-4.1.36.jar" [
+        label="jasper-compiler-4.1.36.jar, jasper-runtime-4.1.36.jar|Provided by Tomcat?",
+        fillcolor="blue"
+    ];
+
+    "maven-artifact-ant-2.0.4-dep.jar" [
+    ];
+
+    // Not packaged but do not package! -------------------
+
+    "javamail" [
+        label="javamail|Not Open Source|Exists in AUR|Replace by java-gnumail",
+        fillcolor="#FF0000"
+    ];
+    "activation" [
+        label="activation|Not Open Source|Exists in AUR|Replace by GNU JAF",
+        fillcolor="#FF0000"
+    ];
+
+    // Is "retired". Do not package
+    "oro" [
+        label="oro|Is 'retired'. Do not package",
+        fillcolor="#FF0000"
+    ];
+
+    // Is "retired". Do not package
+    "regexp" [
+        label="regexp|Is 'retired'. Do not package",
+        fillcolor="#FF0000"
+    ];
+
+    "saxon" [
+        label="saxon|Exists in extra(AndyRTR)|Rearrange PKGBUILD, extract package 'java-saxon', add 'provide=('java-xslt'?)'"
+    ];
+
+    "jms" [
+        label="jms|Present in Geronimo"
+    ];
+    "jmx" [
+        label="jmx|Present in Geronimo"
+    ];
+    
+    // Relationships ######################################
+
+    "xerces2-java" -> "java-xml-commons-external";
+    "xerces2-java" -> "java-resolver";
+
+    "apache-ant" -> "java-antlr2";
+    "apache-ant" -> "java-bcel";
+    "apache-ant" -> "java-commons-bsf2";
+    "apache-ant" -> "log4j";
+    "apache-ant" -> "oro";
+    "apache-ant" -> "regexp";
+    "apache-ant" -> "java-resolver";
+    "apache-ant" -> "xalan-java";
+    "apache-ant" -> "java-commons-logging";
+    //TODO see which version (1 or 3 - Debian depends on 1)
+    "apache-ant" -> "java-commons-net1";
+    "apache-ant" -> "jai";
+    "apache-ant" -> "java-gnumail";
+    "apache-ant" -> "jdepend";
+    "apache-ant" -> "jmf";
+    "apache-ant" -> "jsch";
+    "apache-ant" -> "junit3";
+    "apache-ant" -> "junit";
+    "apache-ant" -> "netrexx";
+    "apache-ant" -> "swing";
+    "apache-ant" -> "testutils";
+    "apache-ant" -> "java-activation-gnu";
+    "apache-ant" -> "jasper-compiler-4.1.36.jar, jasper-runtime-4.1.36.jar";
+    "apache-ant" -> "rhino";
+    "apache-ant" -> "servlet-api-2.3.jar";
+    "apache-ant" -> "java-xml-commons-which";
+    "apache-ant" -> "java-xml-commons-external";
+    "apache-ant" -> "java-asm2";
+    "apache-ant" -> "jruby";
+    "apache-ant" -> "maven-artifact-ant-2.0.4-dep.jar";
+
+    "java-commons-bsf2" -> "beanshell";
+    "java-commons-bsf2" -> "jruby";
+    "java-commons-bsf2" -> "jacl";
+    "java-commons-bsf2" -> "rhino";
+    "java-commons-bsf2" -> "judoscript";
+    "java-commons-bsf2" -> "jython";
+    "java-commons-bsf2" -> "netrexx";
+    "java-commons-bsf2" -> "xalan-java";
+
+    "java-gnumail" -> "java-activation-gnu";
+    "java-gnumail" -> "java-inetlib";
+
+    "log4j" -> "jaxp";
+    "log4j" -> "jms";
+    "log4j" -> "jmx";
+    "log4j" -> "jndi";
+
+    "rhino" -> "xmlbeans";
+
+    "xmlbeans" -> "saxon"
+
+
+/*
+Tomcat7 needs these to compile
+commons-daemon-1.0.10
+commons-dbcp-1.4-src
+commons-pool-1.5.7-src
+tomcat-native-1.1.23
+*/
+}
