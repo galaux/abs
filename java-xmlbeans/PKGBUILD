@@ -1,0 +1,40 @@
+# Maintainer: Guillaume ALAUX <Guillaume at Arch Linux dot org>
+_libname=xmlbeans
+pkgname=java-${_libname}
+pkgver=2.5.0
+pkgrel=1
+epoch=
+pkgdesc="Java API for accessing XML by binding it to Java types"
+arch=('any')
+url=""
+license=('APACHE')
+groups=()
+depends=()
+makedepends=('apache-ant')
+checkdepends=('apache-ant')
+optdepends=()
+provides=()
+conflicts=()
+replaces=()
+backup=()
+options=()
+install=
+changelog=
+source=(http://archive.apache.org/dist/${_libname}/source/${_libname}-${pkgver}-src.tgz)
+noextract=()
+md5sums=('20be260a1453b36613de113736c2cefd')
+
+build() {
+  cd "${srcdir}/${_libname}-${pkgver}"
+  ant 
+}
+
+check() {
+  cd "${srcdir}/${_libname}-${pkgver}"
+  ant testbuild
+}
+
+package() {
+  cd "${srcdir}/${_libname}-${pkgver}"
+  make DESTDIR="${pkgdir}/" install
+}
