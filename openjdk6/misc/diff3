@@ -1,0 +1,14 @@
+3,4c3,8
+< etc/profile.d/openjdk6.csh
+< etc/profile.d/openjdk6.sh
+---
+> etc/profile.d/jdk6-openjdk.csh
+> etc/profile.d/jdk6-openjdk.sh
+> etc/profile.d/jre6-openjdk.csh
+> etc/profile.d/jre6-openjdk.sh
+> .INSTALL
+> .PKGINFO
+18d21
+< usr/bin/java-rmi.cgi
+61d63
+< usr/lib/jvm/java-6-openjdk/bin/java-rmi.cgi

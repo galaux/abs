@@ -1,0 +1,84 @@
+# Normal
+3,4c3,8
+< etc/profile.d/openjdk6.csh
+< etc/profile.d/openjdk6.sh
+---
+> etc/profile.d/openjdk-jdk6.csh
+> etc/profile.d/openjdk-jdk6.sh
+> etc/profile.d/openjdk-jre6.csh
+> etc/profile.d/openjdk-jre6.sh
+> .INSTALL
+> .PKGINFO
+
+
+# Modifier le PKGBUILD pour aller copier les fichiers depuis j2sdk-image/jre plutôt que j2re-image
+466d469
+< usr/lib/jvm/java-6-openjdk/jre/lib/amd64/libattach.so
+491d493
+< usr/lib/jvm/java-6-openjdk/jre/lib/amd64/libsaproc.so
+559d560
+< usr/lib/jvm/java-6-openjdk/jre/lib/security/nss.cfg
+561d561
+< usr/lib/jvm/java-6-openjdk/jre/lib/tz.properties
+
+
+
+# Voir comment ça se fait que j'ai ce décalage.
+# Pê dû au fait que je repackage plutôt que recompilation complète
+1129,1130d1128
+< usr/lib/jvm/java-6-openjdk/sample/rmi/
+< usr/lib/jvm/java-6-openjdk/sample/rmi/java-rmi.cgi
+
+
+# Idem remarque pcdte
+1185,1186c1183,1184
+< usr/share/licenses/openjdk6/
+< usr/share/licenses/openjdk6/LICENSE
+---
+> usr/share/licenses/openjdk-jre6/
+> usr/share/licenses/openjdk-jre6/LICENSE
+
+
+
+# OK, normal : ces pages man sont dans MON pkg
+1187a1186,1225
+> usr/share/man/ja/
+> usr/share/man/ja/man1/
+> usr/share/man/ja/man1/appletviewer.1.gz
+> usr/share/man/ja/man1/apt.1.gz
+> usr/share/man/ja/man1/extcheck.1.gz
+> usr/share/man/ja/man1/idlj.1.gz
+> usr/share/man/ja/man1/jar.1.gz
+> usr/share/man/ja/man1/jarsigner.1.gz
+> usr/share/man/ja/man1/java.1.gz
+> usr/share/man/ja/man1/javac.1.gz
+> usr/share/man/ja/man1/javadoc.1.gz
+> usr/share/man/ja/man1/javah.1.gz
+> usr/share/man/ja/man1/javap.1.gz
+> usr/share/man/ja/man1/jconsole.1.gz
+> usr/share/man/ja/man1/jdb.1.gz
+> usr/share/man/ja/man1/jhat.1.gz
+> usr/share/man/ja/man1/jinfo.1.gz
+> usr/share/man/ja/man1/jmap.1.gz
+> usr/share/man/ja/man1/jps.1.gz
+> usr/share/man/ja/man1/jrunscript.1.gz
+> usr/share/man/ja/man1/jsadebugd.1.gz
+> usr/share/man/ja/man1/jstack.1.gz
+> usr/share/man/ja/man1/jstat.1.gz
+> usr/share/man/ja/man1/jstatd.1.gz
+> usr/share/man/ja/man1/keytool.1.gz
+> usr/share/man/ja/man1/native2ascii.1.gz
+> usr/share/man/ja/man1/orbd.1.gz
+> usr/share/man/ja/man1/pack200.1.gz
+> usr/share/man/ja/man1/policytool.1.gz
+> usr/share/man/ja/man1/rmic.1.gz
+> usr/share/man/ja/man1/rmid.1.gz
+> usr/share/man/ja/man1/rmiregistry.1.gz
+> usr/share/man/ja/man1/schemagen.1.gz
+> usr/share/man/ja/man1/serialver.1.gz
+> usr/share/man/ja/man1/servertool.1.gz
+> usr/share/man/ja/man1/tnameserv.1.gz
+> usr/share/man/ja/man1/unpack200.1.gz
+> usr/share/man/ja/man1/wsgen.1.gz
+> usr/share/man/ja/man1/wsimport.1.gz
+> usr/share/man/ja/man1/xjc.1.gz

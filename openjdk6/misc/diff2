@@ -1,0 +1,50 @@
+1a2
+> etc/
+3,4c4,12
+< etc/profile.d/openjdk6.csh
+< etc/profile.d/openjdk6.sh
+---
+> etc/profile.d/
+> etc/profile.d/jdk6-openjdk.csh
+> etc/profile.d/jdk6-openjdk.sh
+> etc/profile.d/jre6-openjdk.csh
+> etc/profile.d/jre6-openjdk.sh
+> .INSTALL
+> .PKGINFO
+> .PKGINFO
+> usr/
+6a15
+> usr/bin/
+
+
+
+
+
+
+
+46a55
+> usr/lib/
+47a57,58
+> usr/lib/jvm/
+> usr/lib/jvm/java-6-openjdk/
+
+
+
+
+18d26
+< usr/bin/java-rmi.cgi
+61d71
+< usr/lib/jvm/java-6-openjdk/bin/java-rmi.cgi
+1129,1130c1139
+< usr/lib/jvm/java-6-openjdk/sample/rmi/
+< usr/lib/jvm/java-6-openjdk/sample/rmi/java-rmi.cgi
+---
+> usr/lib/jvm/java-6-openjdk/sample/rmi
+1166a1176
+> usr/share/
+1187a1198,1199
+> usr/share/man/
+> usr/share/man/man1/
+
+
+# Vérifier que les man pages JP sont toujours présentes donc mon paquet
