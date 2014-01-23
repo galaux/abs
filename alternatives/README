@@ -11,15 +11,15 @@ How this package was created
 	kept only 'alternatives' files
 	made PKGBUILD based on makefile
 
-Warning about it's use in ArchLinux
-	This ArchLinux package is a 'proof of concept': the binaries provided work
+Warning about it's use in Arch Linux
+	This Arch Linux package is a 'proof of concept': the binaries provided work
 	but the applications managed by 'alternatives' need to be packaged in a particular way
 	such as the different versions of applications do not interfere whith each other
 	(and the package manager does not 'replace' old versions).
 	This implies that applications need to be packaged in version specific directories like:
 	/usr/share/my-app_$pkgver.
-	As packages are not made with this requirement in ArchLinux, you will not be able to use
-	'alternatives' with regular ArchLinux packages. However this 'alternative' will work
+	As packages are not made with this requirement in Arch Linux, you will not be able to use
+	'alternatives' with regular Arch Linux packages. However this 'alternative' will work
 	with any manually managed applications.
 
 So what is the use?
@@ -28,4 +28,4 @@ So what is the use?
 	3) Could be an open door to packaging applications in AL bearing in mind this version
 
 Last warning about testing
-	This binary only handles links to applications so it should not be of great harm to your system. However I have not been able to test it extensively. I am thus interested in feedback about fail or success stories. Feel free to leave a comment on the ArchLinux User Repository page of the package [TODO give URL].
+	This binary only handles links to applications so it should not be of great harm to your system. However I have not been able to test it extensively. I am thus interested in feedback about fail or success stories. Feel free to leave a comment on the Arch Linux User Repository page of the package [TODO give URL].

@@ -13,46 +13,46 @@ md5sums=('885fa556f305e3694b6d05668a3a3c00')
 
 build()
 {
-	install -d $pkgdir/etc/alternatives $pkgdir/var/lib/alternatives
+  install -d $pkgdir/etc/alternatives $pkgdir/var/lib/alternatives
 
-	# Make po files
-	cd $srcdir/$pkgname-$pkgver-src/po
-	xgettext --default-domain=$pkgname \
-		--add-comments --keyword=_ --keyword=N_ ../alternatives.c
+  # Make po files
+  cd $srcdir/$pkgname-$pkgver-src/po
+  xgettext --default-domain=$pkgname \
+    --add-comments --keyword=_ --keyword=N_ ../alternatives.c
 
-	mv $pkgname.po $pkgname.pot
+  mv $pkgname.po $pkgname.pot
 
-	for f in $(ls *.po); do
-		file=$(basename $f .po);
-		msgfmt -o $file.mo $file.po;
-	done
+  for f in $(ls *.po); do
+    file=$(basename $f .po);
+    msgfmt -o $file.mo $file.po;
+  done
 
-	# Make alternatives
-	cd $srcdir/$pkgname-$pkgver-src
-	cc -g -Wall -D_GNU_SOURCE -DVERSION=\"$pkgver\" -c alternatives.c
-	cc -g  alternatives.o -o $pkgname
+  # Make alternatives
+  cd $srcdir/$pkgname-$pkgver-src
+  cc -g -Wall -D_GNU_SOURCE -DVERSION=\"$pkgver\" -c alternatives.c
+  cc -g  alternatives.o -o $pkgname
 
-	# Make install
-	mkdir -p $pkgdir/usr/sbin
-	install -m 755 $srcdir/$pkgname-$pkgver-src/$pkgname \
-		$pkgdir/usr/sbin/$pkgname
+  # Make install
+  mkdir -p $pkgdir/usr/sbin
+  install -m 755 $srcdir/$pkgname-$pkgver-src/$pkgname \
+    $pkgdir/usr/sbin/$pkgname
 
-	ln -s /usr/sbin/alternatives $pkgdir/usr/sbin/update-alternatives
+  ln -s /usr/sbin/alternatives $pkgdir/usr/sbin/update-alternatives
 
-	mkdir -p $pkgdir/usr/share/man/man8
-	install -m 644 $srcdir/$pkgname-$pkgver-src/alternatives.8 \
-		$pkgdir/usr/share/man/man8/alternatives.8
+  mkdir -p $pkgdir/usr/share/man/man8
+  install -m 644 $srcdir/$pkgname-$pkgver-src/alternatives.8 \
+    $pkgdir/usr/share/man/man8/alternatives.8
 
         ln -s /usr/share/man/man8/alternatives.8.gz $pkgdir/usr/share/man/man8/update-alternatives.8
 
-	mkdir -p $pkgdir/usr/share/locale
-	for n in $(ls po/*.po | sed 's/\.po/\.mo/'); do
-		l=$(basename $n .mo)
-		install -m 755 -d $pkgdir/usr/share/locale/$l;
-		install -m 755 -d $pkgdir/usr/share/locale/$l/LC_MESSAGES;
-		if [ -f $srcdir/$pkgname-$pkgver-src/po/$n ]; then
-			$(INSTALL) -m 644 $srcdir/$pkgname-$pkgver-src/po/$n \
-				$pkgdir/usr/share/locale/$l/LC_MESSAGES/$pkgname.mo;
-		fi
-	done
+  mkdir -p $pkgdir/usr/share/locale
+  for n in $(ls po/*.po | sed 's/\.po/\.mo/'); do
+    l=$(basename $n .mo)
+    install -m 755 -d $pkgdir/usr/share/locale/$l;
+    install -m 755 -d $pkgdir/usr/share/locale/$l/LC_MESSAGES;
+    if [ -f $srcdir/$pkgname-$pkgver-src/po/$n ]; then
+      $(INSTALL) -m 644 $srcdir/$pkgname-$pkgver-src/po/$n \
+        $pkgdir/usr/share/locale/$l/LC_MESSAGES/$pkgname.mo;
+    fi
+  done
 }
