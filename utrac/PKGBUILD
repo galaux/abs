@@ -1,0 +1,27 @@
+# Maintainer: Eric Forgeot < http://ifiction.free.fr >
+# Contributor: Guillaume ALAUX <Guillaume at ALAUX dot net>
+pkgname=utrac
+pkgver=0.3.0
+pkgrel=2
+pkgdesc="Universal Text Recognizer and Converter.  It is a command line tool and a library that recognize the encoding of an input file (ex: UTF-8, ISO-8859-1, CP437...) and its end-of-line type (CR, LF, CRLF)."
+arch=('i686' 'x86_64')
+url="http://utrac.sourceforge.net/"
+license=('GPL')
+source=(http://utrac.sourceforge.net/download/${pkgname}-${pkgver}.tar.gz)
+md5sums=('0b70a94e450d428bc49d499110052ae6')
+
+build() {
+  cd "${srcdir}/${pkgname}-${pkgver}"
+  make
+}
+
+package() {
+  cd "${srcdir}/${pkgname}-${pkgver}"
+
+  install -d "${pkgdir}/usr/share/man/man1"
+
+  make \
+       PREFIX_PATH="${pkgdir}/usr" \
+       MAN_PATH="${pkgdir}/usr/share/man/man1" \
+       install
+}
