@@ -1,0 +1,275 @@
+libxerces2-java (2.11.0-2) unstable; urgency=low
+
+  * Add myself as Uploaders.
+  * Add Depends on libxml-commons-external-java for jaxp-1.4.jar
+    (Closes: #639333).
+  * Drop Depends on libjaxp-1.3.jar. 
+
+ -- Damien Raude-Morvan <drazzib@debian.org>  Sat, 27 Aug 2011 00:05:03 +0200
+
+libxerces2-java (2.11.0-1) unstable; urgency=low
+
+  * Team upload.
+
+  [ Ludovic Claude ]
+  * Change section of libxerces2-java-gcj to libs
+
+  [ Damien Raude-Morvan ]
+  * New upstream release.
+  * Bump up Standards-Version to 3.9.2: no changes needed.
+  * d/control: Drop Arnaud from Uploaders. Thanks!
+  * Switch to 3.0 (quilt) format.
+  * Bump up debhelper compat to 7.
+  * d/control: Build-Depends o, default-jdk + gcj-native-helper (instead of
+    default-jdk-builddep).
+  * d/control: Drop Depends on JRE as per Debian Java Policy.
+  * d/control: Only Suggests -gcj packages.
+  * d/control: Build-Depends on libxml-commons-external for
+    org.w3c.dom.ElementTraversal.
+  * d/patches/03_bootclasspath.patch: Fix name of xml-resolver.jar
+    (Closes: #638576).
+  * d/rules: install xercesSamples.jar (Closes: #567001).
+  * d/patches/04_manifest_classpath.patch: Set a Class-Path in Manifest for
+    xml-apis-ext, xml-resolver and jaxp-1.3.
+
+ -- Damien Raude-Morvan <drazzib@debian.org>  Thu, 25 Aug 2011 00:29:32 +0200
+
+libxerces2-java (2.9.1-4) unstable; urgency=low
+
+  * Upload to unstable.
+
+ -- Torsten Werner <twerner@debian.org>  Sun, 09 Aug 2009 12:48:51 +0200
+
+libxerces2-java (2.9.1-3) experimental; urgency=low
+
+  * Change section to java, bump up Standards-Version to 3.8.1
+  * Bump up debhelper to 6
+  * Add the Maven POM to the package,
+  * Add a Build-Depends dependency on maven-repo-helper
+  * Use mh_installpom and mh_installjar to install the POM and the jar to the
+    Maven repository
+  * Add ${misc:Depends} to Depends to clear Lintian warnings
+  * Remove full text of the Apache 2 license from copyright
+
+  [Matthias Klose]
+  * Set java source and target version to 1.4. LP: #264808.
+  * Depend on default-jre-headless.
+
+ -- Ludovic Claude <ludovic.claude@laposte.net>  Thu, 07 May 2009 20:44:34 +0100
+
+libxerces2-java (2.9.1-2) unstable; urgency=low
+
+  * Build-Depends on default-jdk-builddep. Closes: #477892
+
+ -- Michael Koch <konqueror@gmx.de>  Sun, 27 Apr 2008 06:37:01 -0100
+
+libxerces2-java (2.9.1-1) unstable; urgency=low
+
+  * New upstream version.
+  * Updated Standards-Version to 3.7.3.
+  * Added myself to Uploaders.
+  * Added Vcs-Svn and Vcs-Browser fields.
+
+ -- Michael Koch <konqueror@gmx.de>  Mon, 31 Dec 2007 11:02:34 +0100
+
+libxerces2-java (2.9.0-1) unstable; urgency=low
+
+  * New upstream.
+  * debian/control: removed Stefan Gybas and Wolfgang Baer from uploaders.
+  * debian/rule: added generation of the documentation (merge
+    libxerces2-java-doc).
+
+ -- Arnaud Vandyck <avdyk@debian.org>  Tue,  3 Jul 2007 20:21:12 +0200
+
+libxerces2-java (2.8.1-2) unstable; urgency=low
+
+  [Arnaud Vandyck]
+  * debian/watch: added
+
+  [Matthias Klose]
+  * Merge from Ubuntu:
+    - Build architecture dependent -gcj package.
+    - Move build-indep dependencies to build dependencies.
+    - Add gij as alternative runtime dependency.
+
+ -- Matthias Klose <doko@debian.org>  Wed,  3 Jan 2007 13:27:26 +0100
+
+libxerces2-java (2.8.1-1) unstable; urgency=low
+
+  * New upstream version.
+  * Add dependency on libjaxp1.3-java. (Closes: #394221)
+  * Correct copyright information.
+
+ -- Marcus Better <marcus@better.se>  Sun, 22 Oct 2006 21:39:07 +0200
+
+libxerces2-java (2.8.0-1) unstable; urgency=low
+
+  * upload to unstable.
+
+ -- Arnaud Vandyck <avdyk@debian.org>  Mon,  3 Jul 2006 11:29:15 +0000
+
+libxerces2-java (2.8.0-0) experimental; urgency=low
+
+  * New upstream release.
+  * Built with gcj
+  * Updated to Standards-Version 3.7.2: cdbs and debhelper to
+    Build-Depends
+  * Removed jikes compiler definition
+
+ -- Arnaud Vandyck <avdyk@debian.org>  Mon,  3 Jul 2006 13:27:27 +0200
+
+libxerces2-java (2.6.2-4) unstable; urgency=low
+
+  * gnujaxp transition 
+
+ -- Wolfgang Baer <WBaer@gmx.de>  Tue, 17 Jan 2006 21:50:14 +0100
+
+libxerces2-java (2.6.2-3) unstable; urgency=low
+
+  * libant1.6-java to ant transition
+  * As we now have ant >= 1.6.3 we can drop the dom2 source hack
+    + Remove dom2 source from debian package
+    + Added bootclasspath patch to the javac target
+  * Standards-Version 3.6.2 (no changes)
+
+ -- Wolfgang Baer <WBaer@gmx.de>  Sun, 25 Sep 2005 02:02:36 +0200
+
+libxerces2-java (2.6.2-2) unstable; urgency=medium
+
+  * Included DOM Level 2 sources from the libjaxp1.2-java 
+    source package to built against them (closes: #304524)
+    Note: This is a temporary solution - after sarge we will update
+    ant which includes bootclasspath support for jikes need to build
+    without included sources.
+  * Included README.dom2-sources explaining where the DOM Level 2 sources
+    come from, why they are needed ...
+  * Included build.xml patch to copy the DOM Level 2 sources from the 
+    debian directory - before the build - to the build directory.
+  * Changed Build-Depends to Build-Depends-Indep to fix lintian warning.
+  * (avdyk) Added Wolfgang to the uploaders.
+  
+ -- Wolfgang Baer <WBaer@gmx.de>  Tue, 19 Apr 2005 20:28:25 +0200
+
+libxerces2-java (2.6.2-1) unstable; urgency=low
+
+  * New upstream release
+  * Build with free-java-sdk / SableVM instead of Kaffe so I don't need the
+    ugly LD_LIBRARY_PATH hack any longer (closes: #246468)
+  * Use libgnujaxp-java instead of libxerces-java to call Ant since it's
+    included by the SableVM wrapper automatically. It's a bit strange to use
+    an external XML parser to build an XML parser but such is life...
+  * Change the classpath dependency to classpath-common
+
+ -- Stefan Gybas <sgybas@debian.org>  Sun,  6 Jun 2004 18:00:26 +0200
+
+libxerces2-java (2.6.1-1) unstable; urgency=low
+
+  * New upstream release
+  * Split the libxerces2-java source package into libxerces2-java (main)
+    and libxerces2-java-doc (contrib). The package in main now builds the
+    library package, the one in contrib the documentation. Building the
+    documentation requires JDK 1.4 and other packages from contrib. The split
+    also avoids circular build dependencies with Xalan-J.
+  * Use Kaffe, Jikes and Ant 1.6 to build the package
+  * Use the new libjaxp1.2-java and libxml-commons-resolver1.1-java packages
+  * Updated the package description and README.Debian
+
+ -- Stefan Gybas <sgybas@debian.org>  Wed, 18 Feb 2004 14:17:24 +0100
+
+libxerces2-java (2.6.0-1) unstable; urgency=low
+
+  * New upstream release
+  * Depend on "classpath | java1-runtime | java2-runtime"
+  * Updated download location and copyright years in debian/copyright
+  * Move xercesSamples.jar from libxerces2-java to the examples in
+    libxerces2-java-doc
+  * Don't install versioned JARs in /usr/share/java. Sorry, I'm unable to
+    determine an API version. This version is fully compatible to version
+    2.5.*, 2.4.* and others. Should I create 5 symlinks for each JAR to
+    prevent other packages that use the versioned JAR from breaking?
+
+ -- Stefan Gybas <sgybas@debian.org>  Tue, 13 Jan 2004 22:15:43 +0100
+
+libxerces2-java (2.5.0-1) unstable; urgency=low
+
+  * New upstream release (closes: #206185)
+  * Renamed to source package to libxerces2-java
+  * Set maintainer to Debian Java Maintainers
+  * Mention XML Inclusions (XInclude) in the long description
+  * Standards-Version: 3.6.1
+    + Changed Build-Depends-Indep to Build-Depends
+
+ -- Stefan Gybas <sgybas@debian.org>  Fri, 17 Oct 2003 15:22:07 +0200
+
+xerces2-j (2.4.0-1) unstable; urgency=low
+
+  * New upstream release
+  * Built using Blackdown's JDK 1.4 instead of the converted RPM from Sun
+  * Standards-Version: 3.5.9 (no changes required)
+
+ -- Stefan Gybas <sgybas@debian.org>  Sun, 13 Apr 2003 18:50:54 +0200
+
+xerces2-j (2.3.0-1) unstable; urgency=low
+
+  * New upstream release
+    + Fixes the DTD parsing problems in Tomcat 4 (closes: #167135, #171929)
+  * Build with the latest Jikes version (>= 1.18)
+  * Include the compiled examples (xercesSamples.jar) (closes: #170822)
+  * Enable experimental DOM Level 3 support and updated the package
+    description about the new XML 1.1 features
+
+ -- Stefan Gybas <sgybas@debian.org>  Mon, 10 Feb 2003 19:54:06 +0100
+
+xerces2-j (2.2.1-1) unstable; urgency=low
+
+  * New upstream release
+  * Added versioned build dependency on jikes
+  * Compile the classes with debugging enabled
+  * Standards-Version: 3.5.8 (no changes required)
+
+ -- Stefan Gybas <sgybas@debian.org>  Mon, 18 Nov 2002 15:10:27 +0100
+
+xerces2-j (2.2.0-1) unstable; urgency=low
+
+  * New upstream release
+  * Added Takashi Okamoto and Ola Lundqvist as uploaders
+  * Use jikes to compile the Java classes
+
+ -- Stefan Gybas <sgybas@debian.org>  Wed, 23 Oct 2002 18:23:15 +0200
+
+xerces2-j (2.1.0-1) unstable; urgency=low
+
+  * New upstream release
+  * Updated package description
+  * Build with latest Ant and Xalan-J versions
+  * Fixed some typos in README.Debian
+  * Build with debhelper >= 4.1.0 to get rid of /usr/doc compatibility
+    symlinks
+  * Standards-Version: 3.5.7
+
+ -- Stefan Gybas <sgybas@debian.org>  Mon,  2 Sep 2002 15:35:13 +0200
+
+xerces2-j (2.0.2-1) unstable; urgency=low
+
+  * New upstream release
+  * Build with j2sdk >= 1.4.0 because it supports -Djava.awt.headless=true
+    for Xalan and so an X11 display is not needed during the build
+  * Use debhelper V4
+  * Updated README.Debian and package description
+
+ -- Stefan Gybas <sgybas@debian.org>  Mon,  1 Jul 2002 20:44:04 +0200
+
+xerces2-j (2.0.1-1) unstable; urgency=low
+
+  * New upstream release (closes: #140832)
+  * The package can now be built with j2sdk1.3 1.3.1-1 or later
+
+ -- Stefan Gybas <sgybas@debian.org>  Wed,  3 Apr 2002 21:05:23 +0200
+
+xerces2-j (2.0.0-1) unstable; urgency=low
+
+  * Initial release
+  * Placed in contrib because it requires Ant and a Java2 environment 
+    to build
+
+ -- Stefan Gybas <sgybas@debian.org>  Thu,  7 Feb 2002 16:37:15 +0100

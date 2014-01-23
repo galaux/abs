@@ -1,0 +1,64 @@
+Source: libxerces2-java
+Section: java
+Priority: optional
+Maintainer: Debian Java Maintainers <pkg-java-maintainers@lists.alioth.debian.org>
+Uploaders: Marcus Better <marcus@better.se>, Matthias Klose <doko@ubuntu.com>, Michael Koch <konqueror@gmx.de>,
+ Damien Raude-Morvan <drazzib@debian.org>
+Build-Depends: cdbs (>= 0.4.8), debhelper (>= 7), default-jdk, gcj-native-helper, ant,
+ maven-repo-helper, libxml-commons-resolver1.1-java, libstylebook-java,
+ libxml-commons-external-java (>= 1.4.01-2)
+Standards-Version: 3.9.2
+Vcs-Svn: svn://svn.debian.org/svn/pkg-java/trunk/libxerces2-java
+Vcs-Browser: http://svn.debian.org/wsvn/pkg-java/trunk/libxerces2-java
+Homepage: http://xerces.apache.org/xerces2-j/
+
+Package: libxerces2-java
+Architecture: all
+Depends: ${misc:Depends}, libxml-commons-resolver1.1-java,
+ libxml-commons-external-java (>= 1.4.01-2)
+Suggests: libxerces2-java-doc, libxerces2-java-gcj
+Description: Validating XML parser for Java with DOM level 3 support
+ The Xerces2 Java parser is the reference implementation of XNI, the
+ Xerces Native Interface, and also a fully conforming XML Schema processor.
+ .
+ Xerces2-J supports the following standards and APIs:
+  * eXtensible Markup Language (XML) 1.0 Second Edition Recommendation
+  * Namespaces in XML Recommendation
+  * Document Object Model (DOM) Level 2 Core, Events, and Traversal and
+    Range Recommendations
+  * Simple API for XML (SAX) 2.0.1 Core and Extension
+  * Java APIs for XML Processing (JAXP) 1.2.01
+  * XML Schema 1.0 Structures and Datatypes Recommendations
+  * Experimental implementation of the Document Object Model (DOM) Level 3
+    Core and Load/Save Working Drafts
+  * Provides a partial implementation of the XML Inclusions (XInclude) W3C
+    Candidate Recommendation
+ .
+ Xerces is now able to parse documents written according to the XML 1.1
+ Candidate Recommendation, except that it does not yet provide an option to
+ enable normalization checking as described in section 2.13 of this
+ specification. It also handles namespaces according to the  XML Namespaces 1.1
+ Candidate Recommendation, and will correctly serialize XML 1.1 documents if
+ the DOM level 3 load/save API's are in use.
+
+Package: libxerces2-java-gcj
+Architecture: any
+Section: libs
+Depends: libxerces2-java (>= ${source:Version}), ${misc:Depends}, ${shlibs:Depends}
+Description: Validating XML parser for Java with DOM level 3 support (native code)
+ The Xerces2 Java parser is the reference implementation of XNI, the
+ Xerces Native Interface, and also a fully conforming XML Schema processor.
+ .
+ This package contains the natively compiled code for use by gij.
+
+Package: libxerces2-java-doc
+Architecture: all
+Section: doc
+Depends: ${misc:Depends}
+Suggests: libxerces2-java, doc-html-w3
+Description: Validating XML parser for Java -- Documentation and examples
+ The Xerces2 Java parser is the reference implementation of XNI, the
+ Xerces Native Interface, and also a fully conforming XML Schema processor.
+ .
+ This package contains the documentation in HTML format, the Javadoc API
+ documentation and some examples.

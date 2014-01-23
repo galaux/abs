@@ -1,0 +1,39 @@
+Index: b/build.xml
+===================================================================
+--- a/build.xml
++++ b/build.xml
+@@ -291,13 +291,14 @@
+            destdir="${build.dest}"
+            source="${javac.source}"
+            target="${javac.target}"
+-           classpath="${build.dir}/classes:${tools.dir}/${jar.apis}:${tools.dir}/${jar.resolver}:${tools.dir}/${jar.serializer}"
++           classpath="${build.dir}/classes:/usr/share/java/jaxp-1.4.jar:/usr/share/java/xml-apis-ext.jar:/usr/share/java/xml-resolver.jar"
+            debug="${debug}" nowarn="true"
+            debuglevel="${debuglevel}"
+            deprecation="${deprecation}"
+            optimize="${optimize}"
+            includeAntRuntime="false"
+-           includeJavaRuntime="false"
++           includeJavaRuntime="true"
++           bootclasspath="/usr/share/java/jaxp-1.4.jar:/usr/share/java/xml-apis-ext.jar:/usr/share/java/xml-resolver.jar"
+            excludes="org/xml/sax/** 
+                 javax/xml/**
+                 org/w3c/dom/*
+@@ -359,7 +360,7 @@
+            destdir="${build.dest}"
+            source="${javac.source}"
+            target="${javac.target}"
+-           classpath="${build.dir}/classes:${tools.dir}/${jar.apis}"
++           classpath="${build.dir}/classes:/usr/share/java/jaxp-1.4.jar:/usr/share/java/xml-apis-ext.jar:/usr/share/java/xml-resolver.jar"
+            debug="${debug}" nowarn="true"
+            debuglevel="${debuglevel}"
+            includeAntRuntime="false"
+@@ -1301,7 +1302,7 @@
+            destdir="${build.dest}"
+            source="${javac.source}"
+            target="${javac.target}"
+-           classpath="${build.dir}/classes:${tools.dir}/${jar.apis}"
++           classpath="${build.dir}/classes:/usr/share/java/jaxp-1.4.jar:/usr/share/java/xml-apis-ext.jar"
+            debug="${debug}"
+            debuglevel="${debuglevel}"
+            deprecation="${deprecation}"

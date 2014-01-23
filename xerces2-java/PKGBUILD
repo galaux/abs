@@ -1,0 +1,77 @@
+# $Id: PKGBUILD 102136 2010-12-06 06:24:00Z andyrtr $
+
+# Maintainer: Andreas Radke <andyrtr@archlinux.org>
+# Maintainer: Jan de Groot <jgc@archlinux.org>
+
+#README Unable to get this to compile !
+
+pkgname=xerces2-java
+pkgver=2.11.0
+pkgrel=1
+pkgdesc="High performance fully compliant Java XML parser"
+arch=('any')
+url="http://xml.apache.org/xerces2-j"
+license=('APACHE')
+depends=()
+makedepends=('apache-ant' 'junit' 'xerces2-java') # 'java-xml-commons-resolver') #'java-xml-commons-external')
+provides=("java-xerces2=${pkgver}")
+conflicts=('java-xerces2')
+replaces=('java-xerces2')
+source=(http://www.apache.org/dist/xerces/j/source/Xerces-J-src.${pkgver}.tar.gz
+        http://www.apache.org/dist/xerces/j/source/Xerces-J-tools.${pkgver}.tar.gz
+        http://www.apache.org/dist/xerces/xml-commons/source/xml-commons-external-1.4.01-src.zip
+        01_xjavac_taskdef.patch
+        03_bootclasspath.patch)
+md5sums=('d01fc11eacbe43b45681cb85ac112ebf'
+         '50700b3a6558202b056530babf80f1db'
+         '1e4b28b6783cb74645a645405f3b4da0'
+         '0145f9d1edab9307832d5c523739708c'
+         '0f14cf10ce2635f31deb3262c51051be')
+
+build() {
+  cd "${srcdir}/xerces-${pkgver//./_}"
+
+  . /etc/profile.d/apache-ant.sh
+
+#1 create target/src, copy XJavac.java in target/src and patch it
+#2 ant xjavac-jar
+
+  sed -i \
+    -e 's|<taskdef name="xjavac" classname="org.apache.xerces.util.XJavac">|<taskdef name="xjavac" classname="org.apache.tools.ant.taskdefs.Javac">|g' \
+    -e 's|${tools.dir}/${jar.apis}|/usr/share/java/xml-apis.jar|g' \
+    -e 's|${tools.dir}/${jar.resolver}|/usr/share/java/resolver.jar|g' \
+    -e 's|${tools.dir}/${jar.serializer}|/usr/share/java/serializer.jar|g' \
+    -e 's|${tools.dir}/${jar.junit}|/usr/share/java/junit.jar|g' \
+    -e 's|./tools/junit.jar|/usr/share/java/junit.jar|g' \
+    -e 's|./tools/xalan.jar|/usr/share/java/xalan.jar|g' \
+    -e 's|includeJavaRuntime="false"|includeJavaRuntime="true"|g' \
+    build.xml
+
+  ant \
+    -Dsrc.apis.zip=${srcdir}/xml-commons-external-1.4.01-src.zip \
+    -Dant.build.javac.source=1.3 \
+    -Dant.build.javac.target=1.3 \
+    jar
+
+
+#  mkdir tools
+#  ln -s /usr/share/java/junit.jar tools/junit.jar
+#  ln -s /usr/share/java/resolver.jar tools/resolver.jar
+
+#  ant \
+#   -lib /usr/share/java/junit.jar \
+#    -lib /usr/share/java/xml-apis.jar \
+#    -lib /usr/share/java/xercesImpl.jar \
+#    -lib /usr/share/java/resolver.jar \
+#    -lib /usr/share/java/serializer.jar \
+#    -lib ${srcdir}/tools/bin/xjavac.jar \
+#    -Dsrc.apis.zip=${srcdir}/xml-commons-external-1.4.01-src.zip \
+#    jar
+}
+
+package() {
+  cd ${srcdir}/xerces-${pkgver//./_}
+  install -m755 -d ${pkgdir}/usr/share/java
+  rm -f xercesSamples.jar
+  install -m644 *.jar ${pkgdir}/usr/share/java/
+}

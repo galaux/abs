@@ -1,0 +1,46 @@
+#!/usr/bin/make -f
+# debian/rules file for libxerces2-java (uses cdbs)
+
+include /usr/share/cdbs/1/rules/debhelper.mk
+include /usr/share/cdbs/1/class/ant.mk
+
+PACKAGE              := $(DEB_SOURCE_PACKAGE)
+VERSION              := $(DEB_UPSTREAM_VERSION)
+JAVA_HOME            := /usr/lib/jvm/default-java
+ANT_HOME             := /usr/share/ant
+ANT_OPTS = -Dant.build.javac.source=1.4 -Dant.build.javac.target=1.4
+
+include /usr/share/gcj/debian_defaults
+ifneq (,$(filter $(DEB_HOST_ARCH), $(gcj_native_archs)))
+  with_gcj_native := yes
+endif
+
+# Ant targets to call
+DEB_ANT_CLEAN_TARGET := clean
+DEB_ANT_BUILD_TARGET := jar sampjar javadocs 
+#docs
+
+install/$(PACKAGE)::
+	mh_installpoms -p$(PACKAGE);
+	mh_installjar -p$(PACKAGE) -l debian/pom.xml $(DEB_BUILDDIR)/build/xercesImpl.jar
+	dh_install -p$(PACKAGE) $(DEB_BUILDDIR)/build/xercesSamples.jar /usr/share/java/
+
+ifeq ($(with_gcj_native),yes)
+install/libxerces2-java-gcj:: install/libxerces2-java
+	dh_nativejava -plibxerces2-java-gcj
+endif
+
+clean::
+	rm -rf build
+	-rm -rf debian/tmp
+
+binary-post-install/libxerces2-java-doc::
+	dh_install -plibxerces2-java-doc build/docs/javadocs/* \
+			usr/share/doc/libxerces2-java-doc/api
+
+get-orig-source:
+	-uscan --download-version $(DEB_UPSTREAM_VERSION) --force-download --rename --repack
+
+get-orig-pom:
+	wget -O debian/pom.xml http://repository.sonatype.org/service/local/repositories/central/content/xerces/xercesImpl/$(VERSION)/xercesImpl-$(VERSION).pom
+
