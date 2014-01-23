@@ -1,0 +1,36 @@
+# $Id: PKGBUILD 137744 2011-09-10 15:01:53Z pierre $
+# Maintainer: AndyRTR <andyrtr at archlinux.org>
+
+# Initial project looks dead
+# versions 2.0b* are snapshots even thought 2.0b4 is considered as stable by upstream [0] and debian [1]
+# Version 2.0b5 is available thought [2]
+# Project is forked [3] on googlecode
+# See [4] for explanation
+#
+# [0] http://www.beanshell.org/download.html
+# [1] http://packages.debian.org/sid/bsh
+# [2] http://www.beanshell.org/bsh-2.0b5-src.zip
+# [3] http://code.google.com/p/beanshell2/downloads/detail?name=bsh-2.0b4-src.jar&can=1&q=
+# [4] http://sourceforge.net/mailarchive/forum.php?thread_name=BANLkTi%3DDcBRkEsmRVPX4%3DAX6YtEiHQUGNw%40mail.gmail.com&forum_name=beanshell-developers
+
+pkgname=beanshell
+pkgver=2.0b4
+pkgrel=3
+pkgdesc="Small, free, embeddable, source level Java interpreter with object based scripting language features written in Java"
+arch=('any')
+url="http://www.beanshell.org/home.html"
+license=('LGPL')
+depends=('java-runtime')
+provides=('bsh')
+#TODO Put on ftp.archlinux.org (is the Debian .orig archive)
+source=(bsh_${pkgver}-src.tar.gz)
+md5sums=('47642ecdfed4789bed8d4184aeebb132')
+
+build() {
+  cd "${srcdir}/bsh-${pkgver}.orig"
+}
+
+package() {
+  install -m755 -d ${pkgdir}/usr/share/java/
+  install -D -m644 ${srcdir}/bsh-${pkgver}.jar ${pkgdir}/usr/share/java/bsh.jar
+}
