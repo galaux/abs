@@ -1,0 +1,44 @@
+post_install() {
+  getent group tomcat8 >/dev/null 2>&1 || groupadd -g 71 tomcat8
+  getent passwd tomcat8 >/dev/null 2>&1 || useradd -u 71 -g tomcat8 -d /usr/share/tomcat8 -s /bin/false tomcat8
+
+  if [ -f lib/modules/$(uname -r)/kernel/security/capability.ko ]; then
+    echo 'It appears that your current kernel has linux security'
+    echo 'capabilities built as a module. Tomcat requires this'
+    echo ' functionality to operate.'
+    echo ''
+    echo ' To activate the module, please load it now (modprobe capability).'
+    echo ' Also, you should add it to your MODULES array in rc.conf, so'
+    echo ' it will be activated automatically at boot-up.'
+  fi
+
+  # Some tomcat8 files were owned by 'tomcat:tomcat', let's fix this
+#  chown root:tomcat8 /etc/tomcat8 /etc/tomcat8/*
+#  chown -R tomcat8:tomcat8 /etc/tomcat8/Catalina
+#  chown -R tomcat8:tomcat8 /var/lib/tomcat8
+#  chown -R tomcat8:tomcat8 /var/tmp/tomcat8
+#  chown tomcat8:log /var/log/tomcat8
+#  find /var/log/tomcat8 -user tomcat -exec chown tomcat8 {} \;
+#  find /var/log/tomcat8 -group tomcat -exec chgrp tomcat8 {} \;
+#
+#  # Fix some previously erroneous mods
+#  chmod 775 /var/tmp/tomcat8 /var/tmp/tomcat8/temp /var/tmp/tomcat8/work
+}
+
+post_upgrade() {
+  post_install $1
+}
+
+pre_remove() {
+  if getent passwd tomcat8 > /dev/null 2>&1; then
+      userdel tomcat8
+  fi
+  if getent group tomcat8 > /dev/null 2>&1; then
+      groupdel tomcat8
+  fi
+
+  echo 'Please consider removing the following directories:'
+  echo '  /var/lib/tomcat8'
+  echo '  /var/tmp/tomcat8'
+  echo '  /var/log/tomcat8'
+}

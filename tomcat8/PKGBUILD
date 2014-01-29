@@ -1,0 +1,98 @@
+# Maintainer: Guillaume ALAUX <guillaume@archlinux.org>
+pkgname=tomcat8
+#TODO
+_pkgver=8.0.0-RC10
+pkgver=8.0.0_RC10
+pkgrel=1
+arch=('any')
+url='http://tomcat.apache.org/'
+license=('APACHE')
+makedepends=('java-environment>=7' 'apache-ant>=1.8' 'java-commons-daemon' 'eclipse-ecj')
+#TODO
+pkgdesc='Servlet-3.0/JSP-2.2 Container'
+depends=('java-runtime>=7' 'java-jsvc' 'eclipse-ecj')
+# TODO see if this still works
+optdepends=('tomcat-native: to allow optimal performance in production environments')
+backup=(etc/tomcat8/catalina.policy
+        etc/tomcat8/catalina.properties
+        etc/tomcat8/context.xml
+        etc/tomcat8/logging.properties
+        etc/tomcat8/server.xml
+        etc/tomcat8/tomcat-users.xml
+        etc/tomcat8/web.xml)
+install=tomcat8.install
+source=(http://archive.apache.org/dist/tomcat/tomcat-8/v${_pkgver}/src/apache-tomcat-${_pkgver}-src.tar.gz
+        #http://archive.apache.org/dist/tomcat/tomcat-8/v${_pkgver}/bin/apache-tomcat-${_pkgver}.tar.gz
+        systemd_tomcat8.service
+        systemd_tmpfiles.d_tomcat8.conf
+        tomcat8.install)
+
+sha256sums=('cd578264c2b96a3ba404e110efc0277006cb3d645035bc76a6ddca0fdc474709'
+            'bd438b80275bfd49074cf117b3f1dee86a3c9203f06d8d42f2130bd066bbf519'
+            'cd637d5b1a0e816c149c868a72d3d315ea0061efc9e544cadfbc73859dedb847'
+            '48147c17749d09d892606b4e992375c5c33229fa10d8e9c899a6ddd50100ba9c')
+
+build() {
+  cd "${srcdir}/apache-tomcat-${_pkgver}-src"
+
+  . /etc/profile.d/apache-ant.sh
+
+  echo "base.path=${srcdir}" > build.properties
+  mkdir ${srcdir}/DOWN_LIBS
+
+  ant release \
+    -Dbase.path=${srcdir}/DOWN_LIBS \
+    -Dcommons-daemon.jar=/usr/share/java/commons-daemon.jar \
+    -Djdt.jar=/usr/share/java/eclipse-ecj.jar
+    #-Dno.build.dbcp=true
+}
+
+#TODO add test "ant test"
+
+package() {
+  cd "${srcdir}/apache-tomcat-${_pkgver}-src/output/build"
+
+  # Tomcat general files
+  install -dm755 ${pkgdir}/usr/share/{,java/}${pkgname}
+  # commons-daemon and tomcat-natives are packaged on their own
+  rm bin/{*.bat,commons-daemon*,tomcat-native.tar.gz}
+  cp -r bin ${pkgdir}/usr/share/${pkgname}
+
+  # eclipse-ecj is packaged on its own
+  rm lib/eclipse-ecj.jar
+  install -m644 lib/* ${pkgdir}/usr/share/java/${pkgname}
+  ln -s ../eclipse-ecj.jar ${pkgdir}/usr/share/java/${pkgname}/eclipse-ecj.jar
+
+  #install -m644 "${srcdir}/apache-tomcat-${_pkgver}/lib/tomcat-dbcp.jar" \
+  #              ${pkgdir}/usr/share/java/${pkgname}/tomcat-dbcp-${_pkgver}.jar
+  #ln -s tomcat-dbcp-${_pkgver}.jar \
+  #      ${pkgdir}/usr/share/java/${pkgname}/tomcat-dbcp.jar
+
+  ln -s /usr/share/java/${pkgname} ${pkgdir}/usr/share/${pkgname}/lib
+
+  # 71=tomcat7 / 19=log TODO
+  install -dm775 -o 71 -g 19 ${pkgdir}/var/log/${pkgname}
+  ln -s /var/log/${pkgname} ${pkgdir}/usr/share/${pkgname}/logs
+  touch ${pkgdir}/var/log/${pkgname}/catalina.{out,err}
+  chgrp 19 ${pkgdir}/var/log/${pkgname}/catalina.{out,err}
+
+  install -dm775 ${pkgdir}/etc/${pkgname}
+  install -g 71 -m640 conf/* ${pkgdir}/etc/${pkgname}
+  install -d -g 71 -m775 ${pkgdir}/etc/${pkgname}/Catalina
+  ln -s /etc/${pkgname} ${pkgdir}/usr/share/${pkgname}/conf
+
+  install -dm775 ${pkgdir}/var/lib/${pkgname}
+  cp -r webapps ${pkgdir}/var/lib/${pkgname}
+  chown -R 71:71 ${pkgdir}/var/lib/${pkgname}
+  ln -s /var/lib/${pkgname}/webapps ${pkgdir}/usr/share/${pkgname}/webapps
+
+  install -dm1777 ${pkgdir}/var/tmp
+  install -dm775 -o 71 -g 71 ${pkgdir}/var/tmp/${pkgname}/{temp,work}
+  ln -s /var/tmp/${pkgname}/temp ${pkgdir}/usr/share/${pkgname}/temp
+  ln -s /var/tmp/${pkgname}/work ${pkgdir}/usr/share/${pkgname}/work
+
+  install -Dm644 ${srcdir}/systemd_tomcat8.service \
+                 ${pkgdir}/usr/lib/systemd/system/${pkgname}.service
+  install -Dm644 ${srcdir}/systemd_tmpfiles.d_tomcat8.conf \
+                 ${pkgdir}/usr/lib/tmpfiles.d/${pkgname}.conf
+}
