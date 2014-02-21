@@ -1,20 +1,23 @@
+# Maintainer: Guillaume ALAUX <guillaume at alaux dot net>
+# Contributor: Adrian Berriel <berriel@gmail.com>
 # Contributor: Tomas Urgosik <tomas.urgosik@gmail.com>
 # Contributor: Lee.MaRS <leemars@gmail.com>
-# Contributor: Guillaume ALAUX <Guillaume at ALAUX dot net>
-
 pkgname=gwt
-pkgver=2.1.0
-arch=('i686' 'x86_64')
+pkgver=2.6.0
 pkgrel=1
-pkgdesc="Google Web Toolkit is an open source toolkit allowing developers to create Ajax applications in the Java programming language."
-url="http://code.google.com/webtoolkit/"
+pkgdesc='Google Web Toolkit - core libraries and compiler to write web applications'
+arch=('any')
+url='https://developers.google.com/web-toolkit/'
 license=('APACHE')
-depends=('java-runtime')
-source=(http://google-web-toolkit.googlecode.com/files/${pkgname}-${pkgver}.zip)
-md5sums=('50e77dbd2165680fb88032854ec89e25')
+depends=('java-environment')
+source=("http://google-web-toolkit.googlecode.com/files/${pkgname}-${pkgver}.zip")
+sha256sums=('bd4c13a5d1078446d519a742ee233971e55c447d1b87ffd5b1f90e54dd876b9a')
 
 package() {
-  mkdir ${pkgdir}/opt
-  cp -R ${pkgname}-${pkgver} ${pkgdir}/opt/${pkgname}
+  cd "${srcdir}"
+  install -d "${pkgdir}"/{opt,usr/bin}
+  cp -R ${pkgname}-${pkgver} "${pkgdir}"/opt/${pkgname}
+  sed -i 's/`dirname $0`/\/opt\/gwt/' "${pkgdir}"/opt/${pkgname}/webAppCreator
+  ln -s /opt/gwt/webAppCreator "${pkgdir}"/usr/bin/webAppCreator
+  find "${pkgdir}" -name "*.dll" -o -name "*.cmd" -delete
 }
-
