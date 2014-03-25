@@ -2,8 +2,8 @@
 # Contributor: Shizeeg Unadequatov <shizeeque@gmail.com>
 
 pkgname=kakoune-git
-pkgver=r1836.4ba99f7
-pkgrel=2
+pkgver=r1860.bbdb249
+pkgrel=1
 pkgdesc='Code editor heavily inspired by Vim'
 arch=('i686' 'x86_64')
 url='https://github.com/mawww/kakoune'
