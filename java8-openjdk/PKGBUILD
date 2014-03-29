@@ -59,7 +59,10 @@ build() {
   export MAKEFLAGS=${MAKEFLAGS/-j*}
 
   sh configure \
-    --prefix=$pkgdir
+    --prefix=$pkgdir \
+    --with-user-release-suffix='archlinux' \
+    --with-update-version=$_JDK_UPDATE_VERSION
+    #--with-milestone=
 
   make
 }
