@@ -2,9 +2,7 @@
 pkgname=('jdk8-openjdk')
 pkgbase=java8-openjdk
 _java_ver=8
-_codate=2014-03-28
 _JDK_UPDATE_VERSION=132
-_hgdir=jdk8_hg_$_codate
 pkgver=${_java_ver}.u${_JDK_UPDATE_VERSION}
 pkgrel=1
 pkgdesc='Java environment'
@@ -27,6 +25,9 @@ source=($_hgdir.tgz
         001_adjust-mflags-for-gmake-4.patch)
 sha256sums=('a5017c01889551d04acfb946e15b7fdb54c92f2c0a607276ff7863362127dd8d'
             '682104f7723c5c543c47b53f51cc5577e273a12343bd04bebd1bcd70dd72ded9')
+
+_codate=2014-03-28
+_hgdir=jdk8_hg_$_codate
 
 mksource() {
   cd $srcdir
@@ -59,10 +60,11 @@ build() {
   export MAKEFLAGS=${MAKEFLAGS/-j*}
 
   sh configure \
-    --prefix=$pkgdir \
+    --with-update-version=$_JDK_UPDATE_VERSION \
+    --with-milestone='ga' \
     --with-user-release-suffix='archlinux' \
-    --with-update-version=$_JDK_UPDATE_VERSION
-    #--with-milestone=
+    --prefix=$pkgdir
+    #--with-build-number=$pkgrel
 
   make
 }
