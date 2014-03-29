@@ -1,24 +1,23 @@
-# Maintainer: Gaetan Renaudeau <gre at zenexity dot com>
-pkgname=playframework
-pkgver=1.2.5
-pkgrel=10
-pkgdesc="An open source web application framework in Java which follows the MVC pattern."
+# Maintainer: ???
+# Contributor: Gaetan Renaudeau <gre at zenexity dot com>
+# Contributor: Guillaume ALAUX <guillaume at alaux dot net>
+pkgname=playframework1
+pkgver=1.2.5.3
+pkgrel=1
+pkgdesc="An open source web application framework in Java which follows the MVC pattern - version 1"
 url="http://www.playframework.org/"
 arch=('any')
 license=('APACHE')
 depends=('java-environment' 'python2')
-backup=()
-source=(http://download.playframework.org/releases/play-${pkgver}.zip 
+source=(http://downloads.typesafe.com/play/$pkgver/play-$pkgver.zip
         python2fix.patch
         skeleton_playapp
         playapp_sample)
-md5sums=('31d204bb105f67c5e418fad073e818a4'
+md5sums=('cbb53344cf21e35ec19274eaa708392b'
          '967a191ca673aec93546640002c794ab'
          '9104c0ccd6021504a6cd08272bec09ce'
          'b9e54d111538ca39892d580697d1db02')
 
-provides=()
-conflicts=()
 optdepends=('apache-ant: A java-based build tool used to compile play framework.'
             'bash-completion: To have a bash completion on play command.')
 
@@ -38,11 +37,6 @@ package() {
 
   # the python env is python2 on Arch Linux
   patch $pkgdir/usr/share/playframework-${pkgver}/play $srcdir/python2fix.patch
-  
-  ln -s /usr/share/playframework-${pkgver}/play $pkgdir/usr/bin/play
-  install -d $pkgdir/usr/bin
-  install -d -m755 $pkgdir/usr/share
-  install -d $pkgdir/etc/bash_completion.d/
-  install -d $pkgdir/etc/rc.d/
-  install -d $pkgdir/etc/conf.d/
+
+  ln -s /usr/share/playframework-${pkgver}/play $pkgdir/usr/bin/play1
 }
