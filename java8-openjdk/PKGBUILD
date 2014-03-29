@@ -1,0 +1,88 @@
+# Maintainer: Guillaume ALAUX <guillaume@archlinux.org>
+pkgname=('jdk8-openjdk')
+pkgbase=java8-openjdk
+_java_ver=8
+_codate=2014-03-28
+_JDK_UPDATE_VERSION=132
+_hgdir=jdk8_hg_$_codate
+pkgver=${_java_ver}.u${_JDK_UPDATE_VERSION}
+pkgrel=1
+pkgdesc='Java environment'
+arch=('i686' 'x86_64')
+url='http://openjdk.java.net/'
+license=('custom')
+groups=()
+depends=()
+makedepends=('jdk7-openjdk' 'ccache' 'mercurial' 'cpio' 'unzip' 'zip'
+             'libxrender' 'libxtst' 'fontconfig' 'libcups' 'alsa-lib')
+#checkdepends=()
+provides=()
+conflicts=()
+replaces=()
+backup=()
+options=()
+install=
+changelog=
+source=($_hgdir.tgz
+        001_adjust-mflags-for-gmake-4.patch)
+sha256sums=('a5017c01889551d04acfb946e15b7fdb54c92f2c0a607276ff7863362127dd8d'
+            '682104f7723c5c543c47b53f51cc5577e273a12343bd04bebd1bcd70dd72ded9')
+
+mksource() {
+  cd $srcdir
+
+  # Initial checkout
+  #hg clone http://hg.openjdk.java.net/jdk8/jdk8 $_hgdir
+
+  cd $_hgdir
+  # To update the whole forest:
+  sh get_source.sh
+
+  cd $srcdir
+  tar czf $_hgdir.tgz $_hgdir
+}
+
+prepare() {
+  cd "$srcdir/$_hgdir"
+  hg checkout jdk8-b$_JDK_UPDATE_VERSION
+
+  # https://bugs.openjdk.java.net/browse/JDK-8028407
+  cd hotspot
+  patch -p1 < $srcdir/001_adjust-mflags-for-gmake-4.patch
+}
+
+build() {
+  cd "$srcdir/$_hgdir"
+
+  unset JAVA_HOME
+  # http://icedtea.classpath.org/bugzilla/show_bug.cgi?id=1346
+  export MAKEFLAGS=${MAKEFLAGS/-j*}
+
+  sh configure \
+    --prefix=$pkgdir
+
+  make
+}
+
+#check() {
+#  cd "$srcdir/$pkgname-$pkgver"
+#  make -k check
+#}
+
+package_jdk8-openjdk() {
+  # options and directives that can be overridden
+  pkgdesc=""
+  depends=()
+  optdepends=()
+  provides=()
+  conflicts=()
+  replaces=()
+  backup=()
+  install=
+
+  cd "$srcdir/$_hgdir"
+  unset JAVA_HOME
+  # http://icedtea.classpath.org/bugzilla/show_bug.cgi?id=1346
+  export MAKEFLAGS=${MAKEFLAGS/-j*}
+  make DESTDIR="$pkgdir/" install
+}
