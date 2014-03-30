@@ -1,8 +1,10 @@
 # Maintainer: Guillaume ALAUX <guillaume@archlinux.org>
-pkgname=('jdk8-openjdk')
+pkgname=('jdk8-openjdk-noicedtea')
 pkgbase=java8-openjdk
 _java_ver=8
+_codate=2014-03-28
 _JDK_UPDATE_VERSION=132
+_hgdir=jdk8_hg_$_codate
 pkgver=${_java_ver}.u${_JDK_UPDATE_VERSION}
 pkgrel=1
 pkgdesc='Java environment'
@@ -12,7 +14,7 @@ license=('custom')
 groups=()
 depends=()
 makedepends=('jdk7-openjdk' 'ccache' 'mercurial' 'cpio' 'unzip' 'zip'
-             'libxrender' 'libxtst' 'fontconfig' 'libcups' 'alsa-lib')
+             'libxrender' 'libxtst' 'fontconfig' 'libcups' 'alsa-lib' 'giflib')
 #checkdepends=()
 provides=()
 conflicts=()
@@ -25,9 +27,6 @@ source=($_hgdir.tgz
         001_adjust-mflags-for-gmake-4.patch)
 sha256sums=('a5017c01889551d04acfb946e15b7fdb54c92f2c0a607276ff7863362127dd8d'
             '682104f7723c5c543c47b53f51cc5577e273a12343bd04bebd1bcd70dd72ded9')
-
-_codate=2014-03-28
-_hgdir=jdk8_hg_$_codate
 
 mksource() {
   cd $srcdir
@@ -59,13 +58,24 @@ build() {
   # http://icedtea.classpath.org/bugzilla/show_bug.cgi?id=1346
   export MAKEFLAGS=${MAKEFLAGS/-j*}
 
+  install -dm755 $srcdir/$_hgdir/image
   sh configure \
-    --with-update-version=$_JDK_UPDATE_VERSION \
+    --prefix=$srcdir/$_hgdir/image \
     --with-milestone='ga' \
-    --with-user-release-suffix='archlinux' \
-    --prefix=$pkgdir
-    #--with-build-number=$pkgrel
-
+    --with-build-number="b$_JDK_UPDATE_VERSION" \
+    --with-giflib=system \
+    --with-zlib=system
+    # Cannot use 'pkgdir' in 'build' as split package does not know what this can possibly mean
+    #--prefix=$srcdir/image \
+    #--with-update-version=$_JDK_UPDATE_VERSION \
+    # not needed?
+    #--with-user-release-suffix='archlinux' \
+    # does not work? Plus create links refering to $pkgdir
+    #--bindir=$pkgdir/usr/bin \
+    # TODO add these if not already taken by default
+#  --with-freetype-lib
+#  --with-alsa-lib
+ 
   make
 }
 
@@ -74,7 +84,7 @@ build() {
 #  make -k check
 #}
 
-package_jdk8-openjdk() {
+package_jdk8-openjdk-noicedtea() {
   # options and directives that can be overridden
   pkgdesc=""
   depends=()
@@ -89,5 +99,10 @@ package_jdk8-openjdk() {
   unset JAVA_HOME
   # http://icedtea.classpath.org/bugzilla/show_bug.cgi?id=1346
   export MAKEFLAGS=${MAKEFLAGS/-j*}
+  install -dm755 $pkgdir/usr/bin
+  # TODO create links in /usr/bin
   make DESTDIR="$pkgdir/" install
+  #rm -rf $pkgdir/usr/lib/bin
+  # http://pkgs.fedoraproject.org/cgit/java-1.8.0-openjdk.git/tree/java-1.8.0-openjdk.spec
+  # the build (erroneously) removes read permissions from some jars
 }
