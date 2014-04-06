@@ -10,8 +10,6 @@ pkgrel=1
 arch=('i686' 'x86_64')
 url='http://openjdk.java.net/'
 license=('custom')
-groups=()
-depends=()
 makedepends=('jdk7-openjdk' 'ccache' 'mercurial' 'cpio' 'unzip' 'zip'
              'libxrender' 'libxtst' 'fontconfig' 'libcups' 'alsa-lib')
               #'giflib'
@@ -198,7 +196,8 @@ package_jre8-openjdk-noicedtea() {
 
 package_jdk8-openjdk-noicedtea() {
   pkgdesc="Free Java environment - development kit - 'NO ICEDTEA' DEVEL VERSION"
-  depends=('jre8-openjdk' 'xdg-utils' 'hicolor-icon-theme')
+  # TODO remove the '-noicedtea'
+  depends=('jre8-openjdk-noicedtea' 'xdg-utils' 'hicolor-icon-theme')
   optdepends=('alsa-lib: for basic sound support'
              'gtk2: for the Gtk+ look and feel – desktop usage')
              #'icedtea-web-java8: web browser plugin + Java Web Start'
