@@ -81,7 +81,8 @@ build() {
 #  --with-freetype-lib
 #  --with-alsa-lib
  
-  make LOG=trace HOTSPOT_BUILD_JOBS=1
+  make
+  #LOG=trace HOTSPOT_BUILD_JOBS=1
 
   unset JAVA_HOME
   # http://icedtea.classpath.org/bugzilla/show_bug.cgi?id=1346
