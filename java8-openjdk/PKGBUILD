@@ -7,31 +7,21 @@ _JDK_UPDATE_VERSION=132
 _hgdir=jdk8_hg_$_codate
 pkgver=${_java_ver}.u${_JDK_UPDATE_VERSION}
 pkgrel=1
-pkgdesc='Java environment'
 arch=('i686' 'x86_64')
 url='http://openjdk.java.net/'
 license=('custom')
 groups=()
 depends=()
 makedepends=('jdk7-openjdk' 'ccache' 'mercurial' 'cpio' 'unzip' 'zip'
-             'libxrender' 'libxtst' 'fontconfig' 'libcups' 'alsa-lib'
-              )
+             'libxrender' 'libxtst' 'fontconfig' 'libcups' 'alsa-lib')
               #'giflib'
-
-#checkdepends=()
-provides=()
-conflicts=()
-replaces=()
-backup=()
-options=()
-install=
-changelog=
 source=($_hgdir.tgz
         001_adjust-mflags-for-gmake-4.patch
         profile_jdk8-openjdk.csh
         profile_jdk8-openjdk.sh
         profile_jre8-openjdk.csh
         profile_jre8-openjdk.sh)
+
 sha256sums=('a5017c01889551d04acfb946e15b7fdb54c92f2c0a607276ff7863362127dd8d'
             '682104f7723c5c543c47b53f51cc5577e273a12343bd04bebd1bcd70dd72ded9'
             '008296c931817bb95727af87cda4c292139f159436a1122a039b7850c6bec474'
@@ -70,9 +60,6 @@ build() {
   unset JAVA_HOME
   # http://icedtea.classpath.org/bugzilla/show_bug.cgi?id=1346
   export MAKEFLAGS=${MAKEFLAGS/-j*}
-
-  # TODO remove this
-  make clean
 
   install -dm755 $srcdir/$_hgdir/image
   sh configure \
@@ -122,13 +109,13 @@ build() {
 #}
 
 package_jre8-openjdk-noicedtea() {
-  # options and directives that can be overridden
-  pkgdesc=""
-  depends=()
-  optdepends=()
-  provides=()
-  conflicts=()
-  replaces=()
+  pkgdesc="Free Java environment - runtime environment - 'NO ICEDTEA' DEVEL VERSION"
+  #pkgdesc="Free Java environment - minimal runtime headless environment"
+  depends=('ca-certificates-java' 'nss')
+  optdepends=('java-rhino: for some JavaScript support')
+  # TODO remove one of the two when splitting packages into '-headless'
+  provides=('java-runtime=8' 'java-runtime-headless=8')
+  conflicts=('java-runtime' 'java-runtime-headless')
   # FIXME first file looks like it belongs to 64 arch only…
   # Config files from 'lib' dir that should be backup
   _backup_etc=(etc/java-8-openjdk/amd64/jvm.cfg
@@ -150,11 +137,12 @@ package_jre8-openjdk-noicedtea() {
   backup=(etc/profile.d/jre.sh
           etc/profile.d/jre.csh
           ${_backup_etc[@]})
-  install=
+  install=install_jre8-openjdk.sh
 
   cd "$srcdir/$_hgdir/image/jvm/openjdk-1.8.0-ga/jre"
 
-  # TODO in fine, this should go to the '-headless' package
+  # TODO move all non graphical stuff to '-headless' package (do not forget license)
+
   install -d -m755 ${pkgdir}${_jvmdir}/jre
   cp -a bin lib ${pkgdir}${_jvmdir}/jre
 
@@ -165,8 +153,6 @@ package_jre8-openjdk-noicedtea() {
       ln -s ${_jvmdir}/jre/bin/${file} ${pkgdir}/usr/bin
     done
   popd
-
-  # TODO move all non graphical stuff to '-headless' package (do not forget license)
 
   # TODO Install icons and menu entries
   #for s in 16 24 32 48 ; do
@@ -210,15 +196,17 @@ package_jre8-openjdk-noicedtea() {
 }
 
 package_jdk8-openjdk-noicedtea() {
-  # options and directives that can be overridden
-  pkgdesc=""
-  depends=()
-  optdepends=()
-  provides=()
-  conflicts=()
-  replaces=()
-  backup=()
-  install=
+  pkgdesc="Free Java environment - development kit - 'NO ICEDTEA' DEVEL VERSION"
+  depends=('jre8-openjdk' 'xdg-utils' 'hicolor-icon-theme')
+  optdepends=('alsa-lib: for basic sound support'
+             'gtk2: for the Gtk+ look and feel – desktop usage')
+             #'icedtea-web-java8: web browser plugin + Java Web Start'
+             #'giflib: for gif format support'
+             #'libpulse: for advanced sound support'
+  provides=('java-environment=8')
+  conflicts=('java-environment')
+  backup=(etc/profile.d/jdk.sh
+          etc/profile.d/jdk.csh)
 
   cd "$srcdir/$_hgdir/image/jvm/openjdk-1.8.0-ga"
 
