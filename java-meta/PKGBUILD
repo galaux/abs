@@ -1,0 +1,62 @@
+# Maintainer: Guillaume ALAUX <guillaume@archlinux.org>
+pkgname=('java-runtime-meta' 'java-environment-meta')
+pkgbase=java-meta
+pkgver=1
+pkgrel=1
+arch=('any')
+url='www.archlinux.org'
+license=('GPL')
+source=(profile_jre.csh
+        profile_jre.sh
+        profile_jdk.csh
+        profile_jdk.sh)
+sha256sums=('3897326ecc5a842f4022ae9d301795f6418942d512300edbed4e1241715f88eb'
+            'b9e6d7b867d449a674a8f4afc0610917ccb53db69d1a5c1056282a062baee1a1'
+            'fe0b207b7c12a3e9987ed901fec5b18d91bf1bf33dc486040957cc7dbce4a748'
+            '53e15de8c42263a2f548db9f3d7f3cda1802f7a4e8e05a5c9060b20d44d0302c')
+
+package_java-runtime-meta() {
+  pkgdesc="Meta files for Java Runtime Environments"
+  backup=(etc/profile.d/jre.sh
+          etc/profile.d/jre.csh)
+
+  cd "$srcdir"
+
+  install -dm755 $pkgdir/etc/profile.d
+  install -m644 profile_jre.sh  $pkgdir/etc/profile.d/jre.sh
+  install -m644 profile_jre.csh $pkgdir/etc/profile.d/jre.csh
+
+  install -dm755 $pkgdir/usr/bin/
+  # Official list of binaries that can vary depending on the vendor and/or
+  # version of the Java environment pointed by /usr/lib/jvm/java-default-runtime
+  # This list is based on Arch Linux' default Java implementation: "OpenJDK 7 Icedtea"
+  for b in java keytool orbd pack200 rmid rmiregistry servertool tnameserv unpack200; do
+    ln -s /usr/lib/jvm/java-default-runtime/jre/bin/$b $pkgdir/usr/bin/$b
+  done
+}
+
+package_java-environment-meta() {
+  pkgdesc="Meta files for Java Development Kits"
+  backup=(etc/profile.d/jdk.sh
+          etc/profile.d/jdk.csh)
+
+  cd "$srcdir"
+
+  install -dm755 $pkgdir/etc/profile.d
+  install -m644 profile_jdk.sh  $pkgdir/etc/profile.d/jdk.sh
+  install -m644 profile_jdk.csh $pkgdir/etc/profile.d/jdk.csh
+
+  install -dm755 $pkgdir/usr/bin/
+  # Official list of binaries that can vary depending on the vendor and/or
+  # version of the Java environment pointed by /usr/lib/jvm/java-default-runtime
+  # This list is based on Arch Linux' default Java implementation: "OpenJDK 7 Icedtea"
+  for b in \
+    appletviewer extcheck idlj jar jarsigner javac javadoc javah javap jcmd \
+    jconsole jdb jdeps jhat jinfo jmap jps jrunscript jsadebugd jstack jstat \
+    jstatd native2ascii rmic schemagen serialver wsgen wsimport xjc;
+  do
+    ln -s /usr/lib/jvm/java-default-runtime/bin/$b $pkgdir/usr/bin/$b
+  done
+}
+
+# TODO policytool in -headless
