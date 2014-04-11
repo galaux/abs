@@ -152,17 +152,20 @@ package_jre8-openjdk-headless-noicedtea() {
 
   # Link binaries into /usr/bin
   pushd ${pkgdir}${_jvmdir}/jre/bin
-    install -m755 -d ${pkgdir}/usr/bin/
+    install -d -m755 ${pkgdir}/usr/bin/
+    install -d -m755 $pkgdir/usr/share/man/{,ja/}man1/
     for file in *; do
       ln -s ${_jvmdir}/jre/bin/${file} ${pkgdir}/usr/bin
+      install -m644 "$srcdir/$_hgdir/image/jvm/openjdk-1.8.0-ga/man/man1/$file.1" \
+        $pkgdir/usr/share/man/man1/$file.1
+      install -m644 "$srcdir/$_hgdir/image/jvm/openjdk-1.8.0-ga/man/ja/man1/$file.1" \
+        $pkgdir/usr/share/man/ja/man1/$file.1
     done
   popd
 
   # Link JKS keystore from ca-certificates-java
   rm -f ${pkgdir}${_jvmdir}/jre/lib/security/cacerts
   ln -sf /etc/ssl/certs/java/cacerts "${pkgdir}${_jvmdir}/jre/lib/security/cacerts"
-
-  # TODO man pages
 
   # TODO move these on a meta package to enable easy switching between different vendors and versions
   # Set some variables
@@ -219,6 +222,7 @@ package_jre8-openjdk-noicedtea() {
   #install -m644 ${srcdir}/icedtea-${_icedtea_ver}/policytool.desktop ${pkgdir}/usr/share/applications
 
   # TODO man pages
+  # policytool
 
   # Install license
   install -m755 -d ${pkgdir}/usr/share/licenses/${pkgbase}/
@@ -269,12 +273,12 @@ package_jdk8-openjdk-noicedtea() {
   done
   popd
 
+  # Handling 'java-rmi.cgi' separately
+  install -m755 -D bin/java-rmi.cgi ${pkgdir}${_jvmdir}/bin/java-rmi.cgi
+
   # TODO Install desktop files.
   #install -m755 -d ${pkgdir}/usr/share/applications
   #install -m644 ${srcdir}/icedtea-${_icedtea_ver}/jconsole.desktop ${pkgdir}/usr/share/applications
-
-  # Handling 'java-rmi.cgi' separately
-  install -m755 -D bin/java-rmi.cgi ${pkgdir}${_jvmdir}/bin/java-rmi.cgi
 
   # Set some variables
   install -Dm755 ${srcdir}/profile_jdk8-openjdk.sh  ${pkgdir}/etc/profile.d/jdk.sh
