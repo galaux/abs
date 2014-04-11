@@ -1,5 +1,5 @@
 # Maintainer: Guillaume ALAUX <guillaume@archlinux.org>
-pkgname=('jre8-openjdk-noicedtea' 'jdk8-openjdk-noicedtea')
+pkgname=('jre8-openjdk-headless-noicedtea' 'jre8-openjdk-noicedtea' 'jdk8-openjdk-noicedtea')
 pkgbase=java8-openjdk
 _java_ver=8
 _codate=2014-03-28
@@ -28,6 +28,10 @@ sha256sums=('a5017c01889551d04acfb946e15b7fdb54c92f2c0a607276ff7863362127dd8d'
             '3a841d8b5732b8995dbeb8851ba7751249f8f0985946bfc2a8f74c618e9712c9')
 
 _jvmdir=/usr/lib/jvm/java-8-openjdk
+_headlessfiles=(bin/policytool
+                lib/amd64/libjsound.so
+                lib/amd64/libjsoundalsa.so
+                lib/amd64/libsplashscreen.so)
 
 mksource() {
   cd $srcdir
@@ -107,14 +111,12 @@ build() {
 #  make -k check
 #}
 
-package_jre8-openjdk-noicedtea() {
-  pkgdesc="Free Java environment - runtime environment - 'NO ICEDTEA' DEVEL VERSION"
-  #pkgdesc="Free Java environment - minimal runtime headless environment"
+package_jre8-openjdk-headless-noicedtea() {
+  pkgdesc="Free Java environment - headless runtime environment - 'NO ICEDTEA' DEVEL VERSION"
   depends=('ca-certificates-java' 'nss')
   optdepends=('java-rhino: for some JavaScript support')
-  # TODO remove one of the two when splitting packages into '-headless'
-  provides=('java-runtime=8' 'java-runtime-headless=8')
-  conflicts=('java-runtime' 'java-runtime-headless')
+  provides=('java-runtime-headless=8')
+  conflicts=('java-runtime-headless')
   # FIXME first file looks like it belongs to 64 arch only…
   # Config files from 'lib' dir that should be backup
   _backup_etc=(etc/java-8-openjdk/amd64/jvm.cfg
@@ -140,10 +142,13 @@ package_jre8-openjdk-noicedtea() {
 
   cd "$srcdir/$_hgdir/image/jvm/openjdk-1.8.0-ga/jre"
 
-  # TODO move all non graphical stuff to '-headless' package (do not forget license)
-
   install -d -m755 ${pkgdir}${_jvmdir}/jre
   cp -a bin lib ${pkgdir}${_jvmdir}/jre
+
+  # Remove 'non-headless' lib files
+  for f in ${_headlessfiles[@]}; do
+    rm ${pkgdir}${_jvmdir}/jre/$f
+  done
 
   # Link binaries into /usr/bin
   pushd ${pkgdir}${_jvmdir}/jre/bin
@@ -152,17 +157,6 @@ package_jre8-openjdk-noicedtea() {
       ln -s ${_jvmdir}/jre/bin/${file} ${pkgdir}/usr/bin
     done
   popd
-
-  # TODO Install icons and menu entries
-  #for s in 16 24 32 48 ; do
-  #  install -m755 -d ${pkgdir}/usr/share/icons/hicolor/${s}x${s}/apps/
-  #  install -m644 ../../../openjdk/jdk/src/solaris/classes/sun/awt/X11/java-icon${s}.png \
-  #                ${pkgdir}/usr/share/icons/hicolor/${s}x${s}/apps/java.png
-  #done
-
-  # TODO Install desktop files
-  #install -m755 -d ${pkgdir}/usr/share/applications
-  #install -m644 ${srcdir}/icedtea-${_icedtea_ver}/policytool.desktop ${pkgdir}/usr/share/applications
 
   # Link JKS keystore from ca-certificates-java
   rm -f ${pkgdir}${_jvmdir}/jre/lib/security/cacerts
@@ -186,12 +180,49 @@ package_jre8-openjdk-noicedtea() {
   mv ${pkgdir}${_jvmdir}/jre/lib/management/snmp.acl.template \
      ${pkgdir}${_jvmdir}/jre/lib/management/snmp.acl
 
-  # Move 'lib' files files that were set in _backup_etc to /etc
+  # Move config files that were set in _backup_etc from ./lib to /etc
   for file in ${_backup_etc[@]}; do
     _filepkgpath=$_jvmdir/jre/lib/${file#etc/java-8-openjdk/}
     install -Dm644 $pkgdir$_filepkgpath $pkgdir/$file
     ln -sf /$file $pkgdir$_filepkgpath
   done
+}
+
+package_jre8-openjdk-noicedtea() {
+  pkgdesc="Free Java environment - full runtime environment - 'NO ICEDTEA' DEVEL VERSION"
+  depends=('java-runtime-headless')
+  provides=('java-runtime=8')
+  conflicts=('java-runtime')
+
+  cd "$srcdir/$_hgdir/image/jvm/openjdk-1.8.0-ga/jre"
+
+  # TODO? /usr/lib/jvm/java-8-openjdk/jre/lib/sound.properties
+  for f in ${_headlessfiles[@]}; do
+    install -Dm644 $f ${pkgdir}${_jvmdir}/jre/$f
+  done
+
+  # Link binaries into /usr/bin
+  pushd ${pkgdir}${_jvmdir}/jre/bin
+    install -m755 -d ${pkgdir}/usr/bin/
+    ln -s ${_jvmdir}/jre/bin/policytool ${pkgdir}/usr/bin
+  popd
+
+  # TODO Install icons and menu entries
+  #for s in 16 24 32 48 ; do
+  #  install -m755 -d ${pkgdir}/usr/share/icons/hicolor/${s}x${s}/apps/
+  #  install -m644 ../../../openjdk/jdk/src/solaris/classes/sun/awt/X11/java-icon${s}.png \
+  #                ${pkgdir}/usr/share/icons/hicolor/${s}x${s}/apps/java.png
+  #done
+
+  # TODO Install desktop files
+  #install -m755 -d ${pkgdir}/usr/share/applications
+  #install -m644 ${srcdir}/icedtea-${_icedtea_ver}/policytool.desktop ${pkgdir}/usr/share/applications
+
+  # TODO man pages
+
+  # Install license
+  install -m755 -d ${pkgdir}/usr/share/licenses/${pkgbase}/
+  ln -sf /usr/share/licenses/${pkgbase} "${pkgdir}/usr/share/licenses/${pkgname}"
 }
 
 package_jdk8-openjdk-noicedtea() {
