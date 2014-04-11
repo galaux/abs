@@ -1,5 +1,5 @@
 # Maintainer: Guillaume ALAUX <guillaume@archlinux.org>
-pkgname=('java-runtime-meta' 'java-environment-meta')
+pkgname=('java-runtime-headless-meta' 'java-runtime-meta' 'java-environment-meta')
 pkgbase=java-meta
 pkgver=1
 pkgrel=1
@@ -15,8 +15,8 @@ sha256sums=('3897326ecc5a842f4022ae9d301795f6418942d512300edbed4e1241715f88eb'
             'fe0b207b7c12a3e9987ed901fec5b18d91bf1bf33dc486040957cc7dbce4a748'
             '53e15de8c42263a2f548db9f3d7f3cda1802f7a4e8e05a5c9060b20d44d0302c')
 
-package_java-runtime-meta() {
-  pkgdesc="Meta files for Java Runtime Environments"
+package_java-runtime-headless-meta() {
+  pkgdesc='Meta files for headless Java Runtime Environments'
   backup=(etc/profile.d/jre.sh
           etc/profile.d/jre.csh)
 
@@ -35,8 +35,24 @@ package_java-runtime-meta() {
   done
 }
 
+package_java-runtime-meta() {
+  pkgdesc='Meta files for full Java Runtime Environments'
+
+  cd "$srcdir"
+
+  install -dm755 $pkgdir/etc/profile.d
+  install -m644 profile_jre.sh  $pkgdir/etc/profile.d/jre.sh
+  install -m644 profile_jre.csh $pkgdir/etc/profile.d/jre.csh
+
+  install -dm755 $pkgdir/usr/bin/
+  # Official list of binaries that can vary depending on the vendor and/or
+  # version of the Java environment pointed by /usr/lib/jvm/java-default-runtime
+  # This list is based on Arch Linux' default Java implementation: "OpenJDK 7 Icedtea"
+  ln -s /usr/lib/jvm/java-default-runtime/jre/bin/policytool $pkgdir/usr/bin/policytool
+}
+
 package_java-environment-meta() {
-  pkgdesc="Meta files for Java Development Kits"
+  pkgdesc='Meta files for Java Development Kits'
   backup=(etc/profile.d/jdk.sh
           etc/profile.d/jdk.csh)
 
@@ -58,5 +74,3 @@ package_java-environment-meta() {
     ln -s /usr/lib/jvm/java-default-runtime/bin/$b $pkgdir/usr/bin/$b
   done
 }
-
-# TODO policytool in -headless
