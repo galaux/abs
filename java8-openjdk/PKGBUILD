@@ -186,7 +186,13 @@ package_jre8-openjdk-headless-noicedtea() {
 
 package_jre8-openjdk-noicedtea() {
   pkgdesc="Free Java environment - full runtime environment - 'NO ICEDTEA' DEVEL VERSION"
-  depends=('java-runtime-headless')
+  depends=('java-runtime-headless' 'xdg-utils' 'hicolor-icon-theme')
+  optdepends=('alsa-lib: for basic sound support'
+             'gtk2: for the Gtk+ look and feel - desktop usage'
+             'libxtst: linked in xawt/libmawt.so - desktop usage')
+  #TODO 'icedtea-web-java7: web browser plugin + Java Web Start'
+  #TODO 'giflib: for gif format support'
+  #TODO 'libpulse: for advanced sound support'
   provides=('java-runtime=8')
   conflicts=('java-runtime')
 
@@ -229,11 +235,6 @@ package_jdk8-openjdk-noicedtea() {
   pkgdesc="Free Java environment - development kit - 'NO ICEDTEA' DEVEL VERSION"
   # TODO remove the '-noicedtea'
   depends=('jre8-openjdk-noicedtea' 'xdg-utils' 'hicolor-icon-theme')
-  optdepends=('alsa-lib: for basic sound support'
-             'gtk2: for the Gtk+ look and feel – desktop usage')
-             #'icedtea-web-java8: web browser plugin + Java Web Start'
-             #'giflib: for gif format support'
-             #'libpulse: for advanced sound support'
   provides=('java-environment=8')
   conflicts=('java-environment')
   backup=(etc/profile.d/jdk.sh
