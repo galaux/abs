@@ -216,9 +216,10 @@ package_jre8-openjdk-noicedtea() {
                    ${pkgdir}/usr/share/icons/hicolor/${s}x${s}/apps/java.png
   done
 
-  # TODO Install desktop files
-  #install -m755 -d ${pkgdir}/usr/share/applications
-  #install -m644 ${srcdir}/icedtea-${_icedtea_ver}/policytool.desktop ${pkgdir}/usr/share/applications
+  # Desktop files
+  # TODO add them when switching to IcedTea
+  #install -Dm644 ${srcdir}/icedtea-${_icedtea_ver}/policytool.desktop \
+  #               ${pkgdir}/usr/share/applications/policytool.desktop
 
   # TODO man pages
   # policytool
