@@ -247,9 +247,7 @@ package_jdk8-openjdk-noicedtea() {
 
   # 'bin' files
   pushd bin
-  install -m755 -d ${pkgdir}${_jvmdir}/bin/ \
-                   ${pkgdir}/usr/bin/ \
-                   ${pkgdir}/usr/share/man/{,ja/}man1/
+  install -m755 -d ${pkgdir}${_jvmdir}/bin/
 
   # 'java-rmi.cgi' will be handled separately as it should not be in the PATH and has no man page
   for b in $(ls | grep -v java-rmi.cgi); do
@@ -258,10 +256,10 @@ package_jdk8-openjdk-noicedtea() {
       ln -s ../jre/bin/${b} ${pkgdir}${_jvmdir}/bin/${b}
     else
       # Copy binary to jdk/bin/
-      install -m755 ${b} ${pkgdir}${_jvmdir}/bin/${b}
+      install -Dm755 ${b} ${pkgdir}${_jvmdir}/bin/${b}
       # Copy man page
-      install -m644 ../man/man1/${b}.1 ${pkgdir}/usr/share/man/man1/${b}.1
-      install -m644 ../man/ja/man1/${b}.1 ${pkgdir}/usr/share/man/ja/man1/${b}.1
+      install -Dm644 ../man/man1/${b}.1 ${pkgdir}/usr/share/man/man1/${b}.1
+      install -Dm644 ../man/ja/man1/${b}.1 ${pkgdir}/usr/share/man/ja/man1/${b}.1
       # Link from /bin/
       ln -s ${_jvmdir}/bin/${b} ${pkgdir}/usr/bin/${b}
     fi
