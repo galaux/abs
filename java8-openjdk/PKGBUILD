@@ -27,10 +27,11 @@ sha256sums=('a5017c01889551d04acfb946e15b7fdb54c92f2c0a607276ff7863362127dd8d'
             '3a841d8b5732b8995dbeb8851ba7751249f8f0985946bfc2a8f74c618e9712c9')
 
 _jvmdir=/usr/lib/jvm/java-8-openjdk
-_headlessfiles=(bin/policytool
-                lib/amd64/libjsound.so
-                lib/amd64/libjsoundalsa.so
-                lib/amd64/libsplashscreen.so)
+#TODO remove policytool from this array as it is handled separatly or also include its man page
+_nonheadless=(bin/policytool
+              lib/amd64/libjsound.so
+              lib/amd64/libjsoundalsa.so
+              lib/amd64/libsplashscreen.so)
 
 mksource() {
   cd ${srcdir}
@@ -139,7 +140,7 @@ package_jre8-openjdk-headless-noicedtea() {
   cp -a bin lib ${pkgdir}${_jvmdir}/jre
 
   # Remove 'non-headless' lib files
-  for f in ${_headlessfiles[@]}; do
+  for f in ${_nonheadless[@]}; do
     rm ${pkgdir}${_jvmdir}/jre/${f}
   done
 
@@ -197,7 +198,7 @@ package_jre8-openjdk-noicedtea() {
   cd "${srcdir}/${_hgdir}/image/jvm/openjdk-1.8.0-ga/jre"
 
   # TODO? /usr/lib/jvm/java-8-openjdk/jre/lib/sound.properties
-  for f in ${_headlessfiles[@]}; do
+  for f in ${_nonheadless[@]}; do
     install -D -m 644 ${f} ${pkgdir}${_jvmdir}/jre/${f}
   done
 
