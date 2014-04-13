@@ -68,21 +68,14 @@ build() {
     --prefix=${srcdir}/${_hgdir}/image \
     --with-milestone='ga' \
     --with-build-number="b${_JDK_UPDATE_VERSION}" \
+    --enable-unlimited-crypto \
     --with-zlib=system
-    # TODO --enable-unlimited-crypto \
-    # TODO seems like openjdk does not want last version of giflib
+    # TODO OpenJDK does not want last version of giflib
     #--with-giflib=system \
-    # TODO Cannot use 'pkgdir' in 'build' as split package does not know what this can possibly mean
-    #--prefix=${srcdir}/image \
     # TODO do we need these?
     #--with-update-version=${_JDK_UPDATE_VERSION} \
     #--with-user-release-suffix='archlinux' \
-    # TODO does not work? Plus create links refering to ${pkgdir}
-    #--bindir=${pkgdir}/usr/bin \
-    # TODO add these if not already taken by default
-#  --with-freetype-lib
-#  --with-alsa-lib
- 
+
   make
   #LOG=trace HOTSPOT_BUILD_JOBS=1
 
