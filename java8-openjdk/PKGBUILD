@@ -211,11 +211,10 @@ package_jre8-openjdk-noicedtea() {
   popd
 
   # TODO Install icons and menu entries
-  #for s in 16 24 32 48 ; do
-  #  install -m755 -d ${pkgdir}/usr/share/icons/hicolor/${s}x${s}/apps/
-  #  install -m644 ../../../openjdk/jdk/src/solaris/classes/sun/awt/X11/java-icon${s}.png \
-  #                ${pkgdir}/usr/share/icons/hicolor/${s}x${s}/apps/java.png
-  #done
+  for s in 16 24 32 48; do
+    install -Dm644 $srcdir/$_hgdir/jdk/src/solaris/classes/sun/awt/X11/java-icon${s}.png \
+                   ${pkgdir}/usr/share/icons/hicolor/${s}x${s}/apps/java.png
+  done
 
   # TODO Install desktop files
   #install -m755 -d ${pkgdir}/usr/share/applications
