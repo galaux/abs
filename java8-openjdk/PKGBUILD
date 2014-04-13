@@ -62,7 +62,7 @@ build() {
   # http://icedtea.classpath.org/bugzilla/show_bug.cgi?id=1346
   export MAKEFLAGS=${MAKEFLAGS/-j*}
 
-  install -dm755 ${srcdir}/${_hgdir}/image
+  install -d -m 755 ${srcdir}/${_hgdir}/image/
   sh configure \
     --prefix=${srcdir}/${_hgdir}/image \
     --with-milestone='ga' \
@@ -135,7 +135,7 @@ package_jre8-openjdk-headless-noicedtea() {
 
   cd "${srcdir}/${_hgdir}/image/jvm/openjdk-1.8.0-ga/jre"
 
-  install -d -m755 ${pkgdir}${_jvmdir}/jre
+  install -d -m 755 ${pkgdir}${_jvmdir}/jre/
   cp -a bin lib ${pkgdir}${_jvmdir}/jre
 
   # Remove 'non-headless' lib files
@@ -145,13 +145,13 @@ package_jre8-openjdk-headless-noicedtea() {
 
   # Link binaries into /usr/bin
   pushd ${pkgdir}${_jvmdir}/jre/bin
-    install -d -m755 ${pkgdir}/usr/bin/
-    install -d -m755 ${pkgdir}/usr/share/man/{,ja/}man1/
+    install -d -m 755 ${pkgdir}/usr/bin/
+    install -d -m 755 ${pkgdir}/usr/share/man/{,ja/}man1/
     for file in *; do
       ln -s ${_jvmdir}/jre/bin/${file} ${pkgdir}/usr/bin
-      install -m644 "${srcdir}/${_hgdir}/image/jvm/openjdk-1.8.0-ga/man/man1/${file}.1" \
+      install -m 644 "${srcdir}/${_hgdir}/image/jvm/openjdk-1.8.0-ga/man/man1/${file}.1" \
         ${pkgdir}/usr/share/man/man1/${file}.1
-      install -m644 "${srcdir}/${_hgdir}/image/jvm/openjdk-1.8.0-ga/man/ja/man1/${file}.1" \
+      install -m 644 "${srcdir}/${_hgdir}/image/jvm/openjdk-1.8.0-ga/man/ja/man1/${file}.1" \
         ${pkgdir}/usr/share/man/ja/man1/${file}.1
     done
   popd
@@ -161,12 +161,12 @@ package_jre8-openjdk-headless-noicedtea() {
   ln -sf /etc/ssl/certs/java/cacerts "${pkgdir}${_jvmdir}/jre/lib/security/cacerts"
 
   # Set some variables
-  install -Dm755 ${srcdir}/profile_jre8-openjdk.sh  ${pkgdir}/etc/profile.d/jre.sh
-  install -Dm755 ${srcdir}/profile_jre8-openjdk.csh ${pkgdir}/etc/profile.d/jre.csh
+  install -D -m 755 ${srcdir}/profile_jre8-openjdk.sh  ${pkgdir}/etc/profile.d/jre.sh
+  install -D -m 755 ${srcdir}/profile_jre8-openjdk.csh ${pkgdir}/etc/profile.d/jre.csh
 
   # Install license
-  install -m755 -d ${pkgdir}/usr/share/licenses/${pkgbase}/
-  install -m644 ASSEMBLY_EXCEPTION LICENSE THIRD_PARTY_README \
+  install -d -m 755 ${pkgdir}/usr/share/licenses/${pkgbase}/
+  install -m 644 ASSEMBLY_EXCEPTION LICENSE THIRD_PARTY_README \
                  ${pkgdir}/usr/share/licenses/${pkgbase}
   ln -sf /usr/share/licenses/${pkgbase} "${pkgdir}/usr/share/licenses/${pkgname}"
 
@@ -178,7 +178,7 @@ package_jre8-openjdk-headless-noicedtea() {
   # Move config files that were set in _backup_etc from ./lib to /etc
   for file in ${_backup_etc[@]}; do
     _filepkgpath=${_jvmdir}/jre/lib/${file#etc/java-8-openjdk/}
-    install -Dm644 ${pkgdir}${_filepkgpath} ${pkgdir}/${file}
+    install -D -m 644 ${pkgdir}${_filepkgpath} ${pkgdir}/${file}
     ln -sf /${file} ${pkgdir}${_filepkgpath}
   done
 }
@@ -198,34 +198,34 @@ package_jre8-openjdk-noicedtea() {
 
   # TODO? /usr/lib/jvm/java-8-openjdk/jre/lib/sound.properties
   for f in ${_headlessfiles[@]}; do
-    install -Dm644 ${f} ${pkgdir}${_jvmdir}/jre/${f}
+    install -D -m 644 ${f} ${pkgdir}${_jvmdir}/jre/${f}
   done
 
   # Link binaries into /usr/bin
   pushd ${pkgdir}${_jvmdir}/jre/bin
-    install -m755 -d ${pkgdir}/usr/bin/
+    install -d -m 755 ${pkgdir}/usr/bin/
     ln -s ${_jvmdir}/jre/bin/policytool ${pkgdir}/usr/bin
   popd
 
   # Icons
   for s in 16 24 32 48; do
-    install -Dm644 ${srcdir}/${_hgdir}/jdk/src/solaris/classes/sun/awt/X11/java-icon${s}.png \
+    install -D -m 644 ${srcdir}/${_hgdir}/jdk/src/solaris/classes/sun/awt/X11/java-icon${s}.png \
       ${pkgdir}/usr/share/icons/hicolor/${s}x${s}/apps/java.png
   done
 
   # Desktop files
   # TODO add them when switching to IcedTea
-  #install -Dm644 ${srcdir}/icedtea-${_icedtea_ver}/policytool.desktop \
+  #install -D -m 644 ${srcdir}/icedtea-${_icedtea_ver}/policytool.desktop \
   #               ${pkgdir}/usr/share/applications/policytool.desktop
 
   # man pages
-  install -Dm644 "${srcdir}/${_hgdir}/image/jvm/openjdk-1.8.0-ga/man/man1/policytool.1" \
+  install -D -m 644 "${srcdir}/${_hgdir}/image/jvm/openjdk-1.8.0-ga/man/man1/policytool.1" \
     ${pkgdir}/usr/share/man/man1/policytool.1
-  install -Dm644 "${srcdir}/${_hgdir}/image/jvm/openjdk-1.8.0-ga/man/ja/man1/policytool.1" \
+  install -D -m 644 "${srcdir}/${_hgdir}/image/jvm/openjdk-1.8.0-ga/man/ja/man1/policytool.1" \
     ${pkgdir}/usr/share/man/ja/man1/policytool.1
 
   # Install license
-  install -m755 -d ${pkgdir}/usr/share/licenses/${pkgbase}/
+  install -d -m 755 ${pkgdir}/usr/share/licenses/${pkgbase}/
   ln -sf /usr/share/licenses/${pkgbase} "${pkgdir}/usr/share/licenses/${pkgname}"
 }
 
@@ -241,13 +241,13 @@ package_jdk8-openjdk-noicedtea() {
   cd "${srcdir}/${_hgdir}/image/jvm/openjdk-1.8.0-ga"
 
   # Main files
-  install -m755 -d ${pkgdir}${_jvmdir}
+  install -d -m 755 ${pkgdir}${_jvmdir}
 
   cp -a include lib ${pkgdir}${_jvmdir}
 
   # 'bin' files
   pushd bin
-  install -m755 -d ${pkgdir}${_jvmdir}/bin/
+  install -d -m 755 ${pkgdir}${_jvmdir}/bin/
 
   # 'java-rmi.cgi' will be handled separately as it should not be in the PATH and has no man page
   for b in $(ls | grep -v java-rmi.cgi); do
@@ -256,10 +256,10 @@ package_jdk8-openjdk-noicedtea() {
       ln -s ../jre/bin/${b} ${pkgdir}${_jvmdir}/bin/${b}
     else
       # Copy binary to jdk/bin/
-      install -Dm755 ${b} ${pkgdir}${_jvmdir}/bin/${b}
+      install -D -m 755 ${b} ${pkgdir}${_jvmdir}/bin/${b}
       # Copy man page
-      install -Dm644 ../man/man1/${b}.1 ${pkgdir}/usr/share/man/man1/${b}.1
-      install -Dm644 ../man/ja/man1/${b}.1 ${pkgdir}/usr/share/man/ja/man1/${b}.1
+      install -D -m 644 ../man/man1/${b}.1 ${pkgdir}/usr/share/man/man1/${b}.1
+      install -D -m 644 ../man/ja/man1/${b}.1 ${pkgdir}/usr/share/man/ja/man1/${b}.1
       # Link from /bin/
       ln -s ${_jvmdir}/bin/${b} ${pkgdir}/usr/bin/${b}
     fi
@@ -267,17 +267,17 @@ package_jdk8-openjdk-noicedtea() {
   popd
 
   # Handling 'java-rmi.cgi' separately
-  install -m755 -D bin/java-rmi.cgi ${pkgdir}${_jvmdir}/bin/java-rmi.cgi
+  install -D -m 755 bin/java-rmi.cgi ${pkgdir}${_jvmdir}/bin/java-rmi.cgi
 
   # Desktop files.
   # TODO add them when switching to IcedTea
-  #install -m644 ${srcdir}/icedtea-${_icedtea_ver}/jconsole.desktop ${pkgdir}/usr/share/applications
+  #install -m 644 ${srcdir}/icedtea-${_icedtea_ver}/jconsole.desktop ${pkgdir}/usr/share/applications
 
   # Set some variables
-  install -Dm755 ${srcdir}/profile_jdk8-openjdk.sh  ${pkgdir}/etc/profile.d/jdk.sh
-  install -Dm755 ${srcdir}/profile_jdk8-openjdk.csh ${pkgdir}/etc/profile.d/jdk.csh
+  install -D -m 755 ${srcdir}/profile_jdk8-openjdk.sh  ${pkgdir}/etc/profile.d/jdk.sh
+  install -D -m 755 ${srcdir}/profile_jdk8-openjdk.csh ${pkgdir}/etc/profile.d/jdk.csh
 
   # link license
-  install -m755 -d ${pkgdir}/usr/share/licenses
+  install -d -m 755 ${pkgdir}/usr/share/licenses/
   ln -sf /usr/share/licenses/${pkgbase} "${pkgdir}/usr/share/licenses/${pkgname}"
 }
