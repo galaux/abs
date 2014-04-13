@@ -210,7 +210,7 @@ package_jre8-openjdk-noicedtea() {
     ln -s ${_jvmdir}/jre/bin/policytool ${pkgdir}/usr/bin
   popd
 
-  # TODO Install icons and menu entries
+  # Icons
   for s in 16 24 32 48; do
     install -Dm644 $srcdir/$_hgdir/jdk/src/solaris/classes/sun/awt/X11/java-icon${s}.png \
                    ${pkgdir}/usr/share/icons/hicolor/${s}x${s}/apps/java.png
@@ -221,8 +221,11 @@ package_jre8-openjdk-noicedtea() {
   #install -Dm644 ${srcdir}/icedtea-${_icedtea_ver}/policytool.desktop \
   #               ${pkgdir}/usr/share/applications/policytool.desktop
 
-  # TODO man pages
-  # policytool
+  # man pages
+  install -Dm644 "$srcdir/$_hgdir/image/jvm/openjdk-1.8.0-ga/man/man1/policytool.1" \
+    $pkgdir/usr/share/man/man1/policytool.1
+  install -Dm644 "$srcdir/$_hgdir/image/jvm/openjdk-1.8.0-ga/man/ja/man1/policytool.1" \
+    $pkgdir/usr/share/man/ja/man1/policytool.1
 
   # Install license
   install -m755 -d ${pkgdir}/usr/share/licenses/${pkgbase}/
