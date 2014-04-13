@@ -27,7 +27,8 @@ sha256sums=('a5017c01889551d04acfb946e15b7fdb54c92f2c0a607276ff7863362127dd8d'
             '3a841d8b5732b8995dbeb8851ba7751249f8f0985946bfc2a8f74c618e9712c9')
 
 _jvmdir=/usr/lib/jvm/java-8-openjdk
-#TODO remove policytool from this array as it is handled separatly or also include its man page
+_imgdir="${srcdir}"/${_hgdir}/image/jvm/openjdk-1.8.0-ga
+# TODO remove policytool from this array as it is handled separatly or also include its man page
 _nonheadless=(bin/policytool
               lib/amd64/libjsound.so
               lib/amd64/libjsoundalsa.so
@@ -86,7 +87,7 @@ build() {
   # FIXME sadly 'DESTDIR' is not used here!
   make DESTDIR="${pkgdir}/" install
 
-  cd "${srcdir}/${_hgdir}/image/jvm/openjdk-1.8.0-ga"
+  cd "${_imgdir}"
 
   # A lot of stuff were directly taken from
   # http://pkgs.fedoraproject.org/cgit/java-1.8.0-openjdk.git/tree/java-1.8.0-openjdk.spec
@@ -134,7 +135,7 @@ package_jre8-openjdk-headless-noicedtea() {
           ${_backup_etc[@]})
   install=install_jre8-openjdk.sh
 
-  cd "${srcdir}/${_hgdir}/image/jvm/openjdk-1.8.0-ga/jre"
+  cd "${_imgdir}/jre"
 
   install -d -m 755 ${pkgdir}${_jvmdir}/jre/
   cp -a bin lib ${pkgdir}${_jvmdir}/jre
@@ -146,15 +147,15 @@ package_jre8-openjdk-headless-noicedtea() {
 
   # Link binaries into /usr/bin
   pushd ${pkgdir}${_jvmdir}/jre/bin
-    install -d -m 755 ${pkgdir}/usr/bin/
-    install -d -m 755 ${pkgdir}/usr/share/man/{,ja/}man1/
-    for file in *; do
-      ln -s ${_jvmdir}/jre/bin/${file} ${pkgdir}/usr/bin
-      install -m 644 "${srcdir}/${_hgdir}/image/jvm/openjdk-1.8.0-ga/man/man1/${file}.1" \
-        ${pkgdir}/usr/share/man/man1/${file}.1
-      install -m 644 "${srcdir}/${_hgdir}/image/jvm/openjdk-1.8.0-ga/man/ja/man1/${file}.1" \
-        ${pkgdir}/usr/share/man/ja/man1/${file}.1
-    done
+  install -d -m 755 ${pkgdir}/usr/bin/
+  install -d -m 755 ${pkgdir}/usr/share/man/{,ja/}man1/
+  for file in *; do
+    ln -s ${_jvmdir}/jre/bin/${file} ${pkgdir}/usr/bin
+    install -m 644 "${_imgdir}/man/man1/${file}.1" \
+      ${pkgdir}/usr/share/man/man1/${file}.1
+    install -m 644 "${_imgdir}/man/ja/man1/${file}.1" \
+      ${pkgdir}/usr/share/man/ja/man1/${file}.1
+  done
   popd
 
   # Link JKS keystore from ca-certificates-java
@@ -189,13 +190,13 @@ package_jre8-openjdk-noicedtea() {
   depends=('java-runtime-headless' 'xdg-utils' 'hicolor-icon-theme')
   optdepends=('alsa-lib: for basic sound support'
               'gtk2: for the Gtk+ look and feel - desktop usage')
-  #TODO 'icedtea-web-java7: web browser plugin + Java Web Start'
-  #TODO 'giflib: for gif format support'
-  #TODO 'libpulse: for advanced sound support'
+  # TODO 'icedtea-web-java7: web browser plugin + Java Web Start'
+  # TODO 'giflib: for gif format support'
+  # TODO 'libpulse: for advanced sound support'
   provides=('java-runtime=8')
   conflicts=('java-runtime')
 
-  cd "${srcdir}/${_hgdir}/image/jvm/openjdk-1.8.0-ga/jre"
+  cd "${_imgdir}/jre"
 
   # TODO? /usr/lib/jvm/java-8-openjdk/jre/lib/sound.properties
   for f in ${_nonheadless[@]}; do
@@ -204,26 +205,26 @@ package_jre8-openjdk-noicedtea() {
 
   # Link binaries into /usr/bin
   pushd ${pkgdir}${_jvmdir}/jre/bin
-    install -d -m 755 ${pkgdir}/usr/bin/
-    ln -s ${_jvmdir}/jre/bin/policytool ${pkgdir}/usr/bin
+  install -d -m 755 ${pkgdir}/usr/bin/
+  ln -s ${_jvmdir}/jre/bin/policytool ${pkgdir}/usr/bin
   popd
 
   # Icons
   for s in 16 24 32 48; do
     install -D -m 644 ${srcdir}/${_hgdir}/jdk/src/solaris/classes/sun/awt/X11/java-icon${s}.png \
-      ${pkgdir}/usr/share/icons/hicolor/${s}x${s}/apps/java.png
+                      ${pkgdir}/usr/share/icons/hicolor/${s}x${s}/apps/java.png
   done
 
   # Desktop files
   # TODO add them when switching to IcedTea
   #install -D -m 644 ${srcdir}/icedtea-${_icedtea_ver}/policytool.desktop \
-  #               ${pkgdir}/usr/share/applications/policytool.desktop
+  #                  ${pkgdir}/usr/share/applications/policytool.desktop
 
   # man pages
-  install -D -m 644 "${srcdir}/${_hgdir}/image/jvm/openjdk-1.8.0-ga/man/man1/policytool.1" \
-    ${pkgdir}/usr/share/man/man1/policytool.1
-  install -D -m 644 "${srcdir}/${_hgdir}/image/jvm/openjdk-1.8.0-ga/man/ja/man1/policytool.1" \
-    ${pkgdir}/usr/share/man/ja/man1/policytool.1
+  install -D -m 644 "${_imgdir}/man/man1/policytool.1" \
+                     ${pkgdir}/usr/share/man/man1/policytool.1
+  install -D -m 644 "${_imgdir}/man/ja/man1/policytool.1" \
+                     ${pkgdir}/usr/share/man/ja/man1/policytool.1
 
   # Install license
   install -d -m 755 ${pkgdir}/usr/share/licenses/${pkgbase}/
@@ -239,7 +240,7 @@ package_jdk8-openjdk-noicedtea() {
   backup=(etc/profile.d/jdk.sh
           etc/profile.d/jdk.csh)
 
-  cd "${srcdir}/${_hgdir}/image/jvm/openjdk-1.8.0-ga"
+  cd "${_imgdir}"
 
   # Main files
   install -d -m 755 ${pkgdir}${_jvmdir}
@@ -248,7 +249,7 @@ package_jdk8-openjdk-noicedtea() {
 
   # 'bin' files
   pushd bin
-  install -d -m 755 ${pkgdir}${_jvmdir}/bin/
+  install -d -m 755 ${pkgdir}/usr/bin/
 
   # 'java-rmi.cgi' will be handled separately as it should not be in the PATH and has no man page
   for b in $(ls | grep -v java-rmi.cgi); do
