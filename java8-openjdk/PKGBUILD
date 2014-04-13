@@ -4,7 +4,7 @@ pkgbase=java8-openjdk
 _java_ver=8
 _codate=2014-03-28
 _JDK_UPDATE_VERSION=132
-_hgdir=jdk8_hg_$_codate
+_hgdir=jdk8_hg_${_codate}
 pkgver=${_java_ver}.u${_JDK_UPDATE_VERSION}
 pkgrel=1
 arch=('i686' 'x86_64')
@@ -13,7 +13,7 @@ license=('custom')
 makedepends=('jdk7-openjdk' 'ccache' 'mercurial' 'cpio' 'unzip' 'zip'
              'libxrender' 'libxtst' 'fontconfig' 'libcups' 'alsa-lib')
               #'giflib'
-source=($_hgdir.tgz
+source=(${_hgdir}.tgz
         001_adjust-mflags-for-gmake-4.patch
         profile_jdk8-openjdk.csh
         profile_jdk8-openjdk.sh
@@ -34,51 +34,51 @@ _headlessfiles=(bin/policytool
                 lib/amd64/libsplashscreen.so)
 
 mksource() {
-  cd $srcdir
+  cd ${srcdir}
 
   # Initial checkout
-  #hg clone http://hg.openjdk.java.net/jdk8/jdk8 $_hgdir
+  #hg clone http://hg.openjdk.java.net/jdk8/jdk8 ${_hgdir}
 
-  cd $_hgdir
+  cd ${_hgdir}
   # To update the whole forest:
   sh get_source.sh
 
-  cd $srcdir
-  tar czf $_hgdir.tgz $_hgdir
+  cd ${srcdir}
+  tar czf ${_hgdir}.tgz ${_hgdir}
 }
 
 prepare() {
-  cd "$srcdir/$_hgdir"
-  hg checkout jdk8-b$_JDK_UPDATE_VERSION
+  cd "${srcdir}/${_hgdir}"
+  hg checkout jdk8-b${_JDK_UPDATE_VERSION}
 
   # https://bugs.openjdk.java.net/browse/JDK-8028407
   cd hotspot
-  patch -p1 < $srcdir/001_adjust-mflags-for-gmake-4.patch
+  patch -p1 < ${srcdir}/001_adjust-mflags-for-gmake-4.patch
 }
 
 build() {
-  cd "$srcdir/$_hgdir"
+  cd "${srcdir}/${_hgdir}"
 
   unset JAVA_HOME
   # http://icedtea.classpath.org/bugzilla/show_bug.cgi?id=1346
   export MAKEFLAGS=${MAKEFLAGS/-j*}
 
-  install -dm755 $srcdir/$_hgdir/image
+  install -dm755 ${srcdir}/${_hgdir}/image
   sh configure \
-    --prefix=$srcdir/$_hgdir/image \
+    --prefix=${srcdir}/${_hgdir}/image \
     --with-milestone='ga' \
-    --with-build-number="b$_JDK_UPDATE_VERSION" \
+    --with-build-number="b${_JDK_UPDATE_VERSION}" \
     --with-zlib=system
     # TODO --enable-unlimited-crypto \
     # TODO seems like openjdk does not want last version of giflib
     #--with-giflib=system \
     # TODO Cannot use 'pkgdir' in 'build' as split package does not know what this can possibly mean
-    #--prefix=$srcdir/image \
+    #--prefix=${srcdir}/image \
     # TODO do we need these?
-    #--with-update-version=$_JDK_UPDATE_VERSION \
+    #--with-update-version=${_JDK_UPDATE_VERSION} \
     #--with-user-release-suffix='archlinux' \
-    # TODO does not work? Plus create links refering to $pkgdir
-    #--bindir=$pkgdir/usr/bin \
+    # TODO does not work? Plus create links refering to ${pkgdir}
+    #--bindir=${pkgdir}/usr/bin \
     # TODO add these if not already taken by default
 #  --with-freetype-lib
 #  --with-alsa-lib
@@ -90,9 +90,9 @@ build() {
   # http://icedtea.classpath.org/bugzilla/show_bug.cgi?id=1346
   export MAKEFLAGS=${MAKEFLAGS/-j*}
   # FIXME sadly 'DESTDIR' is not used here!
-  make DESTDIR="$pkgdir/" install
+  make DESTDIR="${pkgdir}/" install
 
-  cd "$srcdir/$_hgdir/image/jvm/openjdk-1.8.0-ga"
+  cd "${srcdir}/${_hgdir}/image/jvm/openjdk-1.8.0-ga"
 
   # A lot of stuff were directly taken from
   # http://pkgs.fedoraproject.org/cgit/java-1.8.0-openjdk.git/tree/java-1.8.0-openjdk.spec
@@ -107,7 +107,7 @@ build() {
 }
 
 #check() {
-#  cd "$srcdir/$pkgname-$pkgver"
+#  cd "${srcdir}/${pkgname}-${pkgver}"
 #  make -k check
 #}
 
@@ -140,26 +140,26 @@ package_jre8-openjdk-headless-noicedtea() {
           ${_backup_etc[@]})
   install=install_jre8-openjdk.sh
 
-  cd "$srcdir/$_hgdir/image/jvm/openjdk-1.8.0-ga/jre"
+  cd "${srcdir}/${_hgdir}/image/jvm/openjdk-1.8.0-ga/jre"
 
   install -d -m755 ${pkgdir}${_jvmdir}/jre
   cp -a bin lib ${pkgdir}${_jvmdir}/jre
 
   # Remove 'non-headless' lib files
   for f in ${_headlessfiles[@]}; do
-    rm ${pkgdir}${_jvmdir}/jre/$f
+    rm ${pkgdir}${_jvmdir}/jre/${f}
   done
 
   # Link binaries into /usr/bin
   pushd ${pkgdir}${_jvmdir}/jre/bin
     install -d -m755 ${pkgdir}/usr/bin/
-    install -d -m755 $pkgdir/usr/share/man/{,ja/}man1/
+    install -d -m755 ${pkgdir}/usr/share/man/{,ja/}man1/
     for file in *; do
       ln -s ${_jvmdir}/jre/bin/${file} ${pkgdir}/usr/bin
-      install -m644 "$srcdir/$_hgdir/image/jvm/openjdk-1.8.0-ga/man/man1/$file.1" \
-        $pkgdir/usr/share/man/man1/$file.1
-      install -m644 "$srcdir/$_hgdir/image/jvm/openjdk-1.8.0-ga/man/ja/man1/$file.1" \
-        $pkgdir/usr/share/man/ja/man1/$file.1
+      install -m644 "${srcdir}/${_hgdir}/image/jvm/openjdk-1.8.0-ga/man/man1/${file}.1" \
+        ${pkgdir}/usr/share/man/man1/${file}.1
+      install -m644 "${srcdir}/${_hgdir}/image/jvm/openjdk-1.8.0-ga/man/ja/man1/${file}.1" \
+        ${pkgdir}/usr/share/man/ja/man1/${file}.1
     done
   popd
 
@@ -185,9 +185,9 @@ package_jre8-openjdk-headless-noicedtea() {
 
   # Move config files that were set in _backup_etc from ./lib to /etc
   for file in ${_backup_etc[@]}; do
-    _filepkgpath=$_jvmdir/jre/lib/${file#etc/java-8-openjdk/}
-    install -Dm644 $pkgdir$_filepkgpath $pkgdir/$file
-    ln -sf /$file $pkgdir$_filepkgpath
+    _filepkgpath=${_jvmdir}/jre/lib/${file#etc/java-8-openjdk/}
+    install -Dm644 ${pkgdir}${_filepkgpath} ${pkgdir}/${file}
+    ln -sf /${file} ${pkgdir}${_filepkgpath}
   done
 }
 
@@ -197,11 +197,11 @@ package_jre8-openjdk-noicedtea() {
   provides=('java-runtime=8')
   conflicts=('java-runtime')
 
-  cd "$srcdir/$_hgdir/image/jvm/openjdk-1.8.0-ga/jre"
+  cd "${srcdir}/${_hgdir}/image/jvm/openjdk-1.8.0-ga/jre"
 
   # TODO? /usr/lib/jvm/java-8-openjdk/jre/lib/sound.properties
   for f in ${_headlessfiles[@]}; do
-    install -Dm644 $f ${pkgdir}${_jvmdir}/jre/$f
+    install -Dm644 ${f} ${pkgdir}${_jvmdir}/jre/${f}
   done
 
   # Link binaries into /usr/bin
@@ -212,7 +212,7 @@ package_jre8-openjdk-noicedtea() {
 
   # Icons
   for s in 16 24 32 48; do
-    install -Dm644 $srcdir/$_hgdir/jdk/src/solaris/classes/sun/awt/X11/java-icon${s}.png \
+    install -Dm644 ${srcdir}/${_hgdir}/jdk/src/solaris/classes/sun/awt/X11/java-icon${s}.png \
                    ${pkgdir}/usr/share/icons/hicolor/${s}x${s}/apps/java.png
   done
 
@@ -222,10 +222,10 @@ package_jre8-openjdk-noicedtea() {
   #               ${pkgdir}/usr/share/applications/policytool.desktop
 
   # man pages
-  install -Dm644 "$srcdir/$_hgdir/image/jvm/openjdk-1.8.0-ga/man/man1/policytool.1" \
-    $pkgdir/usr/share/man/man1/policytool.1
-  install -Dm644 "$srcdir/$_hgdir/image/jvm/openjdk-1.8.0-ga/man/ja/man1/policytool.1" \
-    $pkgdir/usr/share/man/ja/man1/policytool.1
+  install -Dm644 "${srcdir}/${_hgdir}/image/jvm/openjdk-1.8.0-ga/man/man1/policytool.1" \
+    ${pkgdir}/usr/share/man/man1/policytool.1
+  install -Dm644 "${srcdir}/${_hgdir}/image/jvm/openjdk-1.8.0-ga/man/ja/man1/policytool.1" \
+    ${pkgdir}/usr/share/man/ja/man1/policytool.1
 
   # Install license
   install -m755 -d ${pkgdir}/usr/share/licenses/${pkgbase}/
@@ -246,7 +246,7 @@ package_jdk8-openjdk-noicedtea() {
   backup=(etc/profile.d/jdk.sh
           etc/profile.d/jdk.csh)
 
-  cd "$srcdir/$_hgdir/image/jvm/openjdk-1.8.0-ga"
+  cd "${srcdir}/${_hgdir}/image/jvm/openjdk-1.8.0-ga"
 
   # Main files
   install -m755 -d ${pkgdir}${_jvmdir}
