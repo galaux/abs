@@ -12,7 +12,6 @@ url='http://openjdk.java.net/'
 license=('custom')
 makedepends=('jdk7-openjdk' 'ccache' 'mercurial' 'cpio' 'unzip' 'zip'
              'libxrender' 'libxtst' 'fontconfig' 'libcups' 'alsa-lib')
-              #'giflib'
 source=(${_hgdir}.tgz
         001_adjust-mflags-for-gmake-4.patch
         profile_jdk8-openjdk.csh
@@ -70,13 +69,14 @@ build() {
     --with-build-number="b${_JDK_UPDATE_VERSION}" \
     --enable-unlimited-crypto \
     --with-zlib=system
-    # TODO OpenJDK does not want last version of giflib
+    # TODO OpenJDK does not want last version of giflib (add 'giflib' as dependency once fixed)
     #--with-giflib=system \
     # TODO do we need these?
     #--with-update-version=${_JDK_UPDATE_VERSION} \
     #--with-user-release-suffix='archlinux' \
 
   make
+  # These help to debug builds:
   #LOG=trace HOTSPOT_BUILD_JOBS=1
 
   unset JAVA_HOME
@@ -160,7 +160,6 @@ package_jre8-openjdk-headless-noicedtea() {
   rm -f ${pkgdir}${_jvmdir}/jre/lib/security/cacerts
   ln -sf /etc/ssl/certs/java/cacerts "${pkgdir}${_jvmdir}/jre/lib/security/cacerts"
 
-  # TODO move these on a meta package to enable easy switching between different vendors and versions
   # Set some variables
   install -Dm755 ${srcdir}/profile_jre8-openjdk.sh  ${pkgdir}/etc/profile.d/jre.sh
   install -Dm755 ${srcdir}/profile_jre8-openjdk.csh ${pkgdir}/etc/profile.d/jre.csh
@@ -188,8 +187,7 @@ package_jre8-openjdk-noicedtea() {
   pkgdesc="Free Java environment - full runtime environment - 'NO ICEDTEA' DEVEL VERSION"
   depends=('java-runtime-headless' 'xdg-utils' 'hicolor-icon-theme')
   optdepends=('alsa-lib: for basic sound support'
-             'gtk2: for the Gtk+ look and feel - desktop usage'
-             'libxtst: linked in xawt/libmawt.so - desktop usage')
+              'gtk2: for the Gtk+ look and feel - desktop usage')
   #TODO 'icedtea-web-java7: web browser plugin + Java Web Start'
   #TODO 'giflib: for gif format support'
   #TODO 'libpulse: for advanced sound support'
@@ -212,7 +210,7 @@ package_jre8-openjdk-noicedtea() {
   # Icons
   for s in 16 24 32 48; do
     install -Dm644 ${srcdir}/${_hgdir}/jdk/src/solaris/classes/sun/awt/X11/java-icon${s}.png \
-                   ${pkgdir}/usr/share/icons/hicolor/${s}x${s}/apps/java.png
+      ${pkgdir}/usr/share/icons/hicolor/${s}x${s}/apps/java.png
   done
 
   # Desktop files
