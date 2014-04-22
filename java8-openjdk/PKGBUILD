@@ -139,7 +139,7 @@ package_jre8-openjdk-headless-noicedtea() {
   backup=(etc/profile.d/jre.sh
           etc/profile.d/jre.csh
           ${_backup_etc[@]})
-  install=install_jre8-openjdk.sh
+  install=install_jre8-openjdk-headless.sh
 
   cd "${srcdir}/${_imgdir}/jre"
 
@@ -201,6 +201,7 @@ package_jre8-openjdk-noicedtea() {
   # TODO 'libpulse: for advanced sound support'
   provides=('java-runtime=8')
   conflicts=('java-runtime')
+  install=install_jre8-openjdk.sh
 
   cd "${srcdir}/${_imgdir}/jre"
 
