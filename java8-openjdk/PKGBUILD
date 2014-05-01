@@ -6,7 +6,7 @@ _codate=2014-03-28
 _JDK_UPDATE_VERSION=132
 _hgdir=jdk8_hg_${_codate}
 pkgver=${_java_ver}.u${_JDK_UPDATE_VERSION}
-pkgrel=1
+pkgrel=2
 arch=('i686' 'x86_64')
 url='http://openjdk.java.net/'
 license=('custom')
@@ -26,13 +26,16 @@ sha256sums=('a5017c01889551d04acfb946e15b7fdb54c92f2c0a607276ff7863362127dd8d'
             'd6902559ad121e10ac005b66e6e3b08f5ec9d3755800243db92580c0dd9d096a'
             '3a841d8b5732b8995dbeb8851ba7751249f8f0985946bfc2a8f74c618e9712c9')
 
+[ "$CARCH" = "x86_64" ] && _JARCH=amd64
+[ "$CARCH" = "i686"   ] && _JARCH=i386
+
 _jvmdir=/usr/lib/jvm/java-8-openjdk
 _imgdir="${_hgdir}/image/jvm/openjdk-1.8.0-ga"
 # TODO remove policytool from this array as it is handled separatly or also include its man page
 _nonheadless=(bin/policytool
-              lib/amd64/libjsound.so
-              lib/amd64/libjsoundalsa.so
-              lib/amd64/libsplashscreen.so)
+              lib/${_JARCH}/libjsound.so
+              lib/${_JARCH}/libjsoundalsa.so
+              lib/${_JARCH}/libsplashscreen.so)
 
 mksource() {
   cd "${srcdir}"
@@ -77,7 +80,10 @@ build() {
     #--with-update-version=${_JDK_UPDATE_VERSION} \
     #--with-user-release-suffix='archlinux' \
 
-  make
+  # Without 'DEBUG_BINARIES', i686 won't build
+  # http://mail.openjdk.java.net/pipermail/core-libs-dev/2013-July/019203.html
+  make \
+    DEBUG_BINARIES=true
   # These help to debug builds:
   #LOG=trace HOTSPOT_BUILD_JOBS=1
 
@@ -114,7 +120,7 @@ package_jre8-openjdk-headless-noicedtea() {
   conflicts=('java-runtime-headless')
   # FIXME first file looks like it belongs to 64 arch only…
   # Config files from 'lib' dir that should be backup
-  _backup_etc=(etc/java-8-openjdk/amd64/jvm.cfg
+  _backup_etc=(etc/java-8-openjdk/${_JARCH}/jvm.cfg
                etc/java-8-openjdk/calendars.properties
                etc/java-8-openjdk/content-types.properties
                etc/java-8-openjdk/flavormap.properties
@@ -133,7 +139,7 @@ package_jre8-openjdk-headless-noicedtea() {
   backup=(etc/profile.d/jre.sh
           etc/profile.d/jre.csh
           ${_backup_etc[@]})
-  install=install_jre8-openjdk.sh
+  install=install_jre8-openjdk-headless.sh
 
   cd "${srcdir}/${_imgdir}/jre"
 
@@ -195,6 +201,7 @@ package_jre8-openjdk-noicedtea() {
   # TODO 'libpulse: for advanced sound support'
   provides=('java-runtime=8')
   conflicts=('java-runtime')
+  install=install_jre8-openjdk.sh
 
   cd "${srcdir}/${_imgdir}/jre"
 
