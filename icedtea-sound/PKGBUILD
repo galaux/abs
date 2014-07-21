@@ -1,0 +1,41 @@
+# Maintainer: Guillaume ALAUX <guillaume@archlinux.org>
+pkgname=icedtea-sound
+pkgver=1.0.1
+pkgrel=1
+pkgdesc='A collection of audio SPI implementations for Java'
+arch=('i686' 'x86_64')
+url='http://icedtea.classpath.org/'
+license=('GPL2')
+groups=()
+depends=('java-runtime-headless' 'libpulse')
+makedepends=('java-environment' 'libpulse' 'zip')
+checkdepends=()
+optdepends=()
+provides=()
+conflicts=()
+replaces=()
+backup=()
+options=()
+install=
+changelog=
+source=(http://icedtea.wildebeest.org/download/source/${pkgname}-${pkgver}.tar.xz
+        http://icedtea.wildebeest.org/download/source/${pkgname}-${pkgver}.tar.xz.sig)
+noextract=()
+sha256sums=('6ff852b82ae7db7a95981271037eb3a3d52c59581e3b27a638a7c6bc8eecb4a3'
+            'SKIP')
+
+build() {
+  cd "${srcdir}/${pkgname}-${pkgver}"
+  ./configure --prefix=/usr
+  make
+}
+
+check() {
+  cd "${srcdir}/${pkgname}-${pkgver}"
+  make -k check
+}
+
+package() {
+  cd "${srcdir}/${pkgname}-${pkgver}"
+  make DESTDIR="${pkgdir}/" install
+}
