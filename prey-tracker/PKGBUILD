@@ -36,16 +36,16 @@ sha256sums=('20dcaa2b0b0af6304c17317a4b57c95ca722a7534b3f83881cbdd01491da65d2'
 backup=('usr/share/prey/config')
 
 prepare() {
-  cd ${srcdir}/prey-bash-client-${pkgver}
-  patch -p1 < ${srcdir}/1.56-overzealous-version-check.patch
+  cd "${srcdir}/prey-bash-client-${pkgver}"
+  patch -p1 < "${srcdir}/1.56-overzealous-version-check.patch"
 }
 
 package() {
-  cd ${srcdir}/prey-bash-client-${pkgver}
+  cd "${srcdir}/prey-bash-client-${pkgver}"
 
   # make directories and move files to /usr/share/prey/
-  mkdir -p ${pkgdir}/usr/share/prey/
-  cp -r ${srcdir}/prey-bash-client-${pkgver}/* ${pkgdir}/usr/share/prey/
+  mkdir -p "${pkgdir}/usr/share/prey/"
+  cp -r "${srcdir}"/prey-bash-client-${pkgver}/* "${pkgdir}/usr/share/prey/"
 
   # symlink the config
   install -d "${pkgdir}/etc"
