@@ -35,9 +35,13 @@ sha256sums=('20dcaa2b0b0af6304c17317a4b57c95ca722a7534b3f83881cbdd01491da65d2'
             '3319e419a207968ad9e520b48924b197fbf0da38daec17f0d6807a8f955bba03')
 backup=('usr/share/prey/config')
 
-package() {
+prepare() {
   cd ${srcdir}/prey-bash-client-${pkgver}
   patch -p1 < ${srcdir}/1.56-overzealous-version-check.patch
+}
+
+package() {
+  cd ${srcdir}/prey-bash-client-${pkgver}
 
   # make directories and move files to /usr/share/prey/
   mkdir -p ${pkgdir}/usr/share/prey/
