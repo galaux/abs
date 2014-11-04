@@ -1,6 +1,10 @@
 # Maintainer: Guillaume ALAUX <guillaume at alaux dot net>
 # Contributor: James Bulmer <nekinie@gmail.com>
 # TODO extract zookeeper dependency?
+# TODO create service for 'local' and custom
+# TODO make etc/zookeeper.conf use /var/tmp/kafka/zookeeper (should this be /var/tmp or /var/lib ???)
+# TODO in service files, remove 'dependencies' on zookeeper (zookeeper could be installed on some other sever)???
+# TODO make dir log belong to 'log' directory
 
 pkgname=kafka
 pkgver=0.8.1.1
