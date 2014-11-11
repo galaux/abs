@@ -1,0 +1,19 @@
+[Unit]
+Description=Zookeeper
+After=network.target
+
+[Service]
+User=zookeeper
+Group=zookeeper
+SyslogIdentifier=zookeeper
+Type=forking
+SuccessExitStatus=143
+PIDFile=/var/run/zookeeper/zookeeper.pid
+Environment=ZOOPIDFILE=/var/run/zookeeper/zookeeper.pid
+Environment=ZOO_LOG_DIR=/var/log/zookeeper
+Environment=ZOOCFGDIR=/etc/zookeeper
+ExecStart=/usr/bin/zkServer.sh start
+ExecStop=/usr/bin/zkServer.sh stop
+
+[Install]
+WantedBy=multi-user.target
