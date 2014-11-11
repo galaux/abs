@@ -1,9 +1,12 @@
 [Unit]
-Description=A high-throughput distributed messaging system
-Requires=kafka-zookeeper.service
-After=network.target kafka-zookeeper.service
+Description=Kafka
+Requires=zookeeper@kafka.service
+After=network.target zookeeper@kafka.service
 
 [Service]
+User=kafka
+Group=kafka
+SyslogIdentifier=kafka
 Type=forking
 SuccessExitStatus=143
 ExecStart=/usr/bin/kafka-server-start.sh -daemon /etc/kafka/server.properties
