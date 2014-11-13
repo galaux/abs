@@ -52,6 +52,7 @@ package() {
   #cp -r src "${pkgdir}/usr/share/${pkgname}"
 
   cp -r lib "${pkgdir}/usr/share/java/${pkgname}"
+  rm -rf "${pkgdir}"/usr/share/java/${pkgname}/{jdiff,cobertura}
   ln -s ../java/${pkgname} "${pkgdir}${_app_home}/lib"
 
   cp -r recipes "${pkgdir}/usr/share/${pkgname}"
