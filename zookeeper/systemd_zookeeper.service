@@ -1,19 +1,20 @@
 [Unit]
-Description=Zookeeper
+Description=Zookeeper distributed coordination server
 After=network.target
 
 [Service]
 User=zookeeper
 Group=zookeeper
 SyslogIdentifier=zookeeper
-Type=forking
-SuccessExitStatus=143
-PIDFile=/var/run/zookeeper/zookeeper.pid
-Environment=ZOOPIDFILE=/var/run/zookeeper/zookeeper.pid
-Environment=ZOO_LOG_DIR=/var/log/zookeeper
-Environment=ZOOCFGDIR=/etc/zookeeper
-ExecStart=/usr/bin/zkServer.sh start
-ExecStop=/usr/bin/zkServer.sh stop
+ExecStart=/usr/bin/java \
+  -Dzookeeper.log.dir=/var/log/zookeeper \
+  -Dzookeeper.root.logger=INFO,ROLLINGFILE \
+  -cp /usr/share/java/zookeeper/* \
+  -Dlog4j.configuration=file:/etc/zookeeper/log4j.properties \
+  -Dcom.sun.management.jmxremote \
+  -Dcom.sun.management.jmxremote.local.only=false \
+  org.apache.zookeeper.server.quorum.QuorumPeerMain \
+  /etc/zookeeper/zoo.cfg
 
 [Install]
 WantedBy=multi-user.target

@@ -15,18 +15,16 @@ backup=(etc/zookeeper/configuration.xsl
 install=install_zookeeper.sh
 
 source=(https://dist.apache.org/repos/dist/release/${pkgname}/${pkgname}-${pkgver}/${pkgname}-${pkgver}.tar.gz
-        001_zkServer-clean-kill.patch
         systemd_zookeeper.service
         systemd_zookeeper@.service
         systemd_sysusers.d_zookeeper.conf
         systemd_tmpfiles.d_zookeeper.conf)
 
 sha256sums=('01b3938547cd620dc4c93efe07c0360411f4a66962a70500b163b59014046994'
-            '8c46c005579171988746197fe7c35061c007387d474fb8d05ecc74b37387634f'
-            '78ab3546f895c41ee78b5446cfd29ab1f8722ab507d83e0e245918e840935660'
-            '145809ca7b5941d462d785c9be833b57b9e9cc257b197faf0a38ad5f8fe5e243'
-            '150c4df043553df3e9118496ae01eb9290d893b4cf7c68a667820b3e708379a1'
-            '65cce4d87a98eff40bfbf2397db1e6f1405029163367f2bef0c142301cc982a8')
+            '0235413122567a4810ce4aeb8b4b41a749ca69b1ee79e1d225b811febd92dfed'
+            '97254db61525b44564483e8aa9e55ff7c52f38b6d26a538c3ca6f82e1482e5e4'
+            'e863b63650c15a8823cfb2b507c375c999a71cda24805062de36af0250de5daa'
+            '99fff5b04623889b0010c74c2dc3a4be29e7770fe2c7e15da51f7442a28c6580')
 
 package() {
   cd "${srcdir}/${pkgname}-${pkgver}"
@@ -38,7 +36,6 @@ package() {
   cp -r conf ${pkgdir}/etc/${pkgname}/
   ln -s /etc/${pkgname} "${pkgdir}${_app_home}/conf"
 
-  patch -p0 < "${srcdir}/001_zkServer-clean-kill.patch"
   cp -r bin/*.sh  "${pkgdir}${_app_home}/bin/"
   sed -i "s|^ZOOBIN=\"\$(dirname \"\${ZOOBIN}\")\"|ZOOBIN=\"${_app_home}/bin\"|" \
     "${pkgdir}"${_app_home}/bin/*
