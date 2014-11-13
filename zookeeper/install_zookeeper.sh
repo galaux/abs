@@ -13,6 +13,6 @@ post_remove() {
         userdel -f zookeeper
     fi
     if getent group zookeeper >/dev/null 2>&1; then
-        groupdel -f zookeeper
+        groupdelf zookeeper
     fi
 }
