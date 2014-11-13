@@ -1,5 +1,6 @@
 # Maintainer: Guillaume ALAUX <guillaume at alaux dot net>
 # Contributor: James Bulmer <nekinie@gmail.com>
+# TODO see if log-cleaner.log should not be written to /var/log/kafka
 pkgname=kafka
 pkgver=0.8.1.1
 # You can change this for one of the Scala version upstream has already built
