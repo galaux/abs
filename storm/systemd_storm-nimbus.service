@@ -1,5 +1,5 @@
 [Unit]
-Description=Storm Nimbus
+Description=Storm Nimbus master node
 Requires=zookeeper@storm.service
 After=network.target zookeeper@storm.service
 

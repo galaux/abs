@@ -1,5 +1,5 @@
 [Unit]
-Description=Storm UI
+Description=Storm UI daemon
 Requires=storm-nimbus.service
 After=network.target storm-nimbus.service
 

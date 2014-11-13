@@ -1,5 +1,5 @@
 [Unit]
-Description=Storm Supervisor
+Description=Storm Supervisor node
 Requires=zookeeper@storm.service
 After=network.target zookeeper@storm.service
 
