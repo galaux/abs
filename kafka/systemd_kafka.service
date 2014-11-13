@@ -1,5 +1,5 @@
 [Unit]
-Description=Kafka
+Description=Kafka publish-subscribe messaging system
 Requires=zookeeper@kafka.service
 After=network.target zookeeper@kafka.service
 
