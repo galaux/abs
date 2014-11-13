@@ -5,6 +5,7 @@
 # ui -> requires nimbus
 
 # TODO change zoo ports
+# TODO split packages? nimbus/supervisor/ui ?
 
 pkgname=storm
 pkgver=0.9.2
